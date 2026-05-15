@@ -15,6 +15,7 @@ from app.models.user_provider_key import UserProviderKey
 from app.services.auth import get_current_user
 from app.services.key_encryption import decrypt_key, encrypt_key, mask_key
 from app.services.llm_client import (
+    clear_provider_preference_for_user,
     get_active_provider_info_for_user,
     get_available_providers,
     get_llm_client_for_user_byok,
@@ -142,11 +143,15 @@ async def _provider_model_ids(
         api_key = api_key or settings.openai_api_key
         if not api_key:
             return defaults, "default"
-        async with httpx.AsyncClient(timeout=15) as http:
-            resp = await http.get(
-                "https://api.openai.com/v1/models",
-                headers={"Authorization": f"Bearer {api_key}"},
-            )
+        try:
+            async with httpx.AsyncClient(timeout=15) as http:
+                resp = await http.get(
+                    "https://api.openai.com/v1/models",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                )
+        except Exception as exc:
+            logger.info("openai_model_list_error error=%s", exc)
+            return defaults, "default"
         if resp.status_code != 200:
             logger.info("openai_model_list_failed status=%s", resp.status_code)
             return defaults, "default"
@@ -164,14 +169,18 @@ async def _provider_model_ids(
         api_key = api_key or settings.anthropic_api_key
         if not api_key:
             return defaults, "default"
-        async with httpx.AsyncClient(timeout=15) as http:
-            resp = await http.get(
-                "https://api.anthropic.com/v1/models",
-                headers={
-                    "x-api-key": api_key,
-                    "anthropic-version": "2023-06-01",
-                },
-            )
+        try:
+            async with httpx.AsyncClient(timeout=15) as http:
+                resp = await http.get(
+                    "https://api.anthropic.com/v1/models",
+                    headers={
+                        "x-api-key": api_key,
+                        "anthropic-version": "2023-06-01",
+                    },
+                )
+        except Exception as exc:
+            logger.info("anthropic_model_list_error error=%s", exc)
+            return defaults, "default"
         if resp.status_code != 200:
             logger.info("anthropic_model_list_failed status=%s", resp.status_code)
             return defaults, "default"
@@ -495,6 +504,7 @@ async def delete_user_key(
         )
     )
     await db.commit()
+    clear_provider_preference_for_user(current_user.id, provider)
     return None
 
 

@@ -7,7 +7,15 @@ interface ProviderOption {
   default_model: string;
 }
 
-export default function ModelSelector() {
+interface ModelSelectorProps {
+  idPrefix?: string;
+  label?: string;
+}
+
+export default function ModelSelector({
+  idPrefix = "llm",
+  label = "AI:",
+}: ModelSelectorProps = {}) {
   const [providers, setProviders] = useState<ProviderOption[]>([]);
   const [providerModels, setProviderModels] = useState<Record<string, string[]>>({});
   const [activeProvider, setActiveProvider] = useState("");
@@ -115,14 +123,16 @@ export default function ModelSelector() {
   const modelOptions = activeModel && !activeModels.includes(activeModel)
     ? [activeModel, ...activeModels]
     : activeModels;
+  const providerSelectId = `${idPrefix}-provider-select`;
+  const modelSelectId = `${idPrefix}-model-select`;
 
   return (
     <div className="model-selector">
-      <label className="model-selector-label" htmlFor="llm-provider-select">
-        AI:
+      <label className="model-selector-label" htmlFor={providerSelectId}>
+        {label}
       </label>
       <select
-        id="llm-provider-select"
+        id={providerSelectId}
         className="model-selector-select"
         value={activeProvider}
         onChange={handleChange}
@@ -137,7 +147,7 @@ export default function ModelSelector() {
       </select>
       {modelOptions.length > 1 ? (
         <select
-          id="llm-model-select"
+          id={modelSelectId}
           className="model-selector-select model-selector-model-select"
           value={activeModel}
           onChange={handleModelChange}

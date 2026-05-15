@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { api } from "../api/client";
 import type { BYOKKeyResponse, LLMProviderHealth } from "../types/api";
 import { useAuth } from "../auth/useAuth";
+import ModelSelector from "../components/ModelSelector";
 
 const BYOK_PROVIDERS = [
   { name: "anthropic", display_name: "Anthropic" },
@@ -264,6 +265,17 @@ export default function SettingsPage() {
           )}
         </section>
       ) : null}
+
+      <section className="settings-provider-switch" aria-label="Active AI provider controls">
+        <div>
+          <span>Active AI Provider</span>
+          <strong>Provider and model selection</strong>
+          <p>
+            Choose the runtime used for AI-assisted generation, review, and explanation workflows.
+          </p>
+        </div>
+        <ModelSelector idPrefix="settings-llm" label="Active AI Provider" />
+      </section>
 
       <h2 style={{ fontSize: "1.125rem", marginBottom: "1rem" }}>AI Provider Keys</h2>
 

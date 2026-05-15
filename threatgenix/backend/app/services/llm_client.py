@@ -1108,6 +1108,26 @@ def set_provider_preference_for_user(
     _user_provider_preferences[_user_key(user_id)] = (provider_name, model)
 
 
+def clear_provider_preference_for_user(
+    user_id: UUID | str,
+    provider_name: str | None = None,
+) -> None:
+    """Clear a user's active provider preference.
+
+    When a specific provider is supplied, only clear the preference if it points
+    at that provider. This prevents deleting one BYOK key from disturbing a
+    deliberate selection of another provider.
+    """
+    key = _user_key(user_id)
+    if provider_name is None:
+        _user_provider_preferences.pop(key, None)
+        return
+
+    current = _user_provider_preferences.get(key)
+    if current is not None and current[0] == provider_name.lower():
+        _user_provider_preferences.pop(key, None)
+
+
 def _set_model_for_provider(provider_name: str, model: str) -> None:
     """Update the settings model field for a given provider."""
     model_field_map = {

@@ -2103,6 +2103,52 @@ main {
   padding-left: 1.1rem;
 }
 
+.settings-provider-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.settings-provider-switch > div {
+  min-width: 0;
+}
+
+.settings-provider-switch span {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: #2563eb;
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.settings-provider-switch strong {
+  display: block;
+  color: #0f172a;
+}
+
+.settings-provider-switch p {
+  margin: 0.4rem 0 0;
+  color: #64748b;
+  font-size: 0.86rem;
+  line-height: 1.45;
+}
+
+.settings-provider-switch .model-selector {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.settings-provider-switch .model-selector-label {
+  color: #475569;
+}
+
 .settings-verify-form {
   display: grid;
   gap: 0.6rem;
@@ -11887,6 +11933,15 @@ main {
   .model-selector-select {
     width: 100%;
     max-width: 100%;
+  }
+
+  .settings-provider-switch {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settings-provider-switch .model-selector {
+    justify-content: flex-start;
   }
 
   .user-badge {

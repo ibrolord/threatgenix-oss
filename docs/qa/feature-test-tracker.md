@@ -62,7 +62,7 @@ fixed.
 | QA-024 | Scan credentials | Credentials are encrypted and scoped | credential tests | Key-rotation behavior | unit | P2 | S2 | backend | open |
 | QA-025 | Application review | Bundle to findings to decision works | broad app-review tests | Browser flow with mocked scanners | browser E2E | P1 | S1 | frontend | open |
 | QA-026 | TMAC | Threat model code round-trips | TMAC tests | Import, mutate, export, diff minimality | unit | P2 | S2 | backend | open |
-| QA-027 | Provider settings | Provider switching and BYOK are usable | API and BYOK tests | Settings-page browser flow | browser E2E | P1 | S1 | frontend | open |
+| QA-027 | Provider settings | Provider switching and BYOK are usable | API and BYOK tests plus Compose Settings-page provider switch and BYOK journey | Keep regression active | browser E2E | P1 | S1 | frontend | closed-verified |
 | QA-028 | Security headers | Common hardening headers are present | health and catalog header tests plus local P0 retest | Keep regression active | security | P0 | S0 | backend | closed-verified |
 | QA-029 | Rate limiting | Auth endpoints throttle bursts | backend auth security unit test plus live HTTP e2e burst-login regression | Keep regression active in backend and e2e suites | security | P1 | S1 | backend | closed-verified |
 | QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix and local P0 retest | Keep regression active | startup | P0 | S0 | backend | closed-verified |
@@ -197,6 +197,13 @@ fixed.
   verifies both persisted threat state and per-threat audit history through the
   API. The targeted browser regression passed against
   `http://127.0.0.1:5180` with API `http://127.0.0.1:8010/api`.
+- 2026-05-15: QA-027 gained a first-class active provider control on Settings
+  and `threatgenix/frontend/e2e/provider-settings.spec.ts`. The Compose browser
+  journey adds an OpenAI BYOK key, switches the active AI provider to that
+  model, verifies `/api/llm/providers` reflects the selected provider, deletes
+  the key, and verifies the stale active provider preference is cleared. The
+  backend now also falls back to configured default model IDs if live model-list
+  discovery cannot reach OpenAI or Anthropic.
 
 ## Release Exit Criteria
 

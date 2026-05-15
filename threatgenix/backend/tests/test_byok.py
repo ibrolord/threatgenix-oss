@@ -11,6 +11,10 @@ from app.main import app
 from app.models.user_provider_key import UserProviderKey
 from app.services.auth import get_current_user
 from app.services.key_encryption import decrypt_key, encrypt_key, mask_key
+from app.services.llm_client import (
+    get_active_provider_info_for_user,
+    set_provider_preference_for_user,
+)
 
 BASE_URL = "http://test"
 API_PREFIX = "/api/llm"
@@ -247,6 +251,35 @@ async def test_delete_key():
         resp = await client.delete(f"{API_PREFIX}/keys/anthropic")
 
     assert resp.status_code == 204
+
+
+@pytest.mark.asyncio
+async def test_delete_key_clears_matching_active_provider_preference():
+    """Deleting the selected BYOK provider should fall back to server defaults."""
+    app.dependency_overrides[get_current_user] = _override_user()
+
+    fake_db = FakeDB()
+    key_obj = UserProviderKey(
+        user_id=FAKE_USER_A,
+        provider="openai",
+        encrypted_key=encrypt_key("sk-openai-secret"),
+        model_override="gpt-4o-mini",
+    )
+    key_obj.created_at = datetime.now(timezone.utc)
+    fake_db._keys[(FAKE_USER_A, "openai")] = key_obj
+    set_provider_preference_for_user(FAKE_USER_A, "openai", "gpt-4o-mini")
+
+    async def override_db():
+        yield fake_db
+
+    app.dependency_overrides[get_db] = override_db
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
+        resp = await client.delete(f"{API_PREFIX}/keys/openai")
+
+    assert resp.status_code == 204
+    assert get_active_provider_info_for_user(FAKE_USER_A)["provider"] != "openai"
 
 
 @pytest.mark.asyncio
