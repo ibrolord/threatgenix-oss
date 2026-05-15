@@ -241,6 +241,9 @@ class NodeProperties(BaseModel):
     component_label: Optional[str] = None
     component_shape: Optional[ComponentShape] = None
     component_description: Optional[str] = None
+    repository_seed_id: Optional[str] = None
+    repository_seed_confidence: Optional[float] = None
+    repository_seed_source_refs: list[str] = Field(default_factory=list)
     property_display_labels: Optional[dict[str, str]] = None
     # All node types
     internet_facing: Optional[bool] = None

@@ -18,7 +18,7 @@ e2e: setup
 	  test_03_concurrency.py test_04_data_integrity.py test_05_performance.py \
 	  test_06_domain.py test_09_threat_csv_export.py \
 	  test_10_compliance_framework_coverage.py test_11_document_retention.py \
-	  test_08_auth_rate_limit.py
+	  test_12_dfd_contracts.py test_08_auth_rate_limit.py
 	@echo "Frontend visual tests run via MCP during agent invocation"
 
 e2e-record: setup
