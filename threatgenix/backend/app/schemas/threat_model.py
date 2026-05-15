@@ -62,6 +62,7 @@ class ThreatModelResponse(BaseModel):
     out_of_scope_statement: Optional[str] = None
     created_at: datetime
     updated_at: datetime
+    archived_at: Optional[datetime] = None
 
     model_config = {"from_attributes": True}
 
@@ -105,6 +106,7 @@ class ThreatModelListItem(BaseModel):
     data_classification: str
     created_at: datetime
     updated_at: datetime
+    archived_at: Optional[datetime] = None
     threat_count: int = 0
     open_count: int = 0
     has_been_analyzed: bool = False

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import type { PortfolioSummary, PortfolioTrendResponse } from "../types/api";
 import { api } from "../api/client";
@@ -51,10 +51,14 @@ function DashboardPage() {
   const [trends, setTrends] = useState<PortfolioTrendResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [archivingId, setArchivingId] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    Promise.all([api.getPortfolioSummary(), api.getPortfolioTrends()])
+  const loadDashboard = useCallback((showLoading = false) => {
+    if (showLoading) setLoading(true);
+    setError(null);
+    return Promise.all([api.getPortfolioSummary(), api.getPortfolioTrends()])
       .then(([summaryResponse, trendResponse]) => {
         setSummary(summaryResponse);
         setTrends(trendResponse);
@@ -62,6 +66,10 @@ function DashboardPage() {
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    void loadDashboard(true);
+  }, [loadDashboard]);
 
   if (loading) return <div className="page-loading"><div className="dfd-spinner" /><span>Loading dashboard...</span></div>;
   if (error) return <p className="error">Failed to load dashboard: {error}</p>;
@@ -124,6 +132,25 @@ function DashboardPage() {
     a.download = `threatgenix-portfolio-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function handleArchiveModel(model: PortfolioSummary["recent_models"][number]) {
+    const confirmed = window.confirm(
+      `Archive ${model.system_name}? It will be removed from active portfolio lists.`
+    );
+    if (!confirmed) return;
+
+    setActionError(null);
+    setArchivingId(model.id);
+    try {
+      await api.archiveThreatModel(model.id);
+      await loadDashboard();
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : "Failed to archive security review.";
+      setActionError(message);
+    } finally {
+      setArchivingId(null);
+    }
   }
 
   return (
@@ -240,6 +267,7 @@ function DashboardPage() {
         </div>
       ) : (
         <div className="dashboard-table-shell">
+          {actionError && <p className="dashboard-action-error">{actionError}</p>}
           <table className="dashboard-model-table">
             <thead>
               <tr>
@@ -247,6 +275,7 @@ function DashboardPage() {
                 <th>Classification</th>
                 <th>Findings</th>
                 <th data-col="updated">Updated</th>
+                <th data-col="actions">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -273,6 +302,21 @@ function DashboardPage() {
                   <td>{m.threat_count}</td>
                   <td data-col="updated">
                     {new Date(m.updated_at).toLocaleDateString()}
+                  </td>
+                  <td className="dashboard-model-actions" data-col="actions">
+                    <button
+                      type="button"
+                      className="dashboard-archive-btn"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        void handleArchiveModel(m);
+                      }}
+                      disabled={archivingId === m.id}
+                      aria-label={`Archive ${m.system_name}`}
+                      title="Archive this security review"
+                    >
+                      {archivingId === m.id ? "Archiving..." : "Archive"}
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -40,7 +40,7 @@ from app.config import settings
 from app.database import engine
 
 logger = logging.getLogger("threatgenix.api")
-REQUIRED_ALEMBIC_REVISION = "083"
+REQUIRED_ALEMBIC_REVISION = "084"
 PRODUCTION_LIKE_ENVS = {"production", "staging"}
 DEFAULT_DEV_SECRET_KEY = "dev-secret-change-in-production"
 LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1", "0.0.0.0"}
@@ -49,6 +49,7 @@ REQUIRED_SCHEMA_COLUMNS = {
     "threat_models": {
         "analyst_attestation",
         "analyst_name",
+        "archived_at",
         "last_analyze_requested_at",
         "next_review_date",
         "organization_id",

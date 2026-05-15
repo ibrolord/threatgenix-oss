@@ -294,6 +294,11 @@ export const api = {
 
   getThreatModel: (id: string) => request<ThreatModelResponse>(`/threat-models/${id}`),
 
+  archiveThreatModel: (id: string) =>
+    request<ThreatModelResponse>(`/threat-models/${id}/archive`, {
+      method: "PATCH",
+    }),
+
   getApplicationReview: (reviewId: string) =>
     request<ApplicationReview>(`/reviews/${reviewId}`),
 

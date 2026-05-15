@@ -116,6 +116,7 @@ export interface ThreatModelResponse {
   out_of_scope_statement?: string | null;
   created_at: string;
   updated_at: string;
+  archived_at?: string | null;
 }
 
 export interface ThreatModelListItem {
@@ -127,7 +128,10 @@ export interface ThreatModelListItem {
   data_classification: string;
   created_at: string;
   updated_at: string;
+  archived_at?: string | null;
   threat_count: number;
+  open_count?: number;
+  has_been_analyzed?: boolean;
 }
 
 export type EvidenceConfidenceLabel =

@@ -503,6 +503,20 @@ async def get_threat_model_endpoint(
     return _serialize_threat_model_response(threat_model)
 
 
+@router.patch("/{threat_model_id}/archive", response_model=ThreatModelResponse)
+async def archive_threat_model_endpoint(
+    threat_model_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> ThreatModelResponse:
+    threat_model = await _require_model_permission(db, threat_model_id, current_user, "write")
+    if threat_model.archived_at is None:
+        threat_model.archived_at = datetime.now(timezone.utc)
+        await db.commit()
+        await db.refresh(threat_model)
+    return _serialize_threat_model_response(threat_model)
+
+
 @router.get("/{threat_model_id}/tmac")
 async def export_threat_model_as_code(
     threat_model_id: UUID,

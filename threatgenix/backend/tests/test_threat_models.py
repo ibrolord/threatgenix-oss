@@ -96,6 +96,7 @@ class FakeThreatModel:
         self.notifications = None
         self.created_at = created_at or datetime(2026, 1, 1, tzinfo=timezone.utc)
         self.updated_at = updated_at or datetime(2026, 1, 2, tzinfo=timezone.utc)
+        self.archived_at = None
 
 
 def _scalars_all_result(values):
@@ -206,6 +207,33 @@ async def test_get_threat_model_by_id():
     body = response.json()
     assert body["id"] == str(tm_id)
     assert body["system_name"] == "Test System"
+
+
+@pytest.mark.asyncio
+async def test_archive_threat_model_sets_archive_timestamp():
+    tm_id = uuid.uuid4()
+    fake_tm = FakeThreatModel(id=tm_id)
+    db = AsyncMock()
+
+    async def override_archive_db():
+        yield db
+
+    app.dependency_overrides[get_db] = override_archive_db
+    try:
+        with patch("app.api.threat_models.get_threat_model", new_callable=AsyncMock, return_value=fake_tm):
+            transport = ASGITransport(app=app)
+            async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
+                response = await client.patch(f"{API_PREFIX}/{tm_id}/archive")
+    finally:
+        app.dependency_overrides[get_db] = override_get_db
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["id"] == str(tm_id)
+    assert body["archived_at"] is not None
+    assert fake_tm.archived_at is not None
+    db.commit.assert_awaited_once()
+    db.refresh.assert_awaited_once_with(fake_tm)
 
 
 @pytest.mark.asyncio

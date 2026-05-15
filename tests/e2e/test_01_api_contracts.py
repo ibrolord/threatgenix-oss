@@ -62,6 +62,28 @@ class TestAPIContracts:
         assert resp.status_code == 200
         assert resp.json()["system_name"] == "Get By ID"
 
+    def test_archive_threat_model_hides_from_active_list(self, client):
+        create_resp = client.post("/api/threat-models", json={
+            "system_name": "Archive Me",
+            "description": "x",
+            "data_classification": "Public",
+        })
+        assert create_resp.status_code == 201
+        model_id = create_resp.json()["id"]
+
+        archive_resp = client.patch(f"/api/threat-models/{model_id}/archive")
+        assert archive_resp.status_code == 200
+        assert archive_resp.json()["archived_at"] is not None
+
+        list_resp = client.get("/api/threat-models")
+        assert list_resp.status_code == 200
+        active_ids = {item["id"] for item in list_resp.json()}
+        assert model_id not in active_ids
+
+        direct_resp = client.get(f"/api/threat-models/{model_id}")
+        assert direct_resp.status_code == 200
+        assert direct_resp.json()["archived_at"] is not None
+
     def test_get_threat_model_404(self, client):
         fake_id = str(uuid.uuid4())
         resp = client.get(f"/api/threat-models/{fake_id}")

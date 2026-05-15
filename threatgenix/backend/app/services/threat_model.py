@@ -73,11 +73,12 @@ def tenant_scoped_threat_model_ids(
     owner_id: UUID | None = None,
     organization_id: UUID | None = None,
 ):
-    return _apply_tenant_scope(
+    statement = _apply_tenant_scope(
         select(ThreatModel.id),
         owner_id=owner_id,
         organization_id=organization_id,
     )
+    return statement.where(ThreatModel.archived_at.is_(None))
 
 
 async def list_threat_models(
@@ -102,6 +103,7 @@ async def list_threat_models(
         .outerjoin(Threat, ThreatModel.id == Threat.threat_model_id)
     )
     stmt = _apply_tenant_scope(stmt, owner_id=owner_id, organization_id=organization_id)
+    stmt = stmt.where(ThreatModel.archived_at.is_(None))
     stmt = stmt.group_by(ThreatModel.id).order_by(ThreatModel.updated_at.desc())
     result = await db.execute(stmt)
     rows = result.all()
@@ -138,6 +140,7 @@ async def get_portfolio_summary(
         owner_id=owner_id,
         organization_id=organization_id,
     )
+    model_stmt = model_stmt.where(ThreatModel.archived_at.is_(None))
     model_stmt = model_stmt.order_by(ThreatModel.updated_at.desc())
     model_result = await db.execute(model_stmt)
     models = list(model_result.scalars().all())
@@ -238,6 +241,7 @@ async def get_portfolio_summary(
         owner_id=owner_id,
         organization_id=organization_id,
     )
+    recent_stmt = recent_stmt.where(ThreatModel.archived_at.is_(None))
     recent_stmt = (
         recent_stmt.group_by(ThreatModel.id)
         .order_by(ThreatModel.updated_at.desc())
@@ -281,6 +285,7 @@ async def get_portfolio_trends(
         owner_id=owner_id,
         organization_id=organization_id,
     )
+    model_stmt = model_stmt.where(ThreatModel.archived_at.is_(None))
     model_result = await db.execute(model_stmt)
     models = list(model_result.scalars().all())
 

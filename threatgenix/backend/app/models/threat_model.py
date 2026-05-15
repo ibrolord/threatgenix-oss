@@ -149,6 +149,13 @@ class ThreatModel(Base):
 
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    archived_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True),
+        nullable=True,
+        default=None,
+        index=True,
+        comment="Soft-archive timestamp. Archived models stay retrievable by direct ID but are hidden from active portfolio lists.",
+    )
 
     owner = relationship("User", lazy="selectin")
     organization = relationship("Organization", lazy="selectin")

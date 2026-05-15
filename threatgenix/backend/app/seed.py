@@ -20,6 +20,7 @@ VECTOR_THREAT_INTEL_TABLES = {
 BOOTSTRAP_SCHEMA_REPAIRS = (
     ("threat_models", "dfd_component_templates", "JSONB"),
     ("threat_models", "dfd_property_options", "JSONB"),
+    ("threat_models", "archived_at", "TIMESTAMP WITH TIME ZONE"),
     ("threat_models", "last_analyze_requested_at", "TIMESTAMP WITH TIME ZONE"),
     ("threat_models", "organization_id", "UUID"),
     ("threat_models", "report_templates", "JSONB"),

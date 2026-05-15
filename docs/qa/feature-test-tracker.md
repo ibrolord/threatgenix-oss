@@ -41,7 +41,7 @@ fixed.
 | QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests and local P0 retest | Keep regression active | startup | P0 | S0 | backend | closed-verified |
 | QA-004 | Tenant isolation | Users cannot access other users' data | owned-resource route matrix, SaaS foundation tests, and Compose product-readiness tenant smoke | Keep regression active | API contract | P0 | S0 | backend | closed-verified |
 | QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression and local P0 retest | Keep regression active | migration | P0 | S0 | backend | closed-verified |
-| QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend and dashboard tests | Browser create/archive journey | browser E2E | P1 | S1 | frontend | open |
+| QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend archive contract, active-list filtering, and Compose browser create/open/archive journey | Keep regression active | browser E2E | P1 | S1 | frontend | closed-verified |
 | QA-007 | Document upload | Architecture document becomes DFD input | Docker-backed upload-to-DFD e2e plus retention purge regression | Keep regression active | integration | P1 | S1 | backend | closed-verified |
 | QA-008 | DFD API | Nodes, edges, boundaries, views persist | broad DFD tests | Quick-add, view regeneration, repository suggestion contracts | API contract | P1 | S1 | backend | open |
 | QA-009 | DFD UI | Canvas editing works in browser | component and Playwright specs | Visual regression and save-state assertion | browser E2E | P2 | S2 | frontend | open |
@@ -162,6 +162,13 @@ fixed.
   upload tests now exercise fixture PDF upload, parser/Bedrock-stub extraction,
   DFD generation, DFD readback, and the time-controlled retention purge
   regression without leaving raw text beyond expiry.
+- 2026-05-15: QA-006 gained soft-archive product support with migration 084,
+  active portfolio filtering, a dashboard archive control, and
+  `threatgenix/frontend/e2e/threat-model-crud.spec.ts`. The Compose browser
+  journey creates a review, opens it from the dashboard, archives it, verifies it
+  leaves active lists, and confirms direct readback retains `archived_at`. The
+  Docker-backed `make e2e` target passed 70 tests with the API archive contract
+  included.
 
 ## Release Exit Criteria
 
