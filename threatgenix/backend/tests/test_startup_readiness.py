@@ -127,6 +127,36 @@ async def test_production_startup_rejects_stale_alembic_revision(monkeypatch):
             pass
 
 
+@pytest.mark.asyncio
+async def test_startup_rejects_missing_required_runtime_schema(monkeypatch):
+    import app.seed as seed_module
+    import app.seed_demo as seed_demo_module
+    import app.services.doc_cleanup as doc_cleanup_module
+
+    monkeypatch.setattr(app_main.settings, "app_env", "development")
+    monkeypatch.setattr(seed_module, "seed", AsyncMock())
+    monkeypatch.setattr(seed_demo_module, "seed_demo", AsyncMock())
+    monkeypatch.setattr(doc_cleanup_module, "purge_expired_documents", AsyncMock())
+    monkeypatch.setattr(doc_cleanup_module, "cleanup_loop", AsyncMock())
+    monkeypatch.setattr(
+        app_main,
+        "get_missing_required_schema",
+        AsyncMock(return_value=["threat_models.review_state"]),
+    )
+
+    test_app = FastAPI()
+    with pytest.raises(RuntimeError, match="threat_models.review_state"):
+        async with app_main.lifespan(test_app):
+            pass
+
+    assert test_app.state.schema_ready is False
+    assert (
+        test_app.state.schema_error
+        == "missing required database columns: threat_models.review_state. "
+        "Run `alembic upgrade head`."
+    )
+
+
 def test_runtime_config_accepts_hardened_production_settings(monkeypatch):
     _set_hardened_production_settings(monkeypatch)
 

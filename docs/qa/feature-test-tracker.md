@@ -40,7 +40,7 @@ fixed.
 | QA-002 | Auth | Register, login, reload, logout all work | auth API and React context tests | Browser auth roundtrip | browser E2E | P0 | S1 | frontend | open |
 | QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Release journey retest for production auth gate | startup | P0 | S0 | backend | awaiting-retest |
 | QA-004 | Tenant isolation | Users cannot access other users' data | partial SaaS foundation tests | Route matrix across all owned resources | API contract | P0 | S0 | backend | open |
-| QA-005 | Migration readiness | Partially migrated DB does not serve traffic | migration/startup tests | Downgrade/stale schema health degradation test | migration | P0 | S0 | backend | open |
+| QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression | Release journey retest on downgraded schema fixture | migration | P0 | S0 | backend | awaiting-retest |
 | QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend and dashboard tests | Browser create/archive journey | browser E2E | P1 | S1 | frontend | open |
 | QA-007 | Document upload | Architecture document becomes DFD input | parser and upload tests | End-to-end extraction plus retention purge | integration | P1 | S1 | backend | open |
 | QA-008 | DFD API | Nodes, edges, boundaries, views persist | broad DFD tests | Quick-add, view regeneration, repository suggestion contracts | API contract | P1 | S1 | backend | open |
@@ -86,6 +86,10 @@ fixed.
   and now asserts `/api/health?deep=true` returns a connected database signal.
   The test compose DB default moved to host port `55433` to avoid local Postgres
   collisions; full frontend/compose release retest remains before closure.
+- 2026-05-15: QA-005 gained a startup regression that returns a missing required
+  schema column and proves lifespan fails before serving traffic with a useful
+  `alembic upgrade head` message. Downgraded-schema release retest remains
+  before closure.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before
