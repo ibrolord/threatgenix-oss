@@ -46,7 +46,7 @@ fixed.
 | QA-008 | DFD API | Nodes, edges, boundaries, views persist | broad DFD tests | Quick-add, view regeneration, repository suggestion contracts | API contract | P1 | S1 | backend | open |
 | QA-009 | DFD UI | Canvas editing works in browser | component and Playwright specs | Visual regression and save-state assertion | browser E2E | P2 | S2 | frontend | open |
 | QA-010 | DFD quality gates | Modeling issues are visible and actionable | service tests | UI rendering of quality issues | browser E2E | P2 | S2 | frontend | open |
-| QA-011 | Rules engine | STRIDE output is deterministic | rules unit tests | Golden DFD to golden threat set | unit | P0 | S1 | rules | open |
+| QA-011 | Rules engine | STRIDE output is deterministic | rules unit tests and golden DFD threat-set regression | Intentional rule change approval/update process | unit | P0 | S1 | rules | awaiting-retest |
 | QA-012 | Rule suppression | Properties suppress or trigger correct rules | targeted suppression tests | Broader property permutation sweep | unit | P2 | S2 | rules | open |
 | QA-013 | AI enhancement | Available AI improves threat output | AI service tests | Stubbed provider end-to-end contract | API contract | P1 | S1 | AI | open |
 | QA-014 | AI degradation | Provider outage does not block rules | partial analyze tests | Browser banner and deterministic threat fallback | browser E2E | P0 | S1 | AI | open |
@@ -99,6 +99,11 @@ fixed.
   parametrized cross-tenant denial matrix for representative owned-resource
   routes: threat model detail/export, DFD, threats, scans, evidence, and
   validation lab. Full-stack release retest remains before closure.
+- 2026-05-15: QA-011 gained
+  `threatgenix/backend/tests/test_rules_golden.py`, which freezes a PCI checkout
+  DFD to the expected deterministic STRIDE threat set including rule order,
+  display IDs, categories, severity, affected nodes, affected edges, and boundary
+  flags.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before
