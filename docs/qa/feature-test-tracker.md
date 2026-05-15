@@ -50,7 +50,7 @@ fixed.
 | QA-012 | Rule suppression | Properties suppress or trigger correct rules | targeted suppression tests | Broader property permutation sweep | unit | P2 | S2 | rules | open |
 | QA-013 | AI enhancement | Available AI improves threat output | AI service tests plus Docker-backed stubbed-provider analyze contract | Keep regression active | API contract | P1 | S1 | AI | closed-verified |
 | QA-014 | AI degradation | Provider outage does not block rules | analyze fallback tests, browser degradation banner regression, and frontend release retest | Keep regression active | browser E2E | P0 | S1 | AI | closed-verified |
-| QA-015 | Threat triage | Accept, dismiss, bulk update, and audit persist | API and modal tests | Bulk triage browser flow | browser E2E | P1 | S1 | frontend | open |
+| QA-015 | Threat triage | Accept, dismiss, bulk update, and audit persist | API and modal tests plus Compose browser bulk accept/dismiss audit journey | Keep regression active | browser E2E | P1 | S1 | frontend | closed-verified |
 | QA-016 | Threat diff | Re-analysis shows new and removed threats | diff tests | Browser edit-and-reanalyze journey | browser E2E | P2 | S2 | frontend | open |
 | QA-017 | Compliance | Threats show relevant controls | compliance tests plus live framework coverage by STRIDE sample | Keep regression active | API contract | P1 | S1 | backend | closed-verified |
 | QA-018 | Threat intelligence | ATT&CK, CAPEC, CWE, KEV, and advisory context appears | threat-intel tests | Sync smoke and UI rendering | integration | P2 | S2 | AI | open |
@@ -190,6 +190,13 @@ fixed.
   process sandbox so production/staging never allow advisory-DB network access
   from the process runner. The Docker-backed `make e2e` target passed 74 tests
   with this contract included.
+- 2026-05-15: QA-015 gained
+  `threatgenix/frontend/e2e/bulk-threat-triage.spec.ts`, a Compose browser
+  journey that creates a self-hosted review, adds manual threats, bulk accepts
+  selected threats, bulk dismisses the same threats with a required reason, and
+  verifies both persisted threat state and per-threat audit history through the
+  API. The targeted browser regression passed against
+  `http://127.0.0.1:5180` with API `http://127.0.0.1:8010/api`.
 
 ## Release Exit Criteria
 
