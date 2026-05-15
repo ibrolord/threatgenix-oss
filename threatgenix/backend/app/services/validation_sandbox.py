@@ -25,7 +25,6 @@ VALIDATION_CONTAINER_PULL_ENV = "THREATGENIX_VALIDATION_CONTAINER_PULL"
 VALIDATION_PROCESS_ADVISORY_DB_NETWORK_ENV = (
     "THREATGENIX_VALIDATION_PROCESS_ADVISORY_DB_NETWORK"
 )
-VALIDATION_RUNTIME_MODE_ENV = "THREATGENIX_VALIDATION_RUNTIME_MODE"
 VALIDATION_ISOLATED_RUNNER_BACKEND_ENV = (
     "THREATGENIX_VALIDATION_ISOLATED_RUNNER_BACKEND"
 )
@@ -263,15 +262,10 @@ def validation_process_sandbox_network_allowed(network_mode: str | None = None) 
     if requested == _NETWORK_NONE:
         return True
     if requested == _NETWORK_ADVISORY_DB:
-        if _production_like_app_env() and not _self_hosted_runtime_mode():
+        if _production_like_app_env():
             return False
         return validation_env_flag(VALIDATION_PROCESS_ADVISORY_DB_NETWORK_ENV)
     return False
-
-
-def _self_hosted_runtime_mode() -> bool:
-    raw = validation_env_value(VALIDATION_RUNTIME_MODE_ENV, "") or ""
-    return raw.strip().lower() == "self_hosted"
 
 
 def create_validation_sandbox_runner(

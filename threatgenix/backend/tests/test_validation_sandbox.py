@@ -329,7 +329,7 @@ async def test_process_sandbox_allows_advisory_db_network_with_local_opt_in(monk
 
 
 @pytest.mark.asyncio
-async def test_process_sandbox_allows_advisory_db_network_for_self_hosted_production_opt_in(
+async def test_process_sandbox_rejects_advisory_db_network_for_self_hosted_production_opt_in(
     monkeypatch,
 ):
     monkeypatch.delenv("APP_ENV", raising=False)
@@ -339,19 +339,16 @@ async def test_process_sandbox_allows_advisory_db_network_for_self_hosted_produc
     monkeypatch.setenv(VALIDATION_PROCESS_ADVISORY_DB_NETWORK_ENV, "true")
     runner = ValidationSandboxRunner(allowed_roots=[], network_mode="advisory_db")
 
-    result = await runner.run(
-        [PYTHON_EXECUTABLE, "-c", "print('ok')"],
-        tool_name="osv-scanner",
-        executable=PYTHON_EXECUTABLE,
-        target="not-a-path",
-        target_type="container_image",
-        timeout_seconds=5,
-        max_output_bytes=1024,
-    )
-
-    assert result.returncode == 0
-    assert result.stdout.strip() == b"ok"
-    assert result.network_policy == "host_process"
+    with pytest.raises(ValidationSandboxError, match="isolated network runner"):
+        await runner.run(
+            [PYTHON_EXECUTABLE, "-c", "print('ok')"],
+            tool_name="osv-scanner",
+            executable=PYTHON_EXECUTABLE,
+            target="not-a-path",
+            target_type="container_image",
+            timeout_seconds=5,
+            max_output_bytes=1024,
+        )
 
 
 @pytest.mark.parametrize(

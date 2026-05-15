@@ -58,7 +58,7 @@ fixed.
 | QA-020 | Report config | Template, logo, watermark, attestation persist | partial tests | Report-config and template-library contract test | API contract | P1 | S2 | backend | open |
 | QA-021 | CSV export | Threat CSV export is scoped and valid | live HTTP CSV header, row, and owner-scope contract in Docker-backed e2e | Keep regression active | API contract | P1 | S1 | backend | closed-verified |
 | QA-022 | Dashboard | Portfolio cards and trends reflect data | dashboard tests | Browser data-update journey | browser E2E | P2 | S2 | frontend | open |
-| QA-023 | Validation Lab | Safe dry-run evidence flow works | validation tests | Allowed-path sandbox dry run | integration | P1 | S1 | backend | open |
+| QA-023 | Validation Lab | Safe dry-run evidence flow works | validation tests plus Docker-backed Try Sandbox evidence and binding contract | Keep regression active | integration | P1 | S1 | backend | closed-verified |
 | QA-024 | Scan credentials | Credentials are encrypted and scoped | credential tests | Key-rotation behavior | unit | P2 | S2 | backend | open |
 | QA-025 | Application review | Bundle to findings to decision works | broad app-review tests | Browser flow with mocked scanners | browser E2E | P1 | S1 | frontend | open |
 | QA-026 | TMAC | Threat model code round-trips | TMAC tests | Import, mutate, export, diff minimality | unit | P2 | S2 | backend | open |
@@ -181,6 +181,15 @@ fixed.
   provider stub, an AI-generated threat is added with `ai_enhanced=true`, and
   the AI threat persists through `GET /threats`. The Docker-backed `make e2e`
   target passed 73 tests with this contract included.
+- 2026-05-15: QA-023 gained `tests/e2e/test_14_validation_lab_contracts.py`
+  and exposes validation finding `evidence_origin` / `synthetic` metadata in
+  scan detail responses. The API journey proves Try Sandbox remains the default
+  non-executing runtime, persists curated Semgrep evidence with an ingest
+  artifact and empty command, binds that evidence to a DFD node, and surfaces
+  the completed scan in the validation ledger. The same slice hardened the
+  process sandbox so production/staging never allow advisory-DB network access
+  from the process runner. The Docker-backed `make e2e` target passed 74 tests
+  with this contract included.
 
 ## Release Exit Criteria
 

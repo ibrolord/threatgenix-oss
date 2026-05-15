@@ -164,6 +164,8 @@ class ScanFindingResponse(BaseModel):
     tool_version: Optional[str] = None
     validation_target: Optional[str] = None
     deterministic: Optional[bool] = None
+    evidence_origin: Optional[str] = None
+    synthetic: Optional[bool] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}
