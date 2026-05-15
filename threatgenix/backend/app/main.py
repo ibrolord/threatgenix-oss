@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 import logging
 import os
+from urllib.parse import urlparse
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +10,7 @@ from slowapi import _rate_limit_exceeded_handler  # type: ignore[import-not-foun
 from slowapi.errors import RateLimitExceeded  # type: ignore[import-not-found]
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import SQLAlchemyError
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from app.limiter import limiter
 
@@ -39,6 +41,9 @@ from app.database import engine
 
 logger = logging.getLogger("threatgenix.api")
 REQUIRED_ALEMBIC_REVISION = "083"
+PRODUCTION_LIKE_ENVS = {"production", "staging"}
+DEFAULT_DEV_SECRET_KEY = "dev-secret-change-in-production"
+LOOPBACK_HOSTS = {"localhost", "127.0.0.1", "::1", "0.0.0.0"}
 
 REQUIRED_SCHEMA_COLUMNS = {
     "threat_models": {
@@ -289,6 +294,75 @@ REQUIRED_SCHEMA_COLUMNS = {
 }
 
 
+def _csv_values(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    return [value.strip() for value in raw.split(",") if value.strip()]
+
+
+def _is_production_like() -> bool:
+    return settings.app_env.strip().lower() in PRODUCTION_LIKE_ENVS
+
+
+def _origin_host(origin: str) -> str:
+    parsed = urlparse(origin)
+    return (parsed.hostname or "").lower()
+
+
+def _host_without_port(host: str) -> str:
+    if host.startswith("[") and "]" in host:
+        return host[1 : host.index("]")].lower()
+    return host.rsplit(":", 1)[0].lower()
+
+
+def _database_host(database_url: str) -> str:
+    return (urlparse(database_url).hostname or "").lower()
+
+
+def validate_runtime_configuration() -> list[str]:
+    """Return production/staging configuration errors that must block startup."""
+
+    if not _is_production_like():
+        return []
+
+    errors: list[str] = []
+    secret_key = settings.secret_key.strip()
+    if secret_key == DEFAULT_DEV_SECRET_KEY or len(secret_key) < 32:
+        errors.append("SECRET_KEY must be a non-default value with at least 32 characters")
+
+    db_host = _database_host(settings.database_url)
+    if db_host in LOOPBACK_HOSTS or db_host == "db":
+        errors.append("DATABASE_URL must point to a production database, not a local Compose host")
+
+    origins = _csv_values(settings.allowed_origins)
+    if not origins:
+        errors.append("ALLOWED_ORIGINS must include the public HTTPS frontend origin")
+    for origin in origins:
+        parsed = urlparse(origin)
+        host = _origin_host(origin)
+        if "*" in origin or parsed.scheme == "*" or "*" in host:
+            errors.append("ALLOWED_ORIGINS cannot use wildcards in production")
+        if parsed.scheme != "https":
+            errors.append(f"ALLOWED_ORIGINS entry must use https: {origin}")
+        if host in LOOPBACK_HOSTS:
+            errors.append(f"ALLOWED_ORIGINS entry cannot be loopback in production: {origin}")
+
+    trusted_hosts = _csv_values(settings.trusted_hosts)
+    if not trusted_hosts:
+        errors.append("TRUSTED_HOSTS must include the public API host in production")
+    for host in trusted_hosts:
+        normalized = _host_without_port(host)
+        if "*" in host or "*" in normalized:
+            errors.append("TRUSTED_HOSTS cannot use wildcards in production")
+        if normalized in LOOPBACK_HOSTS:
+            errors.append(f"TRUSTED_HOSTS entry cannot be loopback in production: {host}")
+
+    if settings.auth_expose_dev_tokens:
+        errors.append("AUTH_EXPOSE_DEV_TOKENS must be false in production")
+
+    return errors
+
+
 async def get_missing_required_schema() -> list[str]:
     def _inspect_schema(sync_conn) -> list[str]:
         inspector = inspect(sync_conn)
@@ -335,23 +409,16 @@ async def lifespan(app: FastAPI):
     app.state.schema_error = None
     startup_failures: list[str] = []
 
-    if settings.secret_key == "dev-secret-change-in-production":
-        if settings.app_env in ("production", "staging"):
-            raise RuntimeError(
-                "SECURITY: SECRET_KEY is set to the default dev value. "
-                "Set the SECRET_KEY environment variable before starting in production."
-            )
+    runtime_config_errors = validate_runtime_configuration()
+    if runtime_config_errors:
+        raise RuntimeError("SECURITY: " + "; ".join(runtime_config_errors))
+
+    if settings.secret_key == DEFAULT_DEV_SECRET_KEY:
         logger.warning(
             "SECURITY: SECRET_KEY is set to the default dev value — "
             "this is only acceptable in local development"
         )
-    if settings.app_env in ("production", "staging"):
-        db_url = settings.database_url
-        if "localhost" in db_url or "127.0.0.1" in db_url:
-            raise RuntimeError(
-                "SECURITY: DATABASE_URL points to localhost in production. "
-                "Set the DATABASE_URL secret (fly secrets set DATABASE_URL=...)."
-            )
+    if _is_production_like():
         try:
             current_revision = await get_current_alembic_revision()
         except Exception as exc:
@@ -427,7 +494,7 @@ async def lifespan(app: FastAPI):
             pass
 
 
-_is_production = settings.app_env in ("production", "staging")
+_is_production = _is_production_like()
 app = FastAPI(
     title=settings.api_title,
     version="0.1.0",
@@ -455,11 +522,15 @@ async def sqlalchemy_exception_handler(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.allowed_origins.split(","),
+    allow_origins=_csv_values(settings.allowed_origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+_trusted_hosts = _csv_values(settings.trusted_hosts)
+if _trusted_hosts:
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=_trusted_hosts)
 
 
 @app.middleware("http")

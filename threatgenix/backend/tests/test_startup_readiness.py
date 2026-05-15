@@ -101,10 +101,14 @@ def test_release_migration_repairs_runner_schema_when_stamped_head():
 @pytest.mark.asyncio
 async def test_production_startup_rejects_stale_alembic_revision(monkeypatch):
     monkeypatch.setattr(app_main.settings, "app_env", "production")
-    monkeypatch.setattr(app_main.settings, "secret_key", "production-secret")
+    monkeypatch.setattr(app_main.settings, "secret_key", "x" * 48)
     monkeypatch.setattr(
-        app_main.settings, "database_url", "postgresql+asyncpg://db/prod"
+        app_main.settings,
+        "database_url",
+        "postgresql+asyncpg://threatgenix:password@postgres.example.test:5432/threatgenix",
     )
+    monkeypatch.setattr(app_main.settings, "allowed_origins", "https://app.example.test")
+    monkeypatch.setattr(app_main.settings, "trusted_hosts", "api.example.test")
     monkeypatch.setattr(
         app_main,
         "get_current_alembic_revision",
@@ -116,3 +120,64 @@ async def test_production_startup_rejects_stale_alembic_revision(monkeypatch):
     ):
         async with app_main.lifespan(FastAPI()):
             pass
+
+
+def test_runtime_config_accepts_hardened_production_settings(monkeypatch):
+    monkeypatch.setattr(app_main.settings, "app_env", "production")
+    monkeypatch.setattr(app_main.settings, "secret_key", "x" * 48)
+    monkeypatch.setattr(
+        app_main.settings,
+        "database_url",
+        "postgresql+asyncpg://threatgenix:password@postgres.example.test:5432/threatgenix",
+    )
+    monkeypatch.setattr(app_main.settings, "allowed_origins", "https://app.example.test")
+    monkeypatch.setattr(app_main.settings, "trusted_hosts", "api.example.test")
+    monkeypatch.setattr(app_main.settings, "auth_expose_dev_tokens", False)
+
+    assert app_main.validate_runtime_configuration() == []
+
+
+def test_runtime_config_rejects_insecure_production_settings(monkeypatch):
+    monkeypatch.setattr(app_main.settings, "app_env", "production")
+    monkeypatch.setattr(app_main.settings, "secret_key", "short")
+    monkeypatch.setattr(
+        app_main.settings,
+        "database_url",
+        "postgresql+asyncpg://threatgenix:password@db:5432/threatgenix",
+    )
+    monkeypatch.setattr(
+        app_main.settings,
+        "allowed_origins",
+        "*,http://localhost:5173",
+    )
+    monkeypatch.setattr(app_main.settings, "trusted_hosts", "*,localhost")
+    monkeypatch.setattr(app_main.settings, "auth_expose_dev_tokens", True)
+
+    errors = app_main.validate_runtime_configuration()
+
+    assert any("SECRET_KEY" in error for error in errors)
+    assert any("DATABASE_URL" in error for error in errors)
+    assert any("ALLOWED_ORIGINS cannot use wildcards" in error for error in errors)
+    assert any("ALLOWED_ORIGINS entry must use https" in error for error in errors)
+    assert any("ALLOWED_ORIGINS entry cannot be loopback" in error for error in errors)
+    assert any("TRUSTED_HOSTS cannot use wildcards" in error for error in errors)
+    assert any("TRUSTED_HOSTS entry cannot be loopback" in error for error in errors)
+    assert any("AUTH_EXPOSE_DEV_TOKENS" in error for error in errors)
+
+
+def test_runtime_config_rejects_missing_production_trusted_hosts(monkeypatch):
+    monkeypatch.setattr(app_main.settings, "app_env", "production")
+    monkeypatch.setattr(app_main.settings, "secret_key", "x" * 48)
+    monkeypatch.setattr(
+        app_main.settings,
+        "database_url",
+        "postgresql+asyncpg://threatgenix:password@postgres.example.test:5432/threatgenix",
+    )
+    monkeypatch.setattr(app_main.settings, "allowed_origins", "https://app.example.test")
+    monkeypatch.setattr(app_main.settings, "trusted_hosts", "")
+    monkeypatch.setattr(app_main.settings, "auth_expose_dev_tokens", False)
+
+    assert any(
+        "TRUSTED_HOSTS must include" in error
+        for error in app_main.validate_runtime_configuration()
+    )

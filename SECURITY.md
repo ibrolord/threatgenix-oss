@@ -31,11 +31,13 @@ If a secret is committed by mistake:
 Before exposing ThreatGenix beyond localhost:
 
 - Set `APP_ENV=production`.
-- Set a strong `SECRET_KEY`.
+- Set a generated `SECRET_KEY` with at least 32 characters.
 - Use TLS at the edge.
 - Use a managed PostgreSQL database with backups.
-- Restrict `ALLOWED_ORIGINS`.
+- Restrict `ALLOWED_ORIGINS` to HTTPS browser origins.
+- Set `TRUSTED_HOSTS` to the public API host.
 - Decide whether AI provider data transfer is allowed.
 - Keep `ALLOW_EXTERNAL_AI_PROVIDERS_IN_PRODUCTION=false` unless users have explicitly opted in.
 - Keep live validation runner paths scoped with `THREATGENIX_VALIDATION_ALLOWED_PATHS`.
 - Run scanners in isolated worker infrastructure, not on the public API host.
+- Run `scripts/check-oss-hygiene.sh` before public releases.

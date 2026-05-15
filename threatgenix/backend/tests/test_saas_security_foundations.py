@@ -28,7 +28,7 @@ def _clean_overrides():
 
 
 def test_default_organization_name_normalizes_full_name_and_email() -> None:
-    assert _default_organization_name("  Priya   Sharma ", "PRIYA@EQBANK.CA") == "Priya Sharma's Organization"
+    assert _default_organization_name("  Priya   Sharma ", "PRIYA@EXAMPLE.TEST") == "Priya Sharma's Organization"
     assert _default_organization_name("", "security.review@example.com") == "Security Review Organization"
 
 
@@ -66,7 +66,7 @@ async def test_register_creates_org_and_dev_verification_header(monkeypatch) -> 
         response = await client.post(
             "/api/auth/register",
             json={
-                "email": "Priya@EqBank.CA",
+                "email": "Priya@Example.Test",
                 "password": "SecurePass123",
                 "full_name": " Priya   Sharma ",
             },

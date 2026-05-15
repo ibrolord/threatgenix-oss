@@ -75,6 +75,7 @@ class Settings(BaseSettings):
     github_app_private_key_base64: Optional[str] = None
 
     allowed_origins: str = "http://localhost:5173"
+    trusted_hosts: str = ""
     pdf_max_pages: int = 30
     max_upload_mb: int = 20
 

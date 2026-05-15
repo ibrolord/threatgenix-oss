@@ -8,8 +8,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install scan dependencies
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - name: OSS hygiene scan
+        run: scripts/check-oss-hygiene.sh
+
   backend:
     runs-on: ubuntu-latest
+    needs: hygiene
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -62,6 +74,7 @@ jobs:
 
   frontend:
     runs-on: ubuntu-latest
+    needs: hygiene
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

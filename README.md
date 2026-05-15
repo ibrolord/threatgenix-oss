@@ -41,7 +41,7 @@ Then open:
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:8000/api/health
 
-The local development stack uses safe example settings from `threatgenix/backend/.env.example`. For production, create a real `.env`, set `APP_ENV=production`, replace `SECRET_KEY`, use a managed PostgreSQL URL, and configure explicit AI provider credentials.
+The local development stack uses safe example settings from `threatgenix/backend/.env.example`. For production, create a real `.env`, set `APP_ENV=production`, replace `SECRET_KEY`, use a managed PostgreSQL URL, set explicit `ALLOWED_ORIGINS` and `TRUSTED_HOSTS`, and configure only the AI provider credentials your deployment has approved.
 
 ## Local Development
 
@@ -92,10 +92,13 @@ ThreatGenix is a security-analysis tool, not a security certification engine. It
 
 For production use:
 
-- Rotate `SECRET_KEY` before first boot.
-- Use TLS and a managed PostgreSQL deployment.
+- Set a generated `SECRET_KEY` with at least 32 characters before first boot.
+- Use TLS, a managed PostgreSQL deployment, and database backups.
+- Set `ALLOWED_ORIGINS` to your HTTPS frontend origin. Do not use `*` or loopback origins.
+- Set `TRUSTED_HOSTS` to the public API host so host-header attacks fail closed.
 - Keep uploaded architecture, source, scanner, and report artifacts inside your own trust boundary.
 - Enable live scanner execution only on isolated runner hosts with tightly scoped target paths.
+- Run `scripts/check-oss-hygiene.sh` before publishing a fork or release.
 - Review `SECURITY.md` before exposing the app beyond localhost.
 
 ## License
