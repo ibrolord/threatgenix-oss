@@ -39,7 +39,7 @@ fixed.
 | QA-001 | Boot | Local stack starts and health is green | configurable deep e2e smoke | Release journey retest for full compose stack | integration | P0 | S0 | backend | awaiting-retest |
 | QA-002 | Auth | Register, login, reload, logout all work | auth API and React context tests | Browser auth roundtrip | browser E2E | P0 | S1 | frontend | open |
 | QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Release journey retest for production auth gate | startup | P0 | S0 | backend | awaiting-retest |
-| QA-004 | Tenant isolation | Users cannot access other users' data | partial SaaS foundation tests | Route matrix across all owned resources | API contract | P0 | S0 | backend | open |
+| QA-004 | Tenant isolation | Users cannot access other users' data | owned-resource route matrix and SaaS foundation tests | Release journey retest against full API stack | API contract | P0 | S0 | backend | awaiting-retest |
 | QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression | Release journey retest on downgraded schema fixture | migration | P0 | S0 | backend | awaiting-retest |
 | QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend and dashboard tests | Browser create/archive journey | browser E2E | P1 | S1 | frontend | open |
 | QA-007 | Document upload | Architecture document becomes DFD input | parser and upload tests | End-to-end extraction plus retention purge | integration | P1 | S1 | backend | open |
@@ -94,6 +94,11 @@ fixed.
   creates negative fixtures for secret patterns, private/customer strings,
   legacy product naming, tracked `.env`, and uncommented provider credentials.
   CI now runs the self-test after the normal hygiene scan.
+- 2026-05-15: QA-004 gained
+  `threatgenix/backend/tests/test_tenant_isolation_route_matrix.py`, a
+  parametrized cross-tenant denial matrix for representative owned-resource
+  routes: threat model detail/export, DFD, threats, scans, evidence, and
+  validation lab. Full-stack release retest remains before closure.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before
