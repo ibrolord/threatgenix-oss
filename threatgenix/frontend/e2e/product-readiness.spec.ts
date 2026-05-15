@@ -437,17 +437,17 @@ test.describe("product-readiness customer journey", () => {
     const systemName = `Buyer Intake Payments ${Date.now()}`;
 
     await page.goto("/new");
-    await page.getByRole("button", { name: "Create New Threat Model" }).click();
-    await page.getByLabel("System Name").fill(systemName);
-    await page.getByLabel("Description").fill("Browser-created model for the buyer-facing intake journey.");
+    await page.getByRole("button", { name: "Start New Review" }).click();
+    await page.getByLabel("Application or PR Name").fill(systemName);
+    await page.getByLabel("Review Summary").fill("Browser-created model for the buyer-facing intake journey.");
     await page.getByLabel("Data Classification").selectOption("Restricted");
     await page.getByLabel("Deployment Model").selectOption("cloud");
     await page.getByLabel(/OSFI B-13/).check();
-    await page.getByRole("button", { name: "Create Threat Model" }).click();
+    await page.getByRole("button", { name: "Start Security Review" }).click();
 
-    await expect(page).toHaveURL(/\/threat-models\/[0-9a-f-]+$/);
-    await expect(page.getByRole("heading", { name: systemName })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Data Flow Diagram" })).toBeVisible();
+    await expect(page).toHaveURL(/\/threat-models\/[0-9a-f-]+\/review$/);
+    await expect(page.getByRole("heading", { name: "Security Review" })).toBeVisible();
+    await expect(page.getByText(systemName)).toBeVisible();
     expect(runtimeFailures).toEqual([]);
   });
 
@@ -478,7 +478,7 @@ test.describe("product-readiness customer journey", () => {
     await page.getByRole("link", { name: "Security Review" }).click();
     await expect(page).toHaveURL(new RegExp(`/threat-models/${harness.threatModelId}/review`));
     await expect(page.getByRole("heading", { name: "Security Review" })).toBeVisible();
-    await expect(page.getByText(`${harness.threatCount} threats in current review scope`)).toBeVisible();
+    await expect(page.getByText(`${harness.threatCount} findings in current review scope`)).toBeVisible();
 
     await page.getByRole("tab", { name: "Findings" }).click();
     await expect(page.getByRole("heading", { name: "Findings" })).toBeVisible({
@@ -507,7 +507,7 @@ test.describe("product-readiness customer journey", () => {
     await expect(page.getByRole("heading", { name: "Deterministic Evidence Workspace" })).toBeVisible();
     await expect(page.getByText("Tool Readiness")).toBeVisible();
     await expect(page.getByText("Validation Cases")).toBeVisible();
-    await expect(page.getByText("Evidence Ledger")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Evidence Ledger" })).toBeVisible();
 
     await page.getByRole("link", { name: "Report" }).click();
     await expect(page).toHaveURL(new RegExp(`/threat-models/${harness.threatModelId}/review\\?tab=report`));

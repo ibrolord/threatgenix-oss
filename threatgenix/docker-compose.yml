@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     image: pgvector/pgvector:pg16
@@ -8,7 +6,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: threatgenix
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -31,7 +29,7 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
 
   frontend:
     build: ./frontend

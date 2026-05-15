@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import ThreatModelPage from "./ThreatModelPage";
 import { api } from "../api/client";
+import type { ThreatResponse } from "../types/api";
 
 const apiMocks = vi.hoisted(() => ({
   analyze: vi.fn(),
@@ -112,9 +113,8 @@ vi.mock("../components/threats/QualificationQueuePanel", () => ({
   QualificationQueuePanel: () => null,
 }));
 
-const deterministicRuleThreat = {
+const deterministicRuleThreat: ThreatResponse = {
   id: "threat-1",
-  threat_model_id: "tm-1",
   display_id: "T-001",
   description: "Rules-only threat survives provider outage.",
   stride_category: "Tampering",
@@ -137,8 +137,20 @@ const deterministicRuleThreat = {
   residual_risk_level: "High",
   provider_managed: false,
   closed_at: null,
+  compliance_controls: [],
+  qualification_score: null,
+  qualification_label: null,
+  qualification_note: null,
+  auto_score: null,
+  analyst_score: null,
+  analyst_score_rationale: null,
+  ai_likelihood_score: null,
+  ai_likelihood_assessment: null,
+  ai_likelihood_generated_at: null,
+  cluster_id: null,
+  false_positive_reason: null,
+  qualification_completed_at: null,
   created_at: "2026-05-15T00:00:00Z",
-  updated_at: "2026-05-15T00:00:00Z",
 };
 
 function renderThreatModelPage() {
@@ -169,27 +181,50 @@ describe("ThreatModelPage AI degradation", () => {
       system_name: "Payments API",
       description: "Payment processing model.",
       data_classification: "Restricted",
+      regulatory_scope: [],
+      deployment_model: "cloud",
+      repository_evidence: null,
+      cloud_scan_evidence: null,
+      iac_evidence: null,
+      environment_context_summary: null,
       report_template: "default",
       report_templates: [],
       arch_diagrams: [],
+      created_at: "2026-05-15T00:00:00Z",
+      updated_at: "2026-05-15T00:00:00Z",
     });
     vi.mocked(api.getDFDQualityGates).mockResolvedValue({
       blocking_count: 0,
       warning_count: 0,
-      issue_count: 0,
-      issues: [],
-      summary: "Ready",
+      results: [],
     });
     vi.mocked(api.getEvidenceStatus).mockResolvedValue({
+      threat_model_id: "tm-1",
       projection_status: "current",
-      coverage_gaps: [],
+      generated_at: "2026-05-15T00:00:00Z",
       source_count: 0,
+      item_count: 0,
       entity_count: 0,
       relationship_count: 0,
+      observation_count: 0,
       finding_count: 0,
+      sources_by_type: [],
+      items_by_type: [],
+      entities_by_type: [],
+      findings_by_kind: [],
+      freshness: [],
+      coverage_gaps: [],
     });
     vi.mocked(api.getDFD).mockResolvedValue({
-      nodes: [{ id: "node-1" }],
+      nodes: [{
+        id: "node-1",
+        node_type: "process",
+        name: "Payments API",
+        position_x: 100,
+        position_y: 120,
+        trust_boundary_id: null,
+        properties: {},
+      }],
       edges: [],
       trust_boundaries: [],
     });

@@ -52,7 +52,7 @@ maps to implementation files and existing tests, not only README claims.
 | Frontend unit | `cd threatgenix/frontend && npm test` | Component, hook, and utility behavior |
 | Frontend type/lint | `cd threatgenix/frontend && npm run typecheck && npm run lint` | Type and lint gate |
 | Frontend build | `cd threatgenix/frontend && npm run build` | Production bundle check |
-| API integration | `cd tests/e2e && python -m pytest -v` | Real Postgres plus backend subprocess |
+| API integration | `cd tests/e2e && make e2e` | Real Postgres plus backend subprocess |
 | Browser E2E | `cd threatgenix/frontend && npm run test:e2e` | Real UI journeys through Playwright |
 | Migration/startup | `test_migration_guards.py`, `test_startup_readiness.py` | Production safety and schema readiness |
 | Security/hygiene | `scripts/check-oss-hygiene.sh` | Secret/private-string/publication guard |

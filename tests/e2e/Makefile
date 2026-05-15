@@ -3,7 +3,8 @@
 .PHONY: e2e e2e-live e2e-record setup teardown
 
 DOCKER_COMPOSE := docker compose -f docker-compose.test.yml
-PYTEST := python -m pytest -xvs --tb=short
+PYTHON ?= $(shell if [ -x ../../threatgenix/backend/.venv/bin/python ]; then echo ../../threatgenix/backend/.venv/bin/python; else echo python; fi)
+PYTEST := $(PYTHON) -m pytest -xvs --tb=short
 
 setup:
 	$(DOCKER_COMPOSE) up -d --wait

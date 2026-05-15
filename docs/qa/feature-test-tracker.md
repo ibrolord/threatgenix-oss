@@ -36,25 +36,25 @@ fixed.
 
 | ID | Area | User promise | Existing coverage | Missing or weak coverage | Type | Priority | Severity | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| QA-001 | Boot | Local stack starts and health is green | configurable deep e2e smoke | Release journey retest for full compose stack | integration | P0 | S0 | backend | awaiting-retest |
-| QA-002 | Auth | Register, login, reload, logout all work | auth API, React context tests, and browser auth roundtrip | Release journey retest against packaged self-hosted stack | browser E2E | P0 | S1 | frontend | awaiting-retest |
-| QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Release journey retest for production auth gate | startup | P0 | S0 | backend | awaiting-retest |
-| QA-004 | Tenant isolation | Users cannot access other users' data | owned-resource route matrix and SaaS foundation tests | Release journey retest against full API stack | API contract | P0 | S0 | backend | awaiting-retest |
-| QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression | Release journey retest on downgraded schema fixture | migration | P0 | S0 | backend | awaiting-retest |
+| QA-001 | Boot | Local stack starts and health is green | configurable deep e2e smoke and Compose release retest | Keep regression active | integration | P0 | S0 | backend | closed-verified |
+| QA-002 | Auth | Register, login, reload, logout all work | auth API, React context tests, and Compose browser auth roundtrip | Keep regression active | browser E2E | P0 | S1 | frontend | closed-verified |
+| QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests and local P0 retest | Keep regression active | startup | P0 | S0 | backend | closed-verified |
+| QA-004 | Tenant isolation | Users cannot access other users' data | owned-resource route matrix, SaaS foundation tests, and Compose product-readiness tenant smoke | Keep regression active | API contract | P0 | S0 | backend | closed-verified |
+| QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression and local P0 retest | Keep regression active | migration | P0 | S0 | backend | closed-verified |
 | QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend and dashboard tests | Browser create/archive journey | browser E2E | P1 | S1 | frontend | open |
 | QA-007 | Document upload | Architecture document becomes DFD input | parser and upload tests | End-to-end extraction plus retention purge | integration | P1 | S1 | backend | open |
 | QA-008 | DFD API | Nodes, edges, boundaries, views persist | broad DFD tests | Quick-add, view regeneration, repository suggestion contracts | API contract | P1 | S1 | backend | open |
 | QA-009 | DFD UI | Canvas editing works in browser | component and Playwright specs | Visual regression and save-state assertion | browser E2E | P2 | S2 | frontend | open |
 | QA-010 | DFD quality gates | Modeling issues are visible and actionable | service tests | UI rendering of quality issues | browser E2E | P2 | S2 | frontend | open |
-| QA-011 | Rules engine | STRIDE output is deterministic | rules unit tests and golden DFD threat-set regression | Intentional rule change approval/update process | unit | P0 | S1 | rules | awaiting-retest |
+| QA-011 | Rules engine | STRIDE output is deterministic | rules unit tests, golden DFD threat-set regression, and Compose product-readiness threat generation smoke | Intentional rule change approval/update process | unit | P0 | S1 | rules | closed-verified |
 | QA-012 | Rule suppression | Properties suppress or trigger correct rules | targeted suppression tests | Broader property permutation sweep | unit | P2 | S2 | rules | open |
 | QA-013 | AI enhancement | Available AI improves threat output | AI service tests | Stubbed provider end-to-end contract | API contract | P1 | S1 | AI | open |
-| QA-014 | AI degradation | Provider outage does not block rules | analyze fallback tests and browser degradation banner regression | Full browser journey retest with mocked provider outage | browser E2E | P0 | S1 | AI | awaiting-retest |
+| QA-014 | AI degradation | Provider outage does not block rules | analyze fallback tests, browser degradation banner regression, and frontend release retest | Keep regression active | browser E2E | P0 | S1 | AI | closed-verified |
 | QA-015 | Threat triage | Accept, dismiss, bulk update, and audit persist | API and modal tests | Bulk triage browser flow | browser E2E | P1 | S1 | frontend | open |
 | QA-016 | Threat diff | Re-analysis shows new and removed threats | diff tests | Browser edit-and-reanalyze journey | browser E2E | P2 | S2 | frontend | open |
 | QA-017 | Compliance | Threats show relevant controls | compliance tests | Framework coverage by STRIDE sample | API contract | P1 | S1 | backend | open |
 | QA-018 | Threat intelligence | ATT&CK, CAPEC, CWE, KEV, and advisory context appears | threat-intel tests | Sync smoke and UI rendering | integration | P2 | S2 | AI | open |
-| QA-019 | PDF report | Exported PDF is complete and parseable | real PDF render/parse test with required sections and DFD image | Release journey retest through report API/browser export | integration | P0 | S1 | backend | awaiting-retest |
+| QA-019 | PDF report | Exported PDF is complete and parseable | real PDF render/parse test with required sections and DFD image plus Compose product-readiness export smoke | Keep regression active | integration | P0 | S1 | backend | closed-verified |
 | QA-020 | Report config | Template, logo, watermark, attestation persist | partial tests | Report-config and template-library contract test | API contract | P1 | S2 | backend | open |
 | QA-021 | CSV export | Threat CSV export is scoped and valid | weak direct coverage | CSV header, row, and owner-scope contract | API contract | P1 | S1 | backend | open |
 | QA-022 | Dashboard | Portfolio cards and trends reflect data | dashboard tests | Browser data-update journey | browser E2E | P2 | S2 | frontend | open |
@@ -63,10 +63,10 @@ fixed.
 | QA-025 | Application review | Bundle to findings to decision works | broad app-review tests | Browser flow with mocked scanners | browser E2E | P1 | S1 | frontend | open |
 | QA-026 | TMAC | Threat model code round-trips | TMAC tests | Import, mutate, export, diff minimality | unit | P2 | S2 | backend | open |
 | QA-027 | Provider settings | Provider switching and BYOK are usable | API and BYOK tests | Settings-page browser flow | browser E2E | P1 | S1 | frontend | open |
-| QA-028 | Security headers | Common hardening headers are present | health and catalog header tests | Release journey retest for deployed headers | security | P0 | S0 | backend | awaiting-retest |
+| QA-028 | Security headers | Common hardening headers are present | health and catalog header tests plus local P0 retest | Keep regression active | security | P0 | S0 | backend | closed-verified |
 | QA-029 | Rate limiting | Auth endpoints throttle bursts | partial limiter presence | Burst-login 429 test | security | P1 | S1 | backend | open |
-| QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix | Release journey retest for packaged production config | startup | P0 | S0 | backend | awaiting-retest |
-| QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script self-test and CI job | Release CI retest on publish branch | security | P0 | S0 | DevOps | awaiting-retest |
+| QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix and local P0 retest | Keep regression active | startup | P0 | S0 | backend | closed-verified |
+| QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script self-test and local release retest | Keep regression active | security | P0 | S0 | DevOps | closed-verified |
 | QA-032 | CLI | CLI emits valid MCP config | CI wheel smoke | CLI argument combination tests | unit | P2 | S2 | backend | open |
 | QA-033 | Document retention | Raw upload text is purged | weak direct coverage | Time-controlled purge test | unit | P1 | S1 | backend | open |
 | QA-034 | Lazy chunk reload | Stale chunks recover cleanly | weak direct coverage | Unit test for reload-once guard | unit | P2 | S3 | frontend | open |
@@ -116,6 +116,14 @@ fixed.
   `threatgenix/backend/tests/test_pdf_report.py` to generate a real WeasyPrint
   PDF, parse it with PyMuPDF, verify required report sections and threat content,
   and assert an embedded DFD image is present.
+- 2026-05-15: P0 release retest passed locally on the self-hosted Compose stack
+  with isolated host ports (`DB_PORT=55432 BACKEND_PORT=8010 FRONTEND_PORT=5180`).
+  Evidence: Compose deep health returned `database=connected` and
+  `alembic_revision=083`; browser smoke passed
+  `auth-roundtrip.spec.ts` plus `product-readiness.spec.ts` with 4 tests; backend
+  P0 pytest subset passed 97 tests; Docker-backed `test_00_smoke.py` passed 5
+  tests using the backend venv; frontend `typecheck` and `build` passed; OSS
+  hygiene and hygiene self-test passed.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before

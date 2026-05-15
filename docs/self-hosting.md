@@ -13,6 +13,16 @@ This starts:
 - FastAPI backend on `localhost:8000`
 - Vite frontend on `localhost:5173`
 
+On startup, the backend runs `alembic upgrade head` before serving requests so a
+fresh self-hosted database is schema-ready and migration-stamped.
+
+If those ports are already used on your workstation, set host-port overrides
+without changing the container-to-container wiring:
+
+```bash
+DB_PORT=55432 BACKEND_PORT=8010 FRONTEND_PORT=5180 docker compose up --build
+```
+
 ## Production Notes
 
 The Compose file is a development baseline, not a complete production stack. A production deployment should add:

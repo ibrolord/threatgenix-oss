@@ -42,9 +42,17 @@ Open:
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:8000/api/health
 
+If local services already use those host ports, keep Compose isolated with:
+
+```bash
+DB_PORT=55432 BACKEND_PORT=8010 FRONTEND_PORT=5180 docker compose up --build
+```
+
 The Compose stack is a local development baseline. It binds the backend and
 frontend to `127.0.0.1` by default, starts PostgreSQL with pgvector, and uses the
-safe example settings in `threatgenix/backend/.env.example`.
+safe example settings in `threatgenix/backend/.env.example`. The backend runs
+`alembic upgrade head` before serving requests so fresh self-hosted databases are
+migration-stamped.
 
 Stop it with:
 
