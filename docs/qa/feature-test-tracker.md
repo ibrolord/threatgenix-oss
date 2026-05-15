@@ -54,7 +54,7 @@ fixed.
 | QA-016 | Threat diff | Re-analysis shows new and removed threats | diff tests | Browser edit-and-reanalyze journey | browser E2E | P2 | S2 | frontend | open |
 | QA-017 | Compliance | Threats show relevant controls | compliance tests | Framework coverage by STRIDE sample | API contract | P1 | S1 | backend | open |
 | QA-018 | Threat intelligence | ATT&CK, CAPEC, CWE, KEV, and advisory context appears | threat-intel tests | Sync smoke and UI rendering | integration | P2 | S2 | AI | open |
-| QA-019 | PDF report | Exported PDF is complete and parseable | PDF tests | Parse generated PDF for required sections and image | integration | P0 | S1 | backend | open |
+| QA-019 | PDF report | Exported PDF is complete and parseable | real PDF render/parse test with required sections and DFD image | Release journey retest through report API/browser export | integration | P0 | S1 | backend | awaiting-retest |
 | QA-020 | Report config | Template, logo, watermark, attestation persist | partial tests | Report-config and template-library contract test | API contract | P1 | S2 | backend | open |
 | QA-021 | CSV export | Threat CSV export is scoped and valid | weak direct coverage | CSV header, row, and owner-scope contract | API contract | P1 | S1 | backend | open |
 | QA-022 | Dashboard | Portfolio cards and trends reflect data | dashboard tests | Browser data-update journey | browser E2E | P2 | S2 | frontend | open |
@@ -108,6 +108,10 @@ fixed.
   `threatgenix/frontend/src/pages/ThreatModelPage.test.tsx`, which mocks an AI
   provider outage response from `/analyze` and proves the page keeps the
   deterministic rule threat visible while surfacing the AI degradation alert.
+- 2026-05-15: QA-019 extended
+  `threatgenix/backend/tests/test_pdf_report.py` to generate a real WeasyPrint
+  PDF, parse it with PyMuPDF, verify required report sections and threat content,
+  and assert an embedded DFD image is present.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before

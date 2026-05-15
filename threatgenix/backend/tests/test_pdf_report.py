@@ -4,6 +4,7 @@ import uuid
 from datetime import date, datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
+import fitz
 import pytest
 
 from app.services import pdf_report
@@ -331,3 +332,65 @@ async def test_generate_report_includes_agent_validation_outcomes(monkeypatch):
             "external_ticket_url": "https://github.com/northstar/export-api/issues/42",
         }
     ]
+
+
+@pytest.mark.asyncio
+async def test_generate_report_writes_parseable_pdf_with_required_sections(monkeypatch):
+    threat_model_id = uuid.uuid4()
+    fake_threat_model = _FakeThreatModel(threat_model_id)
+    fake_threat_model.report_template = "minimal"
+    threat = _FakeThreat(
+        threat_model_id=threat_model_id,
+        display_id="T-001",
+        status="Open",
+        mitigation_plan="Add integrity checks before writing payment state.",
+    )
+
+    execute_calls = []
+
+    async def fake_execute(statement):
+        execute_calls.append(statement)
+        if len(execute_calls) == 1:
+            return _FakeScalarResult(fake_threat_model)
+        if len(execute_calls) == 2:
+            return _FakeListResult([threat])
+        return _FakeScalarResult(None)
+
+    fake_db = MagicMock()
+    fake_db.execute = AsyncMock(side_effect=fake_execute)
+    monkeypatch.setattr(
+        pdf_report,
+        "lookup_controls_batch",
+        AsyncMock(return_value={threat.id: []}),
+    )
+
+    pdf_bytes = await pdf_report.generate_report(
+        fake_db,
+        threat_model_id,
+        dfd_image_base64=(
+            "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII="
+        ),
+        dfd_integrity_sha256="dfd-sha256-test",
+        sections=["executive_summary", "scope", "dfd", "threats", "methodology"],
+    )
+
+    assert pdf_bytes.startswith(b"%PDF")
+    with fitz.open(stream=pdf_bytes, filetype="pdf") as document:
+        assert document.page_count >= 1
+        image_count = sum(len(page.get_images(full=True)) for page in document)
+        parsed_text = "\n".join(page.get_text("text") for page in document)
+
+    assert image_count >= 1
+    for required_text in (
+        "Payments Platform",
+        "Executive Summary",
+        "Scope",
+        "Data Flow Diagram",
+        "dfd-sha256-test",
+        "Threat Scenarios and Findings",
+        "T-001",
+        "T-001 description",
+        "Methodology",
+        "STRIDE",
+    ):
+        assert required_text in parsed_text
