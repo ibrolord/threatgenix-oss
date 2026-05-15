@@ -70,7 +70,7 @@ fixed.
 | QA-032 | CLI | CLI emits valid MCP config | CI wheel smoke | CLI argument combination tests | unit | P2 | S2 | backend | open |
 | QA-033 | Document retention | Raw upload text is purged | weak direct coverage | Time-controlled purge test | unit | P1 | S1 | backend | open |
 | QA-034 | Lazy chunk reload | Stale chunks recover cleanly | weak direct coverage | Unit test for reload-once guard | unit | P2 | S3 | frontend | open |
-| QA-035 | Product identity | Legacy naming does not return | product identity test and hygiene script | Keep regression active | security | P1 | S1 | DevOps | open |
+| QA-035 | Product identity | Legacy naming does not return | product identity test, hygiene script, and local release retest | Keep regression active | security | P1 | S1 | DevOps | closed-verified |
 
 ## Retest Gates
 
@@ -140,6 +140,10 @@ fixed.
   real authenticated e2e user and passed 66 tests. The retest also refreshed
   stale report-export, concurrency, and compliance assertions to match current
   product gates and API fields.
+- 2026-05-15: QA-035 closed after `productIdentity.test.ts`,
+  `scripts/check-oss-hygiene.sh`, and `scripts/check-oss-hygiene.sh --self-test`
+  all passed locally, preserving the ThreatGenix public branding and legacy-name
+  guard.
 
 ## Release Exit Criteria
 
