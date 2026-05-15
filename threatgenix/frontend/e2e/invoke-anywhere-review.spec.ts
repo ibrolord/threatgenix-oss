@@ -124,6 +124,7 @@ async function createInvokeAnywhereReview(
           sensitive_data_types: ["pii", "financial"],
           changed_security_surface: ["authz", "sensitive_data", "public_api"],
           scanner_permissions: ["static_code"],
+          upload_permission: true,
           out_of_scope: ["production data access"],
         },
       },
@@ -233,8 +234,14 @@ test.describe("invoke-anywhere review browser journey", () => {
       await expect(page).toHaveURL(new RegExp(`/reviews/${reviewId}$`));
       await expect(page.getByRole("heading", { name: appName })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Invoke Anywhere", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Review Artifact", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Decision Summary", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Customer-Ready Report", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Evidence Snapshot", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Evidence Chains", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Graph Slice", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Artifact Fix Plan", exact: true })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Rerun History", exact: true })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Missing Evidence", exact: true })).toBeVisible();
       await expect(page.getByText("Check review status")).toBeVisible();
 
@@ -266,6 +273,8 @@ test.describe("invoke-anywhere review browser journey", () => {
 
       const desktopBody = await page.locator("body").innerText();
       expect(desktopBody).toContain("Evidence snapshot");
+      expect(desktopBody).toContain("scanner_finding");
+      expect(desktopBody.toLowerCase()).toContain("semgrep");
       expect(desktopBody).not.toContain("fly.dev");
       expect(desktopBody).not.toContain("127.0.0.1:8000");
       expect(desktopBody).not.toContain("threatgenix-api");

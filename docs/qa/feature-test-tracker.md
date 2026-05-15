@@ -60,7 +60,7 @@ fixed.
 | QA-022 | Dashboard | Portfolio cards and trends reflect data | dashboard tests | Browser data-update journey | browser E2E | P2 | S2 | frontend | open |
 | QA-023 | Validation Lab | Safe dry-run evidence flow works | validation tests plus Docker-backed Try Sandbox evidence and binding contract | Keep regression active | integration | P1 | S1 | backend | closed-verified |
 | QA-024 | Scan credentials | Credentials are encrypted and scoped | credential tests | Key-rotation behavior | unit | P2 | S2 | backend | open |
-| QA-025 | Application review | Bundle to findings to decision works | broad app-review tests | Browser flow with mocked scanners | browser E2E | P1 | S1 | frontend | open |
+| QA-025 | Application review | Bundle to findings to decision works | broad app-review tests plus Compose invoke-anywhere browser journey and artifact chain-id regression | Keep regression active | browser E2E | P1 | S1 | frontend | closed-verified |
 | QA-026 | TMAC | Threat model code round-trips | TMAC tests | Import, mutate, export, diff minimality | unit | P2 | S2 | backend | open |
 | QA-027 | Provider settings | Provider switching and BYOK are usable | API and BYOK tests plus Compose Settings-page provider switch and BYOK journey | Keep regression active | browser E2E | P1 | S1 | frontend | closed-verified |
 | QA-028 | Security headers | Common hardening headers are present | health and catalog header tests plus local P0 retest | Keep regression active | security | P0 | S0 | backend | closed-verified |
@@ -204,6 +204,16 @@ fixed.
   the key, and verifies the stale active provider preference is cleared. The
   backend now also falls back to configured default model IDs if live model-list
   discovery cannot reach OpenAI or Anthropic.
+- 2026-05-15: QA-025 now runs
+  `threatgenix/frontend/e2e/invoke-anywhere-review.spec.ts` against the Compose
+  stack. The journey creates a synthetic user, launches an agent orchestration
+  with a diff bundle and Semgrep scanner job, opens the durable `/reviews/:id`
+  page, verifies artifact, decision, evidence-chain, graph, fix-plan, rerun,
+  and customer-report surfaces, rebuilds context, evaluates the decision, copies
+  the report, screenshots desktop/mobile, and fails on runtime console errors or
+  internal host leaks. The slice also fixed duplicate artifact evidence-chain
+  IDs by keying chains to context entry IDs and added a backend regression for
+  duplicate content hashes.
 
 ## Release Exit Criteria
 

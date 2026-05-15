@@ -9,6 +9,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.exc import IntegrityError
 
+from app.api.application_reviews import _build_evidence_chains
 from app.database import get_db
 from app.main import app
 from app.schemas.application_review import ApplicationReviewCreate, ApplicationReviewResponse
@@ -144,6 +145,38 @@ def _scan_job_response(*, job_id: uuid.UUID, threat_model_id: uuid.UUID) -> Simp
         max_attempts=3,
         created_at=now,
     )
+
+
+def test_build_evidence_chains_keeps_duplicate_content_hash_entries_addressable():
+    review_id = uuid.uuid4()
+    now = datetime(2026, 5, 1, tzinfo=timezone.utc)
+    entries = [
+        ApplicationReviewContextEntryResponse(
+            id=uuid.uuid4(),
+            review_id=review_id,
+            source_type="scan_finding",
+            source_object_id=uuid.uuid4(),
+            item_type="scanner_finding",
+            title=f"Finding {index}",
+            body="same normalized evidence body",
+            keywords=["finding"],
+            facets={"severity": "high"},
+            retrieval_text="same normalized evidence body",
+            source_refs=[{"type": "path", "path": f"apps/api/users.py:{40 + index}"}],
+            content_hash="d" * 64,
+            status="active",
+            stale_reason=None,
+            created_at=now,
+            updated_at=now,
+        )
+        for index in range(2)
+    ]
+
+    chains = _build_evidence_chains(entries)
+
+    assert [chain.chain_id for chain in chains] == [f"chain:{entry.id}" for entry in entries]
+    assert len({chain.chain_id for chain in chains}) == 2
+    assert {chain.content_hash for chain in chains} == {"d" * 64}
 
 
 def _risk_acceptance_response(

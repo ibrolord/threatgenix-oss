@@ -556,7 +556,7 @@ def _build_evidence_chains(
             )
         chains.append(
             ApplicationReviewEvidenceChain(
-                chain_id=f"chain:{entry.content_hash[:16]}",
+                chain_id=f"chain:{entry.id}",
                 title=entry.title,
                 item_type=entry.item_type,
                 status=entry.status,
