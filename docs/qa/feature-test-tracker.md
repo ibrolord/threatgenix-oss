@@ -36,7 +36,7 @@ fixed.
 
 | ID | Area | User promise | Existing coverage | Missing or weak coverage | Type | Priority | Severity | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| QA-001 | Boot | Local stack starts and health is green | `test_health.py`, basic e2e smoke | Compose-up smoke against real stack and deep health | integration | P0 | S0 | backend | open |
+| QA-001 | Boot | Local stack starts and health is green | configurable deep e2e smoke | Release journey retest for full compose stack | integration | P0 | S0 | backend | awaiting-retest |
 | QA-002 | Auth | Register, login, reload, logout all work | auth API and React context tests | Browser auth roundtrip | browser E2E | P0 | S1 | frontend | open |
 | QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Release journey retest for production auth gate | startup | P0 | S0 | backend | awaiting-retest |
 | QA-004 | Tenant isolation | Users cannot access other users' data | partial SaaS foundation tests | Route matrix across all owned resources | API contract | P0 | S0 | backend | open |
@@ -82,6 +82,10 @@ fixed.
 
 ## Progress Notes
 
+- 2026-05-15: QA-001 e2e smoke gained environment-configurable Postgres targets
+  and now asserts `/api/health?deep=true` returns a connected database signal.
+  The test compose DB default moved to host port `55433` to avoid local Postgres
+  collisions; full frontend/compose release retest remains before closure.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before

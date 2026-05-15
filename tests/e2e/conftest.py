@@ -1,11 +1,12 @@
 """E2E test fixtures -- real Postgres, real HTTP, real server.
 
-Uses SYNC httpx and psycopg2 to avoid async event loop issues with pytest.
-The backend server runs as a subprocess (async internally), but all test
+Uses sync httpx plus a small asyncpg-backed DB adapter to avoid async test-loop
+coupling. The backend server runs as a subprocess (async internally), but all test
 interactions are synchronous.
 """
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import signal
@@ -13,19 +14,43 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+from urllib.parse import quote_plus
 
+import asyncpg
 import httpx
-import psycopg2
 import pytest
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-TEST_DB_URL_ASYNC = "postgresql+asyncpg://test:test@localhost:5433/threatgenix_test"
-TEST_DB_URL_SYNC = "postgresql://test:test@localhost:5433/threatgenix_test"
-BACKEND_PORT = 8099
+E2E_DB_USER = os.getenv("THREATGENIX_E2E_DB_USER", "test")
+E2E_DB_PASSWORD = os.getenv("THREATGENIX_E2E_DB_PASSWORD", "test")
+E2E_DB_HOST = os.getenv("THREATGENIX_E2E_DB_HOST", "localhost")
+E2E_DB_PORT = os.getenv("THREATGENIX_E2E_DB_PORT", "55433")
+E2E_DB_NAME = os.getenv("THREATGENIX_E2E_DB_NAME", "threatgenix_test")
+
+
+def _database_url(driver: str) -> str:
+    env_name = (
+        "THREATGENIX_E2E_DATABASE_URL_ASYNC"
+        if driver
+        else "THREATGENIX_E2E_DATABASE_URL_SYNC"
+    )
+    if override := os.getenv(env_name):
+        return override
+    user = quote_plus(E2E_DB_USER)
+    password = quote_plus(E2E_DB_PASSWORD)
+    return (
+        f"postgresql{driver}://{user}:{password}"
+        f"@{E2E_DB_HOST}:{E2E_DB_PORT}/{E2E_DB_NAME}"
+    )
+
+
+TEST_DB_URL_ASYNC = _database_url("+asyncpg")
+TEST_DB_URL_SYNC = _database_url("")
+BACKEND_PORT = int(os.getenv("THREATGENIX_E2E_BACKEND_PORT", "8099"))
 BACKEND_BASE = f"http://localhost:{BACKEND_PORT}"
-FRONTEND_PORT = 5174
+FRONTEND_PORT = int(os.getenv("THREATGENIX_E2E_FRONTEND_PORT", "5174"))
 FRONTEND_BASE = f"http://localhost:{FRONTEND_PORT}"
 PROJECT_ROOT = Path(__file__).resolve().parents[2]  # tests/e2e/../../ = project root
 BACKEND_DIR = PROJECT_ROOT / "threatgenix" / "backend"
@@ -62,7 +87,9 @@ def _setup_schema_and_seed():
 
         engine = create_async_engine(TEST_DB_URL_ASYNC, echo=False)
         async with engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
+            await conn.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
+            await conn.execute(text("CREATE SCHEMA public"))
+            await conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
             await conn.run_sync(Base.metadata.create_all)
 
         # Seed compliance mappings
@@ -72,12 +99,18 @@ def _setup_schema_and_seed():
             count = result.scalar()
             if count == 0:
                 from app.models.compliance import ComplianceMapping as CM
-                for stride_cat, subtype, control_id, control_name in SEED_DATA:
+                seen_mappings: set[tuple[str, str, str, str]] = set()
+                for stride_cat, subtype, framework, control_id, control_name in SEED_DATA:
+                    key = (stride_cat, subtype, framework, control_id)
+                    if key in seen_mappings:
+                        continue
+                    seen_mappings.add(key)
                     session.add(CM(
                         stride_category=stride_cat,
                         threat_subtype=subtype,
-                        nist_control_id=control_id,
-                        nist_control_name=control_name,
+                        framework=framework,
+                        control_id=control_id,
+                        control_name=control_name,
                     ))
                 await session.commit()
 
@@ -93,13 +126,52 @@ def setup_database():
 
 
 # ---------------------------------------------------------------------------
-# Session-scoped: sync psycopg2 connection for direct DB checks
+# Session-scoped: sync-style asyncpg connection for direct DB checks
 # ---------------------------------------------------------------------------
+class SyncAsyncpgCursor:
+    def __init__(self, dsn: str):
+        self._dsn = dsn
+        self._rows: list[tuple] = []
+
+    async def _run(self, query: str) -> list[tuple]:
+        conn = await asyncpg.connect(self._dsn)
+        try:
+            if query.lstrip().upper().startswith("SELECT"):
+                records = await conn.fetch(query)
+                return [tuple(record) for record in records]
+            await conn.execute(query)
+            return []
+        finally:
+            await conn.close()
+
+    def execute(self, query: str) -> None:
+        self._rows = asyncio.run(self._run(query))
+
+    def fetchone(self):
+        return self._rows[0] if self._rows else None
+
+    def fetchall(self):
+        return self._rows
+
+    def close(self) -> None:
+        return None
+
+
+class SyncAsyncpgConnection:
+    def __init__(self, dsn: str):
+        self._dsn = dsn
+
+    def cursor(self) -> SyncAsyncpgCursor:
+        return SyncAsyncpgCursor(self._dsn)
+
+    def close(self) -> None:
+        return None
+
+
 @pytest.fixture(scope="session")
 def db_conn(setup_database):
-    """Sync psycopg2 connection for direct DB queries in tests."""
-    conn = psycopg2.connect(TEST_DB_URL_SYNC)
-    conn.autocommit = True
+    """Sync-style connection for direct DB queries in tests."""
+    conn = SyncAsyncpgConnection(TEST_DB_URL_SYNC)
     yield conn
     conn.close()
 
@@ -223,7 +295,6 @@ class Factories:
         # analyze (which has a source mismatch bug).
         resp = self.client.post(f"/api/threat-models/{mid}/threats/generate")
         assert resp.status_code == 200, f"Factory generate_threats failed: {resp.status_code} {resp.text}"
-        data = resp.json()
         # generate returns RuleEngineOutput {threats: [...], ...}
         # We need the threats list, then re-fetch via the list endpoint
         list_resp = self.client.get(f"/api/threat-models/{mid}/threats")

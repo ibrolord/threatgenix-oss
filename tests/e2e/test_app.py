@@ -1,7 +1,6 @@
 """Test ASGI app that patches Bedrock before importing the real app."""
 import os
 import sys
-from unittest.mock import MagicMock
 
 # Ensure backend is on path
 backend_dir = os.path.join(os.path.dirname(__file__), "..", "..", "threatgenix", "backend")
@@ -44,24 +43,31 @@ FAKE_BEDROCK_EXTRACTION = {
     ],
 }
 
-# Import and patch the bedrock client module
-from app.services import bedrock_client as bc_module
-
-_OriginalBedrockClient = bc_module.BedrockClient
-
-
 class FakeBedrockClient:
     """Fake BedrockClient that returns canned responses."""
 
     def __init__(self, *args, **kwargs):
-        pass
+        self.provider_name = "bedrock"
+        self.model_id = "fake-bedrock-model"
+        self.model_name = self.model_id
 
     def call_with_tools(self, system_message, user_message, tools, **kwargs):
         return FAKE_BEDROCK_EXTRACTION
 
 
-# Monkey-patch at module level
-bc_module.BedrockClient = FakeBedrockClient
+# Import and patch the current LLM provider module before importing the app.
+from app.services import llm_client as llm_module  # noqa: E402
+
+llm_module.BedrockProvider = FakeBedrockClient
+llm_module.PROVIDER_REGISTRY = [
+    (name, FakeBedrockClient if name == "bedrock" else provider)
+    for name, provider in llm_module.PROVIDER_REGISTRY
+]
+llm_module._PROVIDER_MAP = {
+    name: provider for name, provider in llm_module.PROVIDER_REGISTRY
+}
 
 # Now import the real app (which will use our patched BedrockClient)
 from app.main import app  # noqa: E402
+
+__all__ = ["app"]

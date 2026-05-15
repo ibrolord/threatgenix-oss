@@ -1,16 +1,26 @@
 """Level 0: Can it start?"""
+from pathlib import Path
 import subprocess
+
 import pytest
-from conftest import BACKEND_BASE, FRONTEND_DIR
+
+
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+FRONTEND_DIR = PROJECT_ROOT / "threatgenix" / "frontend"
 
 
 @pytest.mark.order(0)
 class TestSmoke:
 
     def test_backend_health(self, client):
-        resp = client.get("/api/health")
+        resp = client.get("/api/health?deep=true")
         assert resp.status_code == 200
-        assert resp.json() == {"status": "ok"}
+        body = resp.json()
+        assert body["status"] == "ok"
+        assert body["api_title"] == "ThreatGenix"
+        assert body["runtime_name"] == "threatgenix"
+        assert body["database"] == "connected"
+        assert "alembic_revision" in body
 
     def test_db_connection(self, db_conn):
         cur = db_conn.cursor()
