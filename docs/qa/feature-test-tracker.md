@@ -66,7 +66,7 @@ fixed.
 | QA-028 | Security headers | Common hardening headers are present | health and catalog header tests | Release journey retest for deployed headers | security | P0 | S0 | backend | awaiting-retest |
 | QA-029 | Rate limiting | Auth endpoints throttle bursts | partial limiter presence | Burst-login 429 test | security | P1 | S1 | backend | open |
 | QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix | Release journey retest for packaged production config | startup | P0 | S0 | backend | awaiting-retest |
-| QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script and CI job | Negative fixture test or CI assertion | security | P0 | S0 | DevOps | open |
+| QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script self-test and CI job | Release CI retest on publish branch | security | P0 | S0 | DevOps | awaiting-retest |
 | QA-032 | CLI | CLI emits valid MCP config | CI wheel smoke | CLI argument combination tests | unit | P2 | S2 | backend | open |
 | QA-033 | Document retention | Raw upload text is purged | weak direct coverage | Time-controlled purge test | unit | P1 | S1 | backend | open |
 | QA-034 | Lazy chunk reload | Stale chunks recover cleanly | weak direct coverage | Unit test for reload-once guard | unit | P2 | S3 | frontend | open |
@@ -90,6 +90,10 @@ fixed.
   schema column and proves lifespan fails before serving traffic with a useful
   `alembic upgrade head` message. Downgraded-schema release retest remains
   before closure.
+- 2026-05-15: QA-031 gained `scripts/check-oss-hygiene.sh --self-test`, which
+  creates negative fixtures for secret patterns, private/customer strings,
+  legacy product naming, tracked `.env`, and uncommented provider credentials.
+  CI now runs the self-test after the normal hygiene scan.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before
