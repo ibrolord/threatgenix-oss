@@ -13,6 +13,7 @@ import signal
 import subprocess
 import sys
 import time
+import uuid
 from pathlib import Path
 from urllib.parse import quote_plus
 
@@ -28,6 +29,8 @@ E2E_DB_PASSWORD = os.getenv("THREATGENIX_E2E_DB_PASSWORD", "test")
 E2E_DB_HOST = os.getenv("THREATGENIX_E2E_DB_HOST", "localhost")
 E2E_DB_PORT = os.getenv("THREATGENIX_E2E_DB_PORT", "55433")
 E2E_DB_NAME = os.getenv("THREATGENIX_E2E_DB_NAME", "threatgenix_test")
+E2E_AUTH_EMAIL = os.getenv("THREATGENIX_E2E_AUTH_EMAIL", "qa-e2e@example.test")
+E2E_AUTH_PASSWORD = os.getenv("THREATGENIX_E2E_AUTH_PASSWORD", "ThreatGenixE2E2026!")
 
 
 def _database_url(driver: str) -> str:
@@ -79,11 +82,14 @@ def _setup_schema_and_seed():
             DFDEdge,
             DFDNode,
             Document,
+            Organization,
             Threat,
             ThreatModel,
             TrustBoundary,
+            User,
         )
         from app.seed import SEED_DATA
+        from app.services.auth import hash_password
 
         engine = create_async_engine(TEST_DB_URL_ASYNC, echo=False)
         async with engine.begin() as conn:
@@ -112,7 +118,20 @@ def _setup_schema_and_seed():
                         control_id=control_id,
                         control_name=control_name,
                     ))
-                await session.commit()
+            session.add(Organization(
+                name="ThreatGenix E2E Organization",
+                users=[
+                    User(
+                        email=E2E_AUTH_EMAIL,
+                        hashed_password=hash_password(E2E_AUTH_PASSWORD),
+                        full_name="ThreatGenix E2E",
+                        role="admin",
+                        is_active=True,
+                        email_verified=True,
+                    )
+                ],
+            ))
+            await session.commit()
 
         await engine.dispose()
 
@@ -133,19 +152,41 @@ class SyncAsyncpgCursor:
         self._dsn = dsn
         self._rows: list[tuple] = []
 
-    async def _run(self, query: str) -> list[tuple]:
+    def _convert_placeholders(self, query: str, params: tuple) -> str:
+        if not params:
+            return query
+        converted = query
+        for index in range(1, len(params) + 1):
+            converted = converted.replace("%s", f"${index}", 1)
+        return converted
+
+    def _coerce_params(self, params: tuple) -> tuple:
+        coerced = []
+        for value in params:
+            if isinstance(value, str):
+                try:
+                    coerced.append(uuid.UUID(value))
+                    continue
+                except ValueError:
+                    pass
+            coerced.append(value)
+        return tuple(coerced)
+
+    async def _run(self, query: str, params: tuple = ()) -> list[tuple]:
         conn = await asyncpg.connect(self._dsn)
         try:
+            query = self._convert_placeholders(query, params)
+            params = self._coerce_params(params)
             if query.lstrip().upper().startswith("SELECT"):
-                records = await conn.fetch(query)
+                records = await conn.fetch(query, *params)
                 return [tuple(record) for record in records]
-            await conn.execute(query)
+            await conn.execute(query, *params)
             return []
         finally:
             await conn.close()
 
-    def execute(self, query: str) -> None:
-        self._rows = asyncio.run(self._run(query))
+    def execute(self, query: str, params: tuple = ()) -> None:
+        self._rows = asyncio.run(self._run(query, params))
 
     def fetchone(self):
         return self._rows[0] if self._rows else None
@@ -229,8 +270,30 @@ def backend_server(setup_database):
 # Session-scoped: sync HTTP client
 # ---------------------------------------------------------------------------
 @pytest.fixture(scope="session")
-def client(backend_server) -> httpx.Client:
-    with httpx.Client(base_url=BACKEND_BASE, timeout=30) as c:
+def auth_headers(setup_database) -> dict[str, str]:
+    """Return a bearer token for the seeded e2e user without consuming /login quota."""
+    sys.path.insert(0, str(BACKEND_DIR))
+    from app.services.auth import create_access_token
+
+    async def _fetch_user_id() -> uuid.UUID:
+        conn = await asyncpg.connect(TEST_DB_URL_SYNC)
+        try:
+            user_id = await conn.fetchval(
+                "SELECT id FROM users WHERE email = $1",
+                E2E_AUTH_EMAIL,
+            )
+            assert user_id is not None, f"Missing seeded e2e user {E2E_AUTH_EMAIL}"
+            return user_id
+        finally:
+            await conn.close()
+
+    token = create_access_token(asyncio.run(_fetch_user_id()))
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture(scope="session")
+def client(backend_server, auth_headers) -> httpx.Client:
+    with httpx.Client(base_url=BACKEND_BASE, timeout=30, headers=auth_headers) as c:
         yield c
 
 
@@ -288,6 +351,98 @@ class Factories:
             )
         assert resp.status_code == 201, f"Factory upload_pdf failed: {resp.status_code} {resp.text}"
         return resp.json()
+
+    def create_report_ready_model(
+        self,
+        system_name: str = "Northstar Bank Report-Ready App",
+    ) -> dict:
+        """Create a model with a connected DFD that passes report blocking gates."""
+        model = self.create_threat_model(
+            system_name=system_name,
+            description="Report-ready e2e model",
+            data_classification="Confidential",
+        )
+        customer_id = str(uuid.uuid4())
+        api_id = str(uuid.uuid4())
+        database_id = str(uuid.uuid4())
+        resp = self.client.put(f"/api/threat-models/{model['id']}/dfd", json={
+            "nodes": [
+                {
+                    "id": customer_id,
+                    "node_type": "external_entity",
+                    "name": "Mobile Banking Customer",
+                    "position_x": 0,
+                    "position_y": 100,
+                    "properties": {
+                        "data_classification": "Public",
+                        "authentication_type": "oauth2",
+                        "network_exposure": "internet",
+                        "privilege_level": "standard",
+                        "entity_scope": "external",
+                        "entity_kind": "human",
+                        "trust_level": "untrusted",
+                    },
+                },
+                {
+                    "id": api_id,
+                    "node_type": "process",
+                    "name": "Authenticated Banking API",
+                    "position_x": 250,
+                    "position_y": 100,
+                    "properties": {
+                        "data_classification": "Confidential",
+                        "authentication_type": "oauth2",
+                        "network_exposure": "internet",
+                        "privilege_level": "standard",
+                        "runtime_type": "container",
+                        "input_validation": "strict",
+                        "logging_level": "audit",
+                    },
+                },
+                {
+                    "id": database_id,
+                    "node_type": "data_store",
+                    "name": "Account Ledger Database",
+                    "position_x": 500,
+                    "position_y": 100,
+                    "properties": {
+                        "data_classification": "Confidential",
+                        "authentication_type": "mtls",
+                        "network_exposure": "vpc_private",
+                        "privilege_level": "restricted",
+                        "store_type": "relational",
+                        "store_purpose": "account ledger",
+                        "encryption_at_rest": "transparent",
+                        "backup_strategy": "geo_redundant",
+                    },
+                },
+            ],
+            "edges": [
+                {
+                    "source_node_id": customer_id,
+                    "target_node_id": api_id,
+                    "label": "HTTPS authenticated account request",
+                    "properties": {
+                        "data_payload": "session token and account query",
+                        "data_classification": "Confidential",
+                    },
+                },
+                {
+                    "source_node_id": api_id,
+                    "target_node_id": database_id,
+                    "label": "Account balance lookup",
+                    "properties": {
+                        "data_payload": "account balance and transaction history",
+                        "data_classification": "Confidential",
+                    },
+                },
+            ],
+            "trust_boundaries": [],
+        })
+        assert resp.status_code == 200, (
+            f"Factory create_report_ready_model failed: {resp.status_code} {resp.text}"
+        )
+        return model
 
     def generate_threats(self, threat_model_id: str | None = None, rules_only: bool = True) -> list:
         mid = threat_model_id or self.model_id

@@ -517,10 +517,11 @@ class TestAPIContracts:
 
     def test_report_returns_pdf(self, client, factories):
         """GET /report returns 200 with content-type application/pdf."""
-        chain = factories.full_demo_chain()
+        model = factories.create_report_ready_model()
+        factories.generate_threats(model["id"])
         resp = client.post(
-            f"/api/threat-models/{chain['model_id']}/report",
-            json={"threat_model_id": chain["model_id"], "dfd_image_base64": ""},
+            f"/api/threat-models/{model['id']}/report",
+            json={"threat_model_id": model["id"], "dfd_image_base64": ""},
         )
         assert resp.status_code == 200, f"Report failed: {resp.status_code} {resp.text}"
         assert resp.headers["content-type"] == "application/pdf"
@@ -529,7 +530,9 @@ class TestAPIContracts:
 
     def test_report_no_threats_still_returns_pdf(self, client, factories):
         """Report for a model with no threats should still return a valid PDF."""
-        model = factories.create_threat_model()
+        model = factories.create_report_ready_model(
+            system_name="Northstar Bank No-Threat Report App",
+        )
         resp = client.post(
             f"/api/threat-models/{model['id']}/report",
             json={"threat_model_id": model["id"], "dfd_image_base64": ""},

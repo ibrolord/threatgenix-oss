@@ -16,7 +16,7 @@ teardown:
 e2e: setup
 	$(PYTEST) test_00_smoke.py test_01_api_contracts.py test_02_demo_flow.py \
 	  test_03_concurrency.py test_04_data_integrity.py test_05_performance.py \
-	  test_06_domain.py
+	  test_06_domain.py test_08_auth_rate_limit.py
 	@echo "Frontend visual tests run via MCP during agent invocation"
 
 e2e-record: setup

@@ -64,7 +64,7 @@ fixed.
 | QA-026 | TMAC | Threat model code round-trips | TMAC tests | Import, mutate, export, diff minimality | unit | P2 | S2 | backend | open |
 | QA-027 | Provider settings | Provider switching and BYOK are usable | API and BYOK tests | Settings-page browser flow | browser E2E | P1 | S1 | frontend | open |
 | QA-028 | Security headers | Common hardening headers are present | health and catalog header tests plus local P0 retest | Keep regression active | security | P0 | S0 | backend | closed-verified |
-| QA-029 | Rate limiting | Auth endpoints throttle bursts | partial limiter presence | Burst-login 429 test | security | P1 | S1 | backend | open |
+| QA-029 | Rate limiting | Auth endpoints throttle bursts | backend auth security unit test plus live HTTP e2e burst-login regression | Keep regression active in backend and e2e suites | security | P1 | S1 | backend | closed-verified |
 | QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix and local P0 retest | Keep regression active | startup | P0 | S0 | backend | closed-verified |
 | QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script self-test and local release retest | Keep regression active | security | P0 | S0 | DevOps | closed-verified |
 | QA-032 | CLI | CLI emits valid MCP config | CI wheel smoke | CLI argument combination tests | unit | P2 | S2 | backend | open |
@@ -132,6 +132,14 @@ fixed.
   `threatgenix/backend/tests/test_security_headers.py` for `/api/health`,
   `/api/threat-catalog`, and HTTPS-only HSTS behavior. Production release
   journey retest remains before closure.
+- 2026-05-15: QA-029 gained `tests/e2e/test_08_auth_rate_limit.py` plus stricter
+  backend auth-security assertions. The live backend burst sends 12 invalid
+  login attempts and verifies the first 10 fail authentication with 401 while
+  subsequent attempts return 429 with a rate-limit response.
+- 2026-05-15: The Docker-backed `tests/e2e make e2e` target now runs against a
+  real authenticated e2e user and passed 66 tests. The retest also refreshed
+  stale report-export, concurrency, and compliance assertions to match current
+  product gates and API fields.
 
 ## Release Exit Criteria
 

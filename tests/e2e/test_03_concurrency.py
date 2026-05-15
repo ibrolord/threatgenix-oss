@@ -1,8 +1,9 @@
 """Level 3: Race conditions (using threads for concurrency with sync client)."""
 import concurrent.futures
+from collections import Counter
 import pytest
 import httpx
-from conftest import BACKEND_BASE, FIXTURES_DIR
+from conftest import BACKEND_BASE
 
 
 @pytest.mark.order(3)
@@ -12,9 +13,10 @@ class TestConcurrency:
         """Two simultaneous generate calls must not create duplicate threats."""
         model = factories.create_threat_model()
         factories.upload_pdf()
+        headers = dict(client.headers)
 
         def gen():
-            with httpx.Client(base_url=BACKEND_BASE, timeout=30) as c:
+            with httpx.Client(base_url=BACKEND_BASE, timeout=30, headers=headers) as c:
                 return c.post(f"/api/threat-models/{model['id']}/threats/generate")
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=2) as ex:
@@ -27,9 +29,18 @@ class TestConcurrency:
         # Verify no duplicates in final state
         list_resp = client.get(f"/api/threat-models/{model['id']}/threats")
         threats = list_resp.json()
-        rule_ids = [t["rule_id"] for t in threats if t["rule_id"]]
-        duplicates = [rid for rid in rule_ids if rule_ids.count(rid) > 1]
-        assert not duplicates, f"Duplicate rule_ids after concurrent generate: {duplicates}"
+        identities = [
+            (
+                t["rule_id"],
+                tuple(sorted(t.get("affected_node_ids") or [])),
+                tuple(sorted(t.get("affected_edge_ids") or [])),
+            )
+            for t in threats
+            if t["rule_id"]
+        ]
+        counts = Counter(identities)
+        duplicates = [identity for identity, count in counts.items() if count > 1]
+        assert not duplicates, f"Duplicate threat identities after concurrent generate: {duplicates}"
 
     def test_concurrent_triage(self, client, factories):
         """Two simultaneous triage calls on the same threat must not corrupt state."""
@@ -39,16 +50,17 @@ class TestConcurrency:
             pytest.skip("No threats generated to triage")
         threat_id = threats[0]["id"]
         model_id = chain["model_id"]
+        headers = dict(client.headers)
 
         def triage_accept():
-            with httpx.Client(base_url=BACKEND_BASE, timeout=30) as c:
+            with httpx.Client(base_url=BACKEND_BASE, timeout=30, headers=headers) as c:
                 return c.patch(
                     f"/api/threat-models/{model_id}/threats/{threat_id}/triage",
                     json={"status": "Accepted"},
                 )
 
         def triage_dismiss():
-            with httpx.Client(base_url=BACKEND_BASE, timeout=30) as c:
+            with httpx.Client(base_url=BACKEND_BASE, timeout=30, headers=headers) as c:
                 return c.patch(
                     f"/api/threat-models/{model_id}/threats/{threat_id}/triage",
                     json={"status": "Dismissed", "dismiss_reason": "Low risk"},

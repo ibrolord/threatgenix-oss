@@ -23,7 +23,11 @@ class TestDomainSanity:
         assert resp.status_code == 200
         mappings = resp.json()
         if mappings:
-            nist_ids = [m["nist_control_id"] for m in mappings]
+            nist_ids = [
+                m["control_id"]
+                for m in mappings
+                if m.get("framework", "").startswith("NIST")
+            ]
             has_relevant = any(
                 nid.startswith("IA-") or nid.startswith("AC-")
                 for nid in nist_ids

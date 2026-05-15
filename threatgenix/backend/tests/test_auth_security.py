@@ -57,6 +57,9 @@ def _clean_revoked_jtis():
 @pytest.mark.asyncio
 async def test_login_rate_limit():
     """POST /api/auth/login should return 429 after exceeding 10 req/min."""
+    from app.limiter import limiter
+
+    limiter.reset()
     db = AsyncMock()
     # Make every login return the fake user (credentials are wrong, so we get 401,
     # but the rate limiter fires regardless of auth outcome).
@@ -79,14 +82,17 @@ async def test_login_rate_limit():
                 )
                 statuses.append(resp.status_code)
 
-            # First 10 should be 401 (wrong creds), 11th+ should be 429
-            assert 429 in statuses, f"Expected 429 in responses, got: {statuses}"
-            # First request should NOT be 429
-            assert statuses[0] != 429
+            assert statuses[:10] == [401] * 10
+            assert statuses[10:] == [429, 429]
+
+            resp = await client.post(
+                "/api/auth/login",
+                json={"email": "x@test.com", "password": "wrong"},
+            )
+            assert resp.status_code == 429
+            assert "rate limit" in resp.text.lower()
     finally:
         app.dependency_overrides.pop(get_db, None)
-        # Reset rate limiter state so other tests aren't affected
-        from app.limiter import limiter
         limiter.reset()
 
 
