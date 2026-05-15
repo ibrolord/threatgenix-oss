@@ -56,7 +56,7 @@ fixed.
 | QA-018 | Threat intelligence | ATT&CK, CAPEC, CWE, KEV, and advisory context appears | threat-intel tests | Sync smoke and UI rendering | integration | P2 | S2 | AI | open |
 | QA-019 | PDF report | Exported PDF is complete and parseable | real PDF render/parse test with required sections and DFD image plus Compose product-readiness export smoke | Keep regression active | integration | P0 | S1 | backend | closed-verified |
 | QA-020 | Report config | Template, logo, watermark, attestation persist | partial tests | Report-config and template-library contract test | API contract | P1 | S2 | backend | open |
-| QA-021 | CSV export | Threat CSV export is scoped and valid | weak direct coverage | CSV header, row, and owner-scope contract | API contract | P1 | S1 | backend | open |
+| QA-021 | CSV export | Threat CSV export is scoped and valid | live HTTP CSV header, row, and owner-scope contract in Docker-backed e2e | Keep regression active | API contract | P1 | S1 | backend | closed-verified |
 | QA-022 | Dashboard | Portfolio cards and trends reflect data | dashboard tests | Browser data-update journey | browser E2E | P2 | S2 | frontend | open |
 | QA-023 | Validation Lab | Safe dry-run evidence flow works | validation tests | Allowed-path sandbox dry run | integration | P1 | S1 | backend | open |
 | QA-024 | Scan credentials | Credentials are encrypted and scoped | credential tests | Key-rotation behavior | unit | P2 | S2 | backend | open |
@@ -144,6 +144,10 @@ fixed.
   `scripts/check-oss-hygiene.sh`, and `scripts/check-oss-hygiene.sh --self-test`
   all passed locally, preserving the ThreatGenix public branding and legacy-name
   guard.
+- 2026-05-15: QA-021 gained `tests/e2e/test_09_threat_csv_export.py`, which
+  verifies threat CSV headers, row count, generated threat IDs, residual-risk
+  values, attachment filename, and cross-tenant denial against the live backend.
+  The Docker-backed `make e2e` target passed 67 tests with this contract included.
 
 ## Release Exit Criteria
 

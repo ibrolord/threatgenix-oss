@@ -291,6 +291,50 @@ def auth_headers(setup_database) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
 
+@pytest.fixture
+def make_auth_headers(setup_database):
+    """Create an isolated e2e user in its own org and return auth headers."""
+    sys.path.insert(0, str(BACKEND_DIR))
+    from app.services.auth import create_access_token
+
+    def _make_auth_headers(email_prefix: str = "qa-e2e-isolated") -> dict[str, str]:
+        org_id = uuid.uuid4()
+        user_id = uuid.uuid4()
+        email = f"{email_prefix}-{uuid.uuid4()}@example.test"
+
+        async def _insert_user() -> None:
+            conn = await asyncpg.connect(TEST_DB_URL_SYNC)
+            try:
+                await conn.execute(
+                    """
+                    INSERT INTO organizations (id, name, subscription_tier, is_active)
+                    VALUES ($1, $2, 'free', true)
+                    """,
+                    org_id,
+                    f"ThreatGenix E2E Isolated {org_id}",
+                )
+                await conn.execute(
+                    """
+                    INSERT INTO users (
+                        id, email, hashed_password, full_name, role,
+                        is_active, email_verified, organization_id
+                    )
+                    VALUES ($1, $2, 'e2e-token-only', 'Isolated E2E User',
+                            'admin', true, true, $3)
+                    """,
+                    user_id,
+                    email,
+                    org_id,
+                )
+            finally:
+                await conn.close()
+
+        asyncio.run(_insert_user())
+        return {"Authorization": f"Bearer {create_access_token(user_id)}"}
+
+    return _make_auth_headers
+
+
 @pytest.fixture(scope="session")
 def client(backend_server, auth_headers) -> httpx.Client:
     with httpx.Client(base_url=BACKEND_BASE, timeout=30, headers=auth_headers) as c:
