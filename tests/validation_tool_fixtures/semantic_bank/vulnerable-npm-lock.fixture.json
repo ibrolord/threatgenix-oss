@@ -1,0 +1,25 @@
+{
+  "name": "semantic-bank-validation-fixture",
+  "lockfileVersion": 2,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "semantic-bank-validation-fixture",
+      "dependencies": {
+        "lodash": "4.17.15"
+      }
+    },
+    "node_modules/lodash": {
+      "version": "4.17.15",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz",
+      "integrity": "sha512-9pl2cD4adBxD/Vf7h0u8FyVnyN6ueaH1Q7nbX5Im8Dxay4D2O0L9TJQWkxXJ/Bw6Pl2G9ktFZg4yJY3+LUG4wQ=="
+    }
+  },
+  "dependencies": {
+    "lodash": {
+      "version": "4.17.15",
+      "resolved": "https://registry.npmjs.org/lodash/-/lodash-4.17.15.tgz",
+      "integrity": "sha512-9pl2cD4adBxD/Vf7h0u8FyVnyN6ueaH1Q7nbX5Im8Dxay4D2O0L9TJQWkxXJ/Bw6Pl2G9ktFZg4yJY3+LUG4wQ=="
+    }
+  }
+}

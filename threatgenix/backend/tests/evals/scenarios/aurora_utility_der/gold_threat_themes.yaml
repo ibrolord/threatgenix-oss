@@ -1,0 +1,179 @@
+critical_themes:
+- id: AUR-01
+  title: Forged DER partner capacity feed
+  description: Partner flexibility data is spoofed or replayed, leading to unsafe
+    dispatch commitments and false restoration confidence.
+  severity: Critical
+  stride_categories:
+  - Spoofing
+  - Tampering
+  affected_assets:
+  - API Mediation Gateway
+  - DER Orchestration Engine
+  - ISO Market Operator API
+- id: AUR-02
+  title: Break-glass dispatch override abuse
+  description: Emergency dispatch privileges bypass ordinary approvals and allow high-impact
+    control actions.
+  severity: Critical
+  stride_categories:
+  - Elevation of Privilege
+  - Tampering
+  - Repudiation
+  affected_assets:
+  - Break-Glass Dispatch Console
+  - DER Orchestration Engine
+  - SCADA / ADMS Interface
+- id: AUR-03
+  title: Vendor diagnostics pivot into OT
+  description: Brokered vendor support is abused to reach switching logic, firmware
+    release, or field gateways.
+  severity: Critical
+  stride_categories:
+  - Elevation of Privilege
+  - Tampering
+  affected_assets:
+  - Vendor Access Broker
+  - SCADA / ADMS Interface
+  - Firmware Signing Service
+- id: AUR-04
+  title: Offline field replay creates unsafe switching
+  description: Stale work packages or hazard notes are replayed after topology changes.
+  severity: High
+  stride_categories:
+  - Tampering
+  - Repudiation
+  affected_assets:
+  - Field Technician Tablet
+  - Work Order Dispatch Service
+  - Outage Command Center
+- id: AUR-05
+  title: Telemetry poisoning drives wrong load-shed decisions
+  description: Manipulated AMI events or forged edge telemetry are treated as operational
+    truth.
+  severity: Critical
+  stride_categories:
+  - Tampering
+  - Information Disclosure
+  - Denial of Service
+  affected_assets:
+  - AMI Meter Mesh
+  - AMI Ingestion Broker
+  - Load Forecasting Service
+- id: AUR-06
+  title: Firmware signing misuse at field gateways
+  description: Compromised signing authority or unreviewed vendor packages deploy
+    malicious edge software.
+  severity: Critical
+  stride_categories:
+  - Elevation of Privilege
+  - Tampering
+  affected_assets:
+  - Firmware Signing Service
+  - Substation Edge Gateway
+- id: AUR-07
+  title: Emergency priority manipulation
+  description: Restoration priorities are silently biased away from actual critical
+    loads or mutual-aid obligations.
+  severity: High
+  stride_categories:
+  - Tampering
+  - Repudiation
+  affected_assets:
+  - Municipal Emergency Operations Center
+  - Outage Command Center
+  - Work Order Dispatch Service
+- id: AUR-08
+  title: Historian and audit gaps hide unauthorized switching
+  description: Incomplete telemetry or delayed replication prevents trustworthy reconstruction
+    of field actions.
+  severity: High
+  stride_categories:
+  - Denial of Service
+  - Repudiation
+  affected_assets:
+  - Grid Telemetry Historian
+  - Operations Data Lake
+  - Audit and Decision Vault
+important_themes:
+- id: AUR-09
+  title: Public outage experience leaks operational metadata
+  description: Customer-facing status channels expose feeder naming, timing, or critical-load
+    prioritization.
+  severity: Medium
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Public Outage Status Publisher
+- id: AUR-10
+  title: Settlement and audit records diverge
+  description: DER dispatch commitments cannot be cleanly reconciled to immutable
+    operator intent.
+  severity: High
+  stride_categories:
+  - Repudiation
+  - Tampering
+  affected_assets:
+  - Market Settlement Ledger
+  - Audit and Decision Vault
+- id: AUR-11
+  title: Identity boundary drift during mutual aid
+  description: Temporary identities and contractor onboarding weaken separation between
+    utility and vendor trust.
+  severity: High
+  stride_categories:
+  - Spoofing
+  - Elevation of Privilege
+  affected_assets:
+  - Workforce Identity Directory
+  - Vendor Access Broker
+- id: AUR-12
+  title: Meter burst flood degrades control plane
+  description: Legitimate-looking telemetry floods overwhelm ingestion and forecasting
+    during incidents.
+  severity: High
+  stride_categories:
+  - Denial of Service
+  affected_assets:
+  - AMI Ingestion Broker
+  - Load Forecasting Service
+- id: AUR-13
+  title: Critical-load lookup leaks customer context
+  description: Restoration workflows reveal customer, premise, or shelter designation
+    data beyond intended audiences.
+  severity: Medium
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Customer and Billing Data Hub
+  - Outage Command Center
+expected_stride_coverage:
+- Spoofing
+- Tampering
+- Repudiation
+- Information Disclosure
+- Denial of Service
+- Elevation of Privilege
+critical_assets:
+- DER Orchestration Engine
+- SCADA / ADMS Interface
+- Break-Glass Dispatch Console
+- Market Settlement Ledger
+- Audit and Decision Vault
+- Substation Edge Gateway
+critical_boundaries:
+- Cloud Operations Control Plane
+- OT Operations Zone
+- Restricted Customer and Settlement Data Zone
+- Vendor Support Enclave
+top_severity_expectations:
+- AUR-01
+- AUR-02
+- AUR-03
+- AUR-05
+- AUR-06
+must_not_hallucinate:
+- nuclear reactor safety system
+- consumer card-present payment terminal estate
+- aircraft maintenance dispatch
+- hospital radiology archive

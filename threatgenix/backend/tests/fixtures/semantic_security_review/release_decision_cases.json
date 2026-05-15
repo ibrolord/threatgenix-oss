@@ -1,0 +1,125 @@
+[
+  {
+    "id": "missing_repo_and_dfd",
+    "name": "No repository evidence and no DFD",
+    "repository_evidence": null,
+    "environment_context_summary": null,
+    "nodes": [],
+    "edges": [],
+    "expected": {
+      "decision": "gather_evidence",
+      "present_gaps": [
+        "Threat model lacks DFD coverage",
+        "Repository evidence is missing for this application review"
+      ],
+      "absent_gaps": []
+    }
+  },
+  {
+    "id": "repo_ingested_without_dfd",
+    "name": "Repository evidence attached before DFD seeds are applied",
+    "repository_evidence": {
+      "filename": "repo.zip",
+      "reference": "main",
+      "file_count": 8,
+      "languages": ["Python"],
+      "frameworks": ["FastAPI"],
+      "code_surfaces": [
+        {
+          "id": "surface-stripe-webhook",
+          "kind": "webhook",
+          "name": "Stripe webhook",
+          "method": "POST",
+          "path": "/stripe-events",
+          "source_file": "app/payments/webhooks.py",
+          "line_number": 42,
+          "auth_guards": ["stripe signature verification"],
+          "sensitive_data_signals": ["payment intent"],
+          "validation_signals": ["pydantic schema"],
+          "outbound_call_signals": ["postgres"],
+          "risk_flags": []
+        }
+      ]
+    },
+    "environment_context_summary": null,
+    "nodes": [],
+    "edges": [],
+    "expected": {
+      "decision": "gather_evidence",
+      "present_gaps": [
+        "Threat model lacks DFD coverage"
+      ],
+      "absent_gaps": [
+        "Repository evidence is missing for this application review"
+      ]
+    }
+  },
+  {
+    "id": "repo_ingested_with_applied_dfd_seeds",
+    "name": "Repository evidence attached after matching DFD seeds are applied",
+    "repository_evidence": {
+      "filename": "repo.zip",
+      "reference": "main",
+      "file_count": 8,
+      "languages": ["Python"],
+      "frameworks": ["FastAPI"],
+      "code_surfaces": [
+        {
+          "id": "surface-stripe-webhook",
+          "kind": "webhook",
+          "name": "Stripe webhook",
+          "method": "POST",
+          "path": "/stripe-events",
+          "source_file": "app/payments/webhooks.py",
+          "line_number": 42,
+          "auth_guards": ["stripe signature verification"],
+          "sensitive_data_signals": ["payment intent"],
+          "validation_signals": ["pydantic schema"],
+          "outbound_call_signals": ["postgres"],
+          "risk_flags": []
+        }
+      ]
+    },
+    "environment_context_summary": {
+      "source": "repository_dfd_seed_apply",
+      "summary": "Analyst applied repository-derived DFD seeds for the webhook and database flow."
+    },
+    "nodes": [
+      {
+        "id": "11111111-1111-4111-8111-111111111111",
+        "name": "Stripe webhook",
+        "node_type": "process",
+        "properties": {
+          "internet_facing": true,
+          "network_exposure": "internet",
+          "source": "repository_dfd_seed"
+        }
+      },
+      {
+        "id": "22222222-2222-4222-8222-222222222222",
+        "name": "PostgreSQL database",
+        "node_type": "data_store",
+        "properties": {
+          "data_classification": "Confidential",
+          "source": "repository_dfd_seed"
+        }
+      }
+    ],
+    "edges": [
+      {
+        "id": "33333333-3333-4333-8333-333333333333",
+        "source_node_id": "11111111-1111-4111-8111-111111111111",
+        "target_node_id": "22222222-2222-4222-8222-222222222222"
+      }
+    ],
+    "expected": {
+      "decision": "fix_now",
+      "present_gaps": [],
+      "absent_gaps": [
+        "Threat model lacks DFD coverage",
+        "Repository evidence is missing for this application review",
+        "Code surfaces need DFD mapping evidence"
+      ]
+    }
+  }
+]

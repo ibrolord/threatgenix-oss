@@ -1,0 +1,5 @@
+trufflehog scan started at 2026-04-25T00:00:00Z
+{"SourceMetadata":{"Data":{"Git":{"file":"src/secrets.py","line":42,"commit":"deadbeef"}}},"DetectorName":"AWS","DetectorType":2,"Verified":true,"Raw":"AKIAFAKE"}
+["not","a","finding"]
+{"SourceMetadata":{"Data":{"Git":{"file":"README.md"}}},"DetectorName":"Slack","Verified":false,"Raw":"xoxb-fake"}
+{"SourceMetadata":{"Data":{"Git":{"file":"truncated.py"

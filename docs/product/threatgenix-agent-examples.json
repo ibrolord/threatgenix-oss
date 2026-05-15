@@ -1,0 +1,288 @@
+[
+  {
+    "decision": "ship",
+    "response": {
+      "generated_at": "2026-05-01T00:00:00Z",
+      "system_name": "Example Service",
+      "decision": "ship",
+      "decision_reason": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "pass_semantics": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "ci": {
+        "fail_policy": "block_only",
+        "blocking_decisions": ["block"],
+        "should_fail": false,
+        "exit_code": 0,
+        "reason": "CI should continue because decision `ship` is not included in policy `block_only`."
+      },
+      "findings": [],
+      "evidence_gaps": []
+    }
+  },
+  {
+    "decision": "block",
+    "response": {
+      "generated_at": "2026-05-01T00:00:00Z",
+      "system_name": "Example Service",
+      "decision": "block",
+      "decision_reason": "1 blocking finding(s) are grounded enough to stop release.",
+      "pass_semantics": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "ci": {
+        "fail_policy": "block_only",
+        "blocking_decisions": ["block"],
+        "should_fail": true,
+        "exit_code": 1,
+        "reason": "CI should fail because decision `block` is included in policy `block_only`."
+      },
+      "findings": [
+        {
+          "decision": "block",
+          "finding_id": "threat:block-1",
+          "source_object_type": "threat",
+          "source_object_id": "block-1",
+          "title": "Public route writes tenant data without ownership checks",
+          "priority": "p0_blocker",
+          "confidence": "high",
+          "risk_path": ["POST /api/share", "Tenant data"],
+          "evidence": [
+            {
+              "type": "repository",
+              "reference": "repository",
+              "claim": "Repository evidence supports this review finding.",
+              "validated": true,
+              "source_object_type": "code_surface",
+              "source_object_id": "surface-share-route",
+              "location": "app/api/share.py:42",
+              "relationship": "confirms_missing_control",
+              "strength": "strong"
+            },
+            {
+              "type": "dfd",
+              "reference": "dfd_node:node-public-api",
+              "claim": "DFD node Public API is affected by this finding.",
+              "validated": true,
+              "source_object_type": "dfd_node",
+              "source_object_id": "node-public-api",
+              "location": "dfd_node:node-public-api",
+              "relationship": "affected_component",
+              "strength": "strong"
+            },
+            {
+              "type": "dfd",
+              "reference": "dfd_edge:edge-public-api-tenant-data",
+              "claim": "DFD flow Public API to tenant data is affected by this finding.",
+              "validated": true,
+              "source_object_type": "dfd_edge",
+              "source_object_id": "edge-public-api-tenant-data",
+              "location": "dfd_edge:edge-public-api-tenant-data",
+              "relationship": "affected_flow",
+              "strength": "strong"
+            }
+          ],
+          "fix_instructions": ["Require authentication and tenant ownership checks."],
+          "verification": {
+            "required": true,
+            "suggested_test": "Add a regression test for cross-tenant access.",
+            "evidence_needed": []
+          }
+        }
+      ],
+      "evidence_gaps": []
+    }
+  },
+  {
+    "decision": "fix_now",
+    "response": {
+      "generated_at": "2026-05-01T00:00:00Z",
+      "system_name": "Example Service",
+      "decision": "fix_now",
+      "decision_reason": "1 finding(s) require current-cycle engineering work before confidence is defensible.",
+      "pass_semantics": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "ci": {
+        "fail_policy": "block_or_fix_now",
+        "blocking_decisions": ["block", "fix_now"],
+        "should_fail": true,
+        "exit_code": 1,
+        "reason": "CI should fail because decision `fix_now` is included in policy `block_or_fix_now`."
+      },
+      "findings": [
+        {
+          "decision": "fix_now",
+          "finding_id": "application_review_finding:model:trust-boundary",
+          "source_object_type": "application_review_finding",
+          "source_object_id": "model:trust-boundary",
+          "title": "Externally reachable surfaces lack trust-boundary segmentation",
+          "priority": "p2_sprint",
+          "confidence": "medium",
+          "risk_path": ["Externally reachable surfaces lack trust-boundary segmentation"],
+          "evidence": [
+            {
+              "type": "dfd",
+              "reference": "dfd_node:node-public-api",
+              "claim": "DFD node Public API is externally reachable.",
+              "validated": false,
+              "source_object_type": "dfd_node",
+              "source_object_id": "node-public-api",
+              "location": "dfd_node:node-public-api",
+              "relationship": "affected_component",
+              "strength": "partial"
+            }
+          ],
+          "fix_instructions": ["Add an explicit trust boundary before release confidence is defensible."],
+          "verification": {
+            "required": true,
+            "suggested_test": "Re-run the review after the boundary is modeled.",
+            "evidence_needed": []
+          }
+        }
+      ],
+      "evidence_gaps": []
+    }
+  },
+  {
+    "decision": "verify",
+    "response": {
+      "generated_at": "2026-05-01T00:00:00Z",
+      "system_name": "Example Service",
+      "decision": "verify",
+      "decision_reason": "1 finding(s) need control or implementation verification before release confidence improves.",
+      "pass_semantics": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "ci": {
+        "fail_policy": "block_only",
+        "blocking_decisions": ["block"],
+        "should_fail": false,
+        "exit_code": 0,
+        "reason": "CI should continue because decision `verify` is not included in policy `block_only`."
+      },
+      "findings": [
+        {
+          "decision": "verify",
+          "finding_id": "threat:verify-1",
+          "source_object_type": "threat",
+          "source_object_id": "verify-1",
+          "title": "Compensating rate limit needs runtime proof",
+          "priority": "p2_sprint",
+          "confidence": "medium",
+          "risk_path": ["Public API", "Compensating rate limit needs runtime proof"],
+          "evidence": [
+            {
+              "type": "control",
+              "reference": "control",
+              "claim": "Control evidence supports this review finding.",
+              "validated": false,
+              "source_object_type": "control_evidence",
+              "source_object_id": "control",
+              "location": null,
+              "relationship": "supports_review_finding",
+              "strength": "partial"
+            }
+          ],
+          "fix_instructions": ["Collect proof that the compensating control is active."],
+          "verification": {
+            "required": true,
+            "suggested_test": "Run a rate-limit verification test.",
+            "evidence_needed": []
+          }
+        }
+      ],
+      "evidence_gaps": []
+    }
+  },
+  {
+    "decision": "gather_evidence",
+    "response": {
+      "generated_at": "2026-05-01T00:00:00Z",
+      "system_name": "Example Service",
+      "decision": "gather_evidence",
+      "decision_reason": "1 evidence gap(s) prevent a strong pass or fix decision.",
+      "pass_semantics": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "ci": {
+        "fail_policy": "block_only",
+        "blocking_decisions": ["block"],
+        "should_fail": false,
+        "exit_code": 0,
+        "reason": "CI should continue because decision `gather_evidence` is not included in policy `block_only`."
+      },
+      "findings": [
+        {
+          "decision": "gather_evidence",
+          "finding_id": "application_review_finding:model:repository-evidence",
+          "source_object_type": "application_review_finding",
+          "source_object_id": "model:repository-evidence",
+          "title": "Repository evidence is missing for this application review",
+          "priority": "p2_sprint",
+          "confidence": "medium",
+          "risk_path": ["Repository evidence is missing for this application review"],
+          "evidence": [
+            {
+              "type": "repository",
+              "reference": "repository",
+              "claim": "Repository evidence supports this review finding.",
+              "validated": false,
+              "source_object_type": "repository_evidence",
+              "source_object_id": "repository_evidence",
+              "location": null,
+              "relationship": "supports_review_finding",
+              "strength": "partial"
+            }
+          ],
+          "fix_instructions": ["Attach repository evidence, then rerun the review."],
+          "verification": {
+            "required": true,
+            "suggested_test": "Attach the missing evidence, then rerun the review.",
+            "evidence_needed": ["grounded evidence chain"]
+          }
+        }
+      ],
+      "evidence_gaps": ["Repository evidence is missing for this application review"]
+    }
+  },
+  {
+    "decision": "accept_risk",
+    "response": {
+      "generated_at": "2026-05-01T00:00:00Z",
+      "system_name": "Example Service",
+      "decision": "accept_risk",
+      "decision_reason": "Only accepted-risk items remain active in the release decision set.",
+      "pass_semantics": "Ship means no blocking finding based on currently connected evidence; it does not certify that the application is secure.",
+      "ci": {
+        "fail_policy": "block_only",
+        "blocking_decisions": ["block"],
+        "should_fail": false,
+        "exit_code": 0,
+        "reason": "CI should continue because decision `accept_risk` is not included in policy `block_only`."
+      },
+      "findings": [
+        {
+          "decision": "accept_risk",
+          "finding_id": "threat:accepted-1",
+          "source_object_type": "threat",
+          "source_object_id": "accepted-1",
+          "title": "Accepted residual risk remains visible",
+          "priority": "p3_backlog",
+          "confidence": "medium",
+          "risk_path": ["Accepted residual risk remains visible"],
+          "evidence": [
+            {
+              "type": "manual",
+              "reference": "risk_acceptance:active:accepted-1",
+              "claim": "Risk acceptance is active; accepted by Priya Reviewer; expires 2026-06-01T00:00:00Z; compensating control: Manual log review.",
+              "validated": true,
+              "source_object_type": "human_attestation",
+              "source_object_id": "accepted-1",
+              "location": "risk_acceptance:active",
+              "relationship": "accepted_by_reviewer",
+              "strength": "partial"
+            }
+          ],
+          "fix_instructions": ["Keep the acceptance owner, rationale, and expiry visible."],
+          "verification": {
+            "required": true,
+            "suggested_test": "Review acceptance expiry before the next release.",
+            "evidence_needed": []
+          }
+        }
+      ],
+      "evidence_gaps": []
+    }
+  }
+]

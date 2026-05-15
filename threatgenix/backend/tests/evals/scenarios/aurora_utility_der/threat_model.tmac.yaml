@@ -1,0 +1,2097 @@
+tmac_version: '1.0'
+metadata:
+  id: d86cb081-6e4b-5039-9d22-0328352af434
+  system_name: Aurora Utility DER Orchestration and Storm Response Platform
+  description: Hybrid utility control and outage-response platform spanning customer
+    channels, DER orchestration, OT switching, vendor support, field mobility, and
+    immutable operational governance.
+  data_classification: Restricted
+  regulatory_scope:
+  - NERC CIP
+  - NIST
+  - ISO 27001
+  - PCI DSS
+  deployment_model: hybrid
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+evidence:
+  environment_context_summary: Primary cloud control plane with OT integration, meter
+    mesh telemetry, vendor diagnostics, emergency coordination feeds, and storm-restoration
+    break-glass operations.
+reporting:
+  report_template: default
+  arch_diagrams: []
+dfd: &id001
+  nodes:
+  - id: ba800d23-d3f1-5dc3-810e-b8f466588a50
+    node_type: external_entity
+    name: Customer Mobile App
+    position_x: 0
+    position_y: 30
+    trust_boundary_id: null
+    properties:
+      entity_kind: device
+      entity_scope: external
+      trust_level: semi_trusted
+      handles_pii: true
+    security_controls: []
+  - id: 4bc4ef0e-3f8c-5418-849a-2fedfdb2c248
+    node_type: external_entity
+    name: Customer Web Portal
+    position_x: 0
+    position_y: 120
+    trust_boundary_id: null
+    properties:
+      entity_kind: system
+      entity_scope: external
+      trust_level: semi_trusted
+      handles_pii: true
+    security_controls: []
+  - id: a925a6e3-6503-52e4-87e4-0cdf28838936
+    node_type: external_entity
+    name: DER Aggregator Partner
+    position_x: 0
+    position_y: 220
+    trust_boundary_id: null
+    properties:
+      entity_kind: api
+      entity_scope: external
+      authenticated: true
+      trust_level: contracted_market_partner
+    security_controls: []
+  - id: 4f5d755b-11fd-573f-b6a2-c8a52b7e7d90
+    node_type: external_entity
+    name: Weather Intelligence Provider
+    position_x: 0
+    position_y: 320
+    trust_boundary_id: null
+    properties:
+      entity_kind: api
+      entity_scope: external
+      authenticated: true
+      trust_level: semi_trusted
+    security_controls: []
+  - id: 31db6198-03e1-585d-966d-395d2404cbeb
+    node_type: external_entity
+    name: ISO Market Operator API
+    position_x: 0
+    position_y: 420
+    trust_boundary_id: e133d504-707a-579e-bc79-544881df4b8f
+    properties:
+      entity_kind: api
+      entity_scope: external
+      authenticated: true
+      trust_level: regulated_operator
+    security_controls: []
+  - id: cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+    node_type: external_entity
+    name: Municipal Emergency Operations Center
+    position_x: 0
+    position_y: 520
+    trust_boundary_id: e133d504-707a-579e-bc79-544881df4b8f
+    properties:
+      entity_kind: human
+      entity_scope: external
+      authenticated: true
+      trust_level: mutual_aid_authority
+    security_controls: []
+  - id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+    node_type: human_actor
+    name: Field Technician Tablet
+    position_x: 320
+    position_y: 560
+    trust_boundary_id: f6121228-6951-596c-b3aa-09a7a8809393
+    properties:
+      entity_scope: internal
+      authenticated: true
+      trust_level: trusted
+      network_exposure: mobile_utility_lte
+    security_controls: []
+  - id: 76f07e0c-1adf-5153-88be-af8bccee4bbd
+    node_type: external_entity
+    name: Vendor Support Enclave
+    position_x: 1250
+    position_y: 470
+    trust_boundary_id: 086f7e74-f052-550c-b320-292b4ed927be
+    properties:
+      entity_kind: system
+      entity_scope: external
+      authenticated: true
+      trust_level: vendor_limited
+    security_controls: []
+  - id: 87b6bc1a-7038-545f-9d89-a96ab9f96b52
+    node_type: external_entity
+    name: AMI Meter Mesh
+    position_x: 890
+    position_y: 560
+    trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+    properties:
+      entity_kind: device
+      entity_scope: external
+      authenticated: true
+      trust_level: telemetry_only
+      network_exposure: dedicated_utility_backhaul
+    security_controls: []
+  - id: 22e58d88-53b5-5b11-b3e4-ae7a1482ba52
+    node_type: api_gateway
+    name: Identity Gateway
+    position_x: 250
+    position_y: 80
+    trust_boundary_id: 81d63583-9507-5259-b175-17caf1a973b3
+    properties:
+      authentication_type: oauth2
+      authorization_model: policy
+      internet_facing: true
+      uses_auth: true
+      uses_encryption: true
+      validates_input: true
+      runtime_type: gateway
+    security_controls: []
+  - id: 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+    node_type: api_gateway
+    name: API Mediation Gateway
+    position_x: 250
+    position_y: 220
+    trust_boundary_id: 81d63583-9507-5259-b175-17caf1a973b3
+    properties:
+      internet_facing: true
+      uses_auth: true
+      uses_encryption: true
+      validates_input: true
+      runtime_type: gateway
+      network_exposure: internet
+    security_controls: []
+  - id: e3650994-227e-50cc-885b-6ecb03d4a668
+    node_type: serverless
+    name: Public Outage Status Publisher
+    position_x: 250
+    position_y: 340
+    trust_boundary_id: 81d63583-9507-5259-b175-17caf1a973b3
+    properties:
+      component_template_id: 28706144-4a94-5994-ad4e-950d3c4fe054
+      runtime_type: function
+      uses_encryption: true
+      validates_input: true
+      logging_level: audit
+    security_controls: []
+  - id: a0baef43-a6e7-52ec-88a5-9c1e6a8b5d41
+    node_type: managed_service
+    name: Workforce Identity Directory
+    position_x: 500
+    position_y: 40
+    trust_boundary_id: dbf9b537-59ad-502a-acea-bf1649e51144
+    properties:
+      authentication_type: saml
+      authorization_model: rbac
+      responsibility: shared_cloud_provider
+      service_name: Enterprise IdP
+    security_controls: []
+  - id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+    node_type: process
+    name: Vendor Access Broker
+    position_x: 500
+    position_y: 160
+    trust_boundary_id: dbf9b537-59ad-502a-acea-bf1649e51144
+    properties:
+      uses_auth: true
+      uses_encryption: true
+      privilege_level: elevated
+      logging_level: audit
+    security_controls: []
+  - id: e993dddc-cdff-5a09-a23c-e16a071a259b
+    node_type: process
+    name: Outage Command Center
+    position_x: 520
+    position_y: 280
+    trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    properties:
+      handles_sensitive_data: true
+      uses_encryption: true
+      runtime_type: service
+      responsibility: shared
+    security_controls: []
+  - id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    node_type: process
+    name: DER Orchestration Engine
+    position_x: 760
+    position_y: 240
+    trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    properties:
+      component_template_id: a47e6eee-3e2d-57c3-8c11-e988e4842dfc
+      handles_sensitive_data: true
+      uses_encryption: true
+      runtime_type: service
+      network_exposure: internal_cross_zone
+    security_controls: []
+  - id: 800c3ca3-742d-52ad-9b42-e5e75eb28eb2
+    node_type: process
+    name: Load Forecasting Service
+    position_x: 760
+    position_y: 120
+    trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    properties:
+      handles_sensitive_data: false
+      uses_encryption: true
+      runtime_type: worker
+      logging_level: full
+    security_controls: []
+  - id: a429722a-b6d5-5ea9-b521-2df4ba7e1414
+    node_type: process
+    name: Work Order Dispatch Service
+    position_x: 520
+    position_y: 420
+    trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    properties:
+      handles_sensitive_data: true
+      uses_encryption: true
+      runtime_type: service
+      logging_level: audit
+    security_controls: []
+  - id: d388d76d-8270-52ae-93c0-ca78b69f0bfc
+    node_type: process
+    name: Break-Glass Dispatch Console
+    position_x: 760
+    position_y: 360
+    trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    properties:
+      component_template_id: 24d6ea82-310c-5392-b7bc-7ed8a45cf2f6
+      uses_auth: true
+      uses_encryption: true
+      privilege_level: emergency_dispatch
+      logging_level: audit
+    security_controls: []
+  - id: 9ff91834-81d5-5c2a-bae3-cd060d8a2802
+    node_type: managed_service
+    name: AMI Ingestion Broker
+    position_x: 760
+    position_y: 500
+    trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    properties:
+      service_name: Telemetry Ingestion Bus
+      runtime_type: worker
+      uses_encryption: true
+      logging_level: full
+    security_controls: []
+  - id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    node_type: process
+    name: SCADA / ADMS Interface
+    position_x: 1010
+    position_y: 220
+    trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+    properties:
+      handles_sensitive_data: true
+      uses_encryption: true
+      runtime_type: service
+      isolation_boundary: ot_control_zone
+      network_exposure: internal_cross_zone
+    security_controls: []
+  - id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+    node_type: container
+    name: Substation Edge Gateway
+    position_x: 1010
+    position_y: 360
+    trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+    properties:
+      component_template_id: b6089cba-b614-5af7-95f5-2bbc44e64aad
+      runtime_type: container
+      uses_encryption: true
+      isolation_boundary: field_site_gateway
+      network_exposure: dedicated_utility_backhaul
+    security_controls: []
+  - id: a696152b-d944-5c71-a3ea-76c36bd30247
+    node_type: process
+    name: Firmware Signing Service
+    position_x: 1010
+    position_y: 80
+    trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+    properties:
+      uses_auth: true
+      uses_encryption: true
+      stores_secrets: true
+      privilege_level: admin
+      logging_level: audit
+    security_controls: []
+  - id: 5713f5ce-4156-563b-9f86-01b67cf60564
+    node_type: data_store
+    name: Grid Telemetry Historian
+    position_x: 1250
+    position_y: 180
+    trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+    properties:
+      encrypted_at_rest: true
+      has_backup: true
+      data_classification: Restricted
+      store_type: historian_cluster
+      store_purpose: topology and switching state
+      integrity_controls: append-only journals and signed snapshots
+    security_controls: []
+  - id: 71c2b261-04b7-5395-bb70-fa50523e65ec
+    node_type: data_store
+    name: Customer and Billing Data Hub
+    position_x: 1250
+    position_y: 40
+    trust_boundary_id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    properties:
+      encrypted_at_rest: true
+      has_backup: true
+      data_classification: Restricted
+      store_type: customer_master
+      store_purpose: service points and billing context
+      read_access_scope: api and outage operations
+      write_access_scope: billing sync only
+    security_controls: []
+  - id: 90188cd1-1d4a-53f0-a292-cf2feba7e3f6
+    node_type: data_store
+    name: Market Settlement Ledger
+    position_x: 1250
+    position_y: 300
+    trust_boundary_id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    properties:
+      encrypted_at_rest: true
+      has_backup: true
+      data_classification: Restricted
+      store_type: settlement_ledger
+      store_purpose: DER dispatch settlement and audit
+      integrity_controls: dual-ledger reconciliation
+    security_controls: []
+  - id: c97cb084-f004-53eb-b467-8aaf4ae92229
+    node_type: data_store
+    name: Audit and Decision Vault
+    position_x: 1250
+    position_y: 420
+    trust_boundary_id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    properties:
+      encrypted_at_rest: true
+      has_backup: true
+      data_classification: Restricted
+      store_type: immutable_audit
+      store_purpose: operator approvals and break-glass records
+      integrity_controls: WORM retention
+    security_controls: []
+  - id: 8f1a38c6-d006-5792-a898-91e3ba673d96
+    node_type: data_store
+    name: Operations Data Lake
+    position_x: 1250
+    position_y: 540
+    trust_boundary_id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    properties:
+      encrypted_at_rest: true
+      has_backup: true
+      data_classification: Confidential
+      store_type: analytics_lake
+      store_purpose: telemetry analytics and post-incident review
+    security_controls: []
+  edges:
+  - id: cba615ca-542b-58ed-a151-6dce0362363b
+    source_node_id: ba800d23-d3f1-5dc3-810e-b8f466588a50
+    target_node_id: 22e58d88-53b5-5b11-b3e4-ae7a1482ba52
+    label: mobile authentication request
+    properties:
+      protocol: HTTPS
+      auth_mechanism: OAuth2 + device binding
+      data_classification: Restricted
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      carries_pii: true
+      tls_version: tls_1_3
+  - id: 1698a9da-aa5e-56ac-b80e-8f7ce8d39621
+    source_node_id: 4bc4ef0e-3f8c-5418-849a-2fedfdb2c248
+    target_node_id: 22e58d88-53b5-5b11-b3e4-ae7a1482ba52
+    label: portal authentication request
+    properties:
+      protocol: HTTPS
+      auth_mechanism: OAuth2
+      data_classification: Restricted
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      carries_pii: true
+      tls_version: tls_1_3
+  - id: 6ba1b830-02f8-513f-aa7b-f6db4ba63d5e
+    source_node_id: 22e58d88-53b5-5b11-b3e4-ae7a1482ba52
+    target_node_id: 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+    label: signed customer session token
+    properties:
+      protocol: mTLS gRPC
+      auth_mechanism: JWT
+      data_classification: Restricted
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+      tls_version: tls_1_3
+  - id: dbbb1d25-6975-56b5-a783-791addd741d3
+    source_node_id: 22e58d88-53b5-5b11-b3e4-ae7a1482ba52
+    target_node_id: a0baef43-a6e7-52ec-88a5-9c1e6a8b5d41
+    label: federated workforce directory lookup
+    properties:
+      protocol: OIDC federation lookup
+      auth_mechanism: mTLS
+      data_classification: Internal
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      integrity_protected: true
+      tls_version: tls_1_3
+  - id: 64497e5b-cde6-5ee3-8959-415211db2fd4
+    source_node_id: a925a6e3-6503-52e4-87e4-0cdf28838936
+    target_node_id: 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+    label: DER flexibility availability feed
+    properties:
+      protocol: HTTPS webhook
+      auth_mechanism: mTLS + signed payload
+      data_classification: Confidential
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: near_real_time
+      integrity_protected: true
+      tls_version: tls_1_3
+  - id: a9a6fd58-0c53-53d4-8bed-ecd960732511
+    source_node_id: 4f5d755b-11fd-573f-b6a2-c8a52b7e7d90
+    target_node_id: 800c3ca3-742d-52ad-9b42-e5e75eb28eb2
+    label: severe weather forecast ingest
+    properties:
+      protocol: HTTPS API
+      data_classification: Internal
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: batch
+      tls_version: tls_1_2
+  - id: 0425fbb5-4279-5082-b30e-8a1074729e22
+    source_node_id: 31db6198-03e1-585d-966d-395d2404cbeb
+    target_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    label: market dispatch and curtailment schedule
+    properties:
+      protocol: HTTPS API
+      auth_mechanism: mTLS
+      data_classification: Confidential
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: near_real_time
+      integrity_protected: true
+      tls_version: tls_1_3
+  - id: bb82c03a-69c7-5cd4-a014-c55647a308b0
+    source_node_id: cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+    target_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+    label: emergency restoration priority request
+    properties:
+      protocol: HTTPS API
+      auth_mechanism: signed request
+      data_classification: Confidential
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: f3232b2b-5b53-5266-9112-a753ba81702f
+    source_node_id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+    target_node_id: a429722a-b6d5-5ea9-b521-2df4ba7e1414
+    label: technician sync and status ack
+    properties:
+      protocol: HTTPS
+      auth_mechanism: mutual device attestation
+      data_classification: Confidential
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: bidirectional
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: e3cec7ee-968c-5069-8439-1bb5c3fdc74b
+    source_node_id: a429722a-b6d5-5ea9-b521-2df4ba7e1414
+    target_node_id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+    label: offline work package and switching steps
+    properties:
+      protocol: HTTPS
+      auth_mechanism: JWT
+      data_classification: Restricted
+      lifecycle_stage: egress
+      encryption_in_transit: true
+      directionality: response
+      transfer_mode: batch
+      carries_pii: true
+      integrity_protected: true
+  - id: 2dc8c6ed-4348-5bb0-9290-cd0d26ee224b
+    source_node_id: 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+    target_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+    label: customer outage report and restoration query
+    properties:
+      protocol: mTLS gRPC
+      auth_mechanism: JWT
+      data_classification: Restricted
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      carries_pii: true
+  - id: 90d0c7c7-0610-5768-a2c6-05f7c09bc1a4
+    source_node_id: 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+    target_node_id: 71c2b261-04b7-5395-bb70-fa50523e65ec
+    label: customer premise and service point lookup
+    properties:
+      protocol: mTLS SQL proxy
+      data_classification: Restricted
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      carries_pii: true
+  - id: 7c3a5375-23f6-5f95-85da-21af5161f653
+    source_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+    target_node_id: e3650994-227e-50cc-885b-6ecb03d4a668
+    label: outage status summary publish
+    properties:
+      protocol: internal event
+      data_classification: Internal
+      lifecycle_stage: notification
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: near_real_time
+  - id: f14a5859-6496-5250-bd0e-e1ba06d50a32
+    source_node_id: e3650994-227e-50cc-885b-6ecb03d4a668
+    target_node_id: ba800d23-d3f1-5dc3-810e-b8f466588a50
+    label: push outage notification
+    properties:
+      protocol: push notification API
+      data_classification: Internal
+      lifecycle_stage: notification
+      directionality: event
+      transfer_mode: near_real_time
+  - id: dff0612a-ce87-55f1-bacb-21732afe212c
+    source_node_id: 87b6bc1a-7038-545f-9d89-a96ab9f96b52
+    target_node_id: 9ff91834-81d5-5c2a-bae3-cd060d8a2802
+    label: meter telemetry burst
+    properties:
+      protocol: MQTT
+      auth_mechanism: device certificate
+      data_classification: Confidential
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: streaming
+      integrity_protected: true
+  - id: cc25d22c-4ebc-5873-9220-2f083eb7edf6
+    source_node_id: 9ff91834-81d5-5c2a-bae3-cd060d8a2802
+    target_node_id: 800c3ca3-742d-52ad-9b42-e5e75eb28eb2
+    label: normalized meter and DER telemetry
+    properties:
+      protocol: Kafka
+      data_classification: Confidential
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: streaming
+      integrity_protected: true
+  - id: 371135ab-dcda-5c0b-be99-208955a3b8b2
+    source_node_id: 800c3ca3-742d-52ad-9b42-e5e75eb28eb2
+    target_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    label: load shed and restoration recommendation
+    properties:
+      protocol: gRPC
+      data_classification: Confidential
+      lifecycle_stage: analytics
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: cc491140-88e0-53d3-9881-f035c99c19d6
+    source_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    target_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    label: DER setpoint and feeder reconfiguration request
+    properties:
+      protocol: IEC-104 gateway API
+      auth_mechanism: signed command token
+      data_classification: Restricted
+      lifecycle_stage: egress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+      carries_financial_data: false
+  - id: 23cfc988-f1f3-5052-9a50-1452d5ce8753
+    source_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    target_node_id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+    label: signed field command bundle
+    properties:
+      protocol: mTLS control channel
+      auth_mechanism: signed command package
+      data_classification: Restricted
+      lifecycle_stage: egress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: 98cddfa1-e846-57c5-856f-24664f444d9b
+    source_node_id: 76f07e0c-1adf-5153-88be-af8bccee4bbd
+    target_node_id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+    label: time-boxed maintenance request
+    properties:
+      protocol: HTTPS
+      auth_mechanism: federated SSO
+      data_classification: Confidential
+      lifecycle_stage: ingress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      integrity_protected: true
+  - id: befeb908-22d6-5084-8008-fc6dcdbad2c5
+    source_node_id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+    target_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    label: approved vendor diagnostic session
+    properties:
+      protocol: brokered bastion session
+      auth_mechanism: just-in-time session certificate
+      data_classification: Restricted
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      integrity_protected: true
+  - id: 4205126b-6e77-5495-b332-bad1ca1a7285
+    source_node_id: d388d76d-8270-52ae-93c0-ca78b69f0bfc
+    target_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    label: emergency override command
+    properties:
+      protocol: gRPC
+      auth_mechanism: dual-approval emergency token
+      data_classification: Restricted
+      lifecycle_stage: egress
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: f4bcf402-718e-55a8-be7c-c6293f34a90f
+    source_node_id: d388d76d-8270-52ae-93c0-ca78b69f0bfc
+    target_node_id: c97cb084-f004-53eb-b467-8aaf4ae92229
+    label: break-glass approval record
+    properties:
+      protocol: append API
+      data_classification: Restricted
+      lifecycle_stage: notification
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: 5d3c631b-4981-541b-9b5d-d156e8fdb5af
+    source_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    target_node_id: c97cb084-f004-53eb-b467-8aaf4ae92229
+    label: dispatch and load shed decision record
+    properties:
+      protocol: append API
+      data_classification: Restricted
+      lifecycle_stage: notification
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: c96b4bc2-2524-5639-8591-168194917679
+    source_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+    target_node_id: c97cb084-f004-53eb-b467-8aaf4ae92229
+    label: switching and restoration decision record
+    properties:
+      protocol: append API
+      data_classification: Restricted
+      lifecycle_stage: notification
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: 4b99d69e-7cd8-5678-9a0e-76181ac87a9f
+    source_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    target_node_id: 90188cd1-1d4a-53f0-a292-cf2feba7e3f6
+    label: dispatch and settlement event
+    properties:
+      protocol: SQL proxy
+      data_classification: Restricted
+      lifecycle_stage: storage
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      carries_financial_data: true
+      integrity_protected: true
+  - id: 5457e99f-7f1b-5f95-b9c8-1f78bfa3b414
+    source_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    target_node_id: 71c2b261-04b7-5395-bb70-fa50523e65ec
+    label: premise participation and tariff lookup
+    properties:
+      protocol: SQL proxy
+      data_classification: Restricted
+      lifecycle_stage: processing
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: synchronous
+      carries_pii: true
+  - id: 5760906e-e4a2-5e3b-a881-277b511d0eb9
+    source_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    target_node_id: 31db6198-03e1-585d-966d-395d2404cbeb
+    label: committed flexibility response
+    properties:
+      protocol: HTTPS API
+      auth_mechanism: mTLS
+      data_classification: Confidential
+      lifecycle_stage: egress
+      encryption_in_transit: true
+      directionality: response
+      transfer_mode: near_real_time
+      integrity_protected: true
+  - id: 2dcb8d5f-19ce-557c-9909-936469ece381
+    source_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    target_node_id: 5713f5ce-4156-563b-9f86-01b67cf60564
+    label: control and topology snapshot
+    properties:
+      protocol: historian write API
+      data_classification: Restricted
+      lifecycle_stage: storage
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: streaming
+      integrity_protected: true
+  - id: 3a0eb2c2-ec49-5221-b6ef-c946de84ece4
+    source_node_id: 5713f5ce-4156-563b-9f86-01b67cf60564
+    target_node_id: 8f1a38c6-d006-5792-a898-91e3ba673d96
+    label: telemetry replication for analytics
+    properties:
+      protocol: batch export
+      data_classification: Confidential
+      lifecycle_stage: analytics
+      encryption_in_transit: true
+      directionality: request
+      transfer_mode: batch
+  - id: 7dd4129e-7c36-5618-9b0c-cd1fe8420e1b
+    source_node_id: a696152b-d944-5c71-a3ea-76c36bd30247
+    target_node_id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+    label: signed firmware package
+    properties:
+      protocol: artifact release
+      auth_mechanism: signed manifest
+      data_classification: Confidential
+      lifecycle_stage: egress
+      directionality: request
+      transfer_mode: batch
+      integrity_protected: true
+  - id: 2552beaf-a372-5ba0-b32a-b5765d1694ca
+    source_node_id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+    target_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+    label: crew hazard note and local isolation status
+    properties:
+      protocol: HTTPS
+      auth_mechanism: device attestation
+      data_classification: Confidential
+      lifecycle_stage: notification
+      encryption_in_transit: true
+      directionality: event
+      transfer_mode: near_real_time
+      integrity_protected: true
+  trust_boundaries:
+  - id: 81d63583-9507-5259-b175-17caf1a973b3
+    name: Public Customer and External Partner Edge
+    node_ids:
+    - 22e58d88-53b5-5b11-b3e4-ae7a1482ba52
+    - 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+    - e3650994-227e-50cc-885b-6ecb03d4a668
+    position_x: 180
+    position_y: 10
+    width: 240
+    height: 420
+    boundary_type: network
+    parent_boundary_id: null
+  - id: dbf9b537-59ad-502a-acea-bf1649e51144
+    name: Utility Identity and Corporate Core
+    node_ids:
+    - a0baef43-a6e7-52ec-88a5-9c1e6a8b5d41
+    - 402d0d3e-74f4-521e-ab20-c191badbadd8
+    position_x: 430
+    position_y: 0
+    width: 210
+    height: 240
+    boundary_type: organizational
+    parent_boundary_id: null
+  - id: 2f706e61-9b66-5e35-a58b-cb107f811884
+    name: Cloud Operations Control Plane
+    node_ids:
+    - e993dddc-cdff-5a09-a23c-e16a071a259b
+    - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    - 800c3ca3-742d-52ad-9b42-e5e75eb28eb2
+    - a429722a-b6d5-5ea9-b521-2df4ba7e1414
+    - d388d76d-8270-52ae-93c0-ca78b69f0bfc
+    - 9ff91834-81d5-5c2a-bae3-cd060d8a2802
+    position_x: 440
+    position_y: 90
+    width: 470
+    height: 500
+    boundary_type: cloud
+    parent_boundary_id: null
+  - id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+    name: OT Operations Zone
+    node_ids:
+    - 87b6bc1a-7038-545f-9d89-a96ab9f96b52
+    - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    - 45ab1c20-f573-57e4-aedf-7db386a0606a
+    - a696152b-d944-5c71-a3ea-76c36bd30247
+    - 5713f5ce-4156-563b-9f86-01b67cf60564
+    position_x: 910
+    position_y: 40
+    width: 420
+    height: 590
+    boundary_type: ot_safety
+    parent_boundary_id: null
+  - id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    name: Restricted Customer and Settlement Data Zone
+    node_ids:
+    - 71c2b261-04b7-5395-bb70-fa50523e65ec
+    - 90188cd1-1d4a-53f0-a292-cf2feba7e3f6
+    - c97cb084-f004-53eb-b467-8aaf4ae92229
+    - 8f1a38c6-d006-5792-a898-91e3ba673d96
+    position_x: 1180
+    position_y: 0
+    width: 360
+    height: 640
+    boundary_type: regulatory
+    parent_boundary_id: null
+  - id: f6121228-6951-596c-b3aa-09a7a8809393
+    name: Field and Mobile Edge
+    node_ids:
+    - 75524cd1-d0fe-5ed3-815d-3442117ebd13
+    position_x: 260
+    position_y: 500
+    width: 250
+    height: 150
+    boundary_type: organizational
+    parent_boundary_id: null
+  - id: 086f7e74-f052-550c-b320-292b4ed927be
+    name: Vendor Support Enclave
+    node_ids:
+    - 76f07e0c-1adf-5153-88be-af8bccee4bbd
+    position_x: 1200
+    position_y: 440
+    width: 260
+    height: 150
+    boundary_type: privilege
+    parent_boundary_id: null
+  - id: e133d504-707a-579e-bc79-544881df4b8f
+    name: Regulatory and Emergency Coordination Exchange
+    node_ids:
+    - 31db6198-03e1-585d-966d-395d2404cbeb
+    - cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+    position_x: -30
+    position_y: 380
+    width: 240
+    height: 220
+    boundary_type: regulatory
+    parent_boundary_id: null
+views:
+  built_in_views:
+  - id: 0b59156f-4a3c-5ea3-a94f-c1a0213dd43d
+    view_type: context
+    name: Context View
+    layout_snapshot: {}
+  - id: afc840f1-08c8-5fa3-8624-7701cca2cbd0
+    view_type: container
+    name: System View
+    layout_snapshot: {}
+  - id: 16b41199-7bfe-5aec-94ad-ea89753b7c33
+    view_type: deep_dive
+    name: Risky Flows
+    layout_snapshot: {}
+  - id: bcebb14c-7273-5853-a6fe-25796523aed4
+    view_type: data_lifecycle
+    name: Sensitive Data
+    layout_snapshot: {}
+  custom_views:
+  - id: d39d3c5d-aa77-5175-b909-40dee222894a
+    view_type: workspace
+    name: Storm Restoration Control
+    node_ids:
+    - cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+    - 75524cd1-d0fe-5ed3-815d-3442117ebd13
+    - e993dddc-cdff-5a09-a23c-e16a071a259b
+    - a429722a-b6d5-5ea9-b521-2df4ba7e1414
+    - d388d76d-8270-52ae-93c0-ca78b69f0bfc
+    - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+    - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    - 45ab1c20-f573-57e4-aedf-7db386a0606a
+    - c97cb084-f004-53eb-b467-8aaf4ae92229
+    edge_ids:
+    - bb82c03a-69c7-5cd4-a014-c55647a308b0
+    - f3232b2b-5b53-5266-9112-a753ba81702f
+    - e3cec7ee-968c-5069-8439-1bb5c3fdc74b
+    - 4205126b-6e77-5495-b332-bad1ca1a7285
+    - f4bcf402-718e-55a8-be7c-c6293f34a90f
+    - 23cfc988-f1f3-5052-9a50-1452d5ce8753
+    - c96b4bc2-2524-5639-8591-168194917679
+    - 2552beaf-a372-5ba0-b32a-b5765d1694ca
+    boundary_ids:
+    - e133d504-707a-579e-bc79-544881df4b8f
+    - f6121228-6951-596c-b3aa-09a7a8809393
+    - 2f706e61-9b66-5e35-a58b-cb107f811884
+    - 5827a5f5-806c-572b-a9c0-411f4af6126f
+    - ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    layout_snapshot: {}
+    graph:
+      nodes:
+      - id: cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+        node_type: external_entity
+        name: Municipal Emergency Operations Center
+        position_x: 0
+        position_y: 520
+        trust_boundary_id: e133d504-707a-579e-bc79-544881df4b8f
+        properties:
+          entity_kind: human
+          entity_scope: external
+          authenticated: true
+          trust_level: mutual_aid_authority
+        security_controls: []
+      - id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+        node_type: human_actor
+        name: Field Technician Tablet
+        position_x: 320
+        position_y: 560
+        trust_boundary_id: f6121228-6951-596c-b3aa-09a7a8809393
+        properties:
+          entity_scope: internal
+          authenticated: true
+          trust_level: trusted
+          network_exposure: mobile_utility_lte
+        security_controls: []
+      - id: e993dddc-cdff-5a09-a23c-e16a071a259b
+        node_type: process
+        name: Outage Command Center
+        position_x: 520
+        position_y: 280
+        trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+        properties:
+          handles_sensitive_data: true
+          uses_encryption: true
+          runtime_type: service
+          responsibility: shared
+        security_controls: []
+      - id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+        node_type: process
+        name: DER Orchestration Engine
+        position_x: 760
+        position_y: 240
+        trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+        properties:
+          component_template_id: a47e6eee-3e2d-57c3-8c11-e988e4842dfc
+          handles_sensitive_data: true
+          uses_encryption: true
+          runtime_type: service
+          network_exposure: internal_cross_zone
+        security_controls: []
+      - id: a429722a-b6d5-5ea9-b521-2df4ba7e1414
+        node_type: process
+        name: Work Order Dispatch Service
+        position_x: 520
+        position_y: 420
+        trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+        properties:
+          handles_sensitive_data: true
+          uses_encryption: true
+          runtime_type: service
+          logging_level: audit
+        security_controls: []
+      - id: d388d76d-8270-52ae-93c0-ca78b69f0bfc
+        node_type: process
+        name: Break-Glass Dispatch Console
+        position_x: 760
+        position_y: 360
+        trust_boundary_id: 2f706e61-9b66-5e35-a58b-cb107f811884
+        properties:
+          component_template_id: 24d6ea82-310c-5392-b7bc-7ed8a45cf2f6
+          uses_auth: true
+          uses_encryption: true
+          privilege_level: emergency_dispatch
+          logging_level: audit
+        security_controls: []
+      - id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        node_type: process
+        name: SCADA / ADMS Interface
+        position_x: 1010
+        position_y: 220
+        trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        properties:
+          handles_sensitive_data: true
+          uses_encryption: true
+          runtime_type: service
+          isolation_boundary: ot_control_zone
+          network_exposure: internal_cross_zone
+        security_controls: []
+      - id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+        node_type: container
+        name: Substation Edge Gateway
+        position_x: 1010
+        position_y: 360
+        trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        properties:
+          component_template_id: b6089cba-b614-5af7-95f5-2bbc44e64aad
+          runtime_type: container
+          uses_encryption: true
+          isolation_boundary: field_site_gateway
+          network_exposure: dedicated_utility_backhaul
+        security_controls: []
+      - id: c97cb084-f004-53eb-b467-8aaf4ae92229
+        node_type: data_store
+        name: Audit and Decision Vault
+        position_x: 1250
+        position_y: 420
+        trust_boundary_id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+        properties:
+          encrypted_at_rest: true
+          has_backup: true
+          data_classification: Restricted
+          store_type: immutable_audit
+          store_purpose: operator approvals and break-glass records
+          integrity_controls: WORM retention
+        security_controls: []
+      edges:
+      - id: bb82c03a-69c7-5cd4-a014-c55647a308b0
+        source_node_id: cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+        target_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+        label: emergency restoration priority request
+        properties:
+          protocol: HTTPS API
+          auth_mechanism: signed request
+          data_classification: Confidential
+          lifecycle_stage: processing
+          encryption_in_transit: true
+          directionality: event
+          transfer_mode: near_real_time
+          integrity_protected: true
+      - id: f3232b2b-5b53-5266-9112-a753ba81702f
+        source_node_id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+        target_node_id: a429722a-b6d5-5ea9-b521-2df4ba7e1414
+        label: technician sync and status ack
+        properties:
+          protocol: HTTPS
+          auth_mechanism: mutual device attestation
+          data_classification: Confidential
+          lifecycle_stage: ingress
+          encryption_in_transit: true
+          directionality: bidirectional
+          transfer_mode: near_real_time
+          integrity_protected: true
+      - id: e3cec7ee-968c-5069-8439-1bb5c3fdc74b
+        source_node_id: a429722a-b6d5-5ea9-b521-2df4ba7e1414
+        target_node_id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+        label: offline work package and switching steps
+        properties:
+          protocol: HTTPS
+          auth_mechanism: JWT
+          data_classification: Restricted
+          lifecycle_stage: egress
+          encryption_in_transit: true
+          directionality: response
+          transfer_mode: batch
+          carries_pii: true
+          integrity_protected: true
+      - id: 23cfc988-f1f3-5052-9a50-1452d5ce8753
+        source_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        target_node_id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+        label: signed field command bundle
+        properties:
+          protocol: mTLS control channel
+          auth_mechanism: signed command package
+          data_classification: Restricted
+          lifecycle_stage: egress
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: near_real_time
+          integrity_protected: true
+      - id: 4205126b-6e77-5495-b332-bad1ca1a7285
+        source_node_id: d388d76d-8270-52ae-93c0-ca78b69f0bfc
+        target_node_id: 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+        label: emergency override command
+        properties:
+          protocol: gRPC
+          auth_mechanism: dual-approval emergency token
+          data_classification: Restricted
+          lifecycle_stage: egress
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: near_real_time
+          integrity_protected: true
+      - id: f4bcf402-718e-55a8-be7c-c6293f34a90f
+        source_node_id: d388d76d-8270-52ae-93c0-ca78b69f0bfc
+        target_node_id: c97cb084-f004-53eb-b467-8aaf4ae92229
+        label: break-glass approval record
+        properties:
+          protocol: append API
+          data_classification: Restricted
+          lifecycle_stage: notification
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: near_real_time
+          integrity_protected: true
+      - id: c96b4bc2-2524-5639-8591-168194917679
+        source_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+        target_node_id: c97cb084-f004-53eb-b467-8aaf4ae92229
+        label: switching and restoration decision record
+        properties:
+          protocol: append API
+          data_classification: Restricted
+          lifecycle_stage: notification
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: near_real_time
+          integrity_protected: true
+      - id: 2552beaf-a372-5ba0-b32a-b5765d1694ca
+        source_node_id: 75524cd1-d0fe-5ed3-815d-3442117ebd13
+        target_node_id: e993dddc-cdff-5a09-a23c-e16a071a259b
+        label: crew hazard note and local isolation status
+        properties:
+          protocol: HTTPS
+          auth_mechanism: device attestation
+          data_classification: Confidential
+          lifecycle_stage: notification
+          encryption_in_transit: true
+          directionality: event
+          transfer_mode: near_real_time
+          integrity_protected: true
+      trust_boundaries:
+      - id: 2f706e61-9b66-5e35-a58b-cb107f811884
+        name: Cloud Operations Control Plane
+        node_ids:
+        - e993dddc-cdff-5a09-a23c-e16a071a259b
+        - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+        - a429722a-b6d5-5ea9-b521-2df4ba7e1414
+        - d388d76d-8270-52ae-93c0-ca78b69f0bfc
+        position_x: 440
+        position_y: 90
+        width: 470
+        height: 500
+        boundary_type: cloud
+        parent_boundary_id: null
+      - id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        name: OT Operations Zone
+        node_ids:
+        - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        - 45ab1c20-f573-57e4-aedf-7db386a0606a
+        position_x: 910
+        position_y: 40
+        width: 420
+        height: 590
+        boundary_type: ot_safety
+        parent_boundary_id: null
+      - id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+        name: Restricted Customer and Settlement Data Zone
+        node_ids:
+        - c97cb084-f004-53eb-b467-8aaf4ae92229
+        position_x: 1180
+        position_y: 0
+        width: 360
+        height: 640
+        boundary_type: regulatory
+        parent_boundary_id: null
+      - id: f6121228-6951-596c-b3aa-09a7a8809393
+        name: Field and Mobile Edge
+        node_ids:
+        - 75524cd1-d0fe-5ed3-815d-3442117ebd13
+        position_x: 260
+        position_y: 500
+        width: 250
+        height: 150
+        boundary_type: organizational
+        parent_boundary_id: null
+      - id: e133d504-707a-579e-bc79-544881df4b8f
+        name: Regulatory and Emergency Coordination Exchange
+        node_ids:
+        - cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+        position_x: -30
+        position_y: 380
+        width: 240
+        height: 220
+        boundary_type: regulatory
+        parent_boundary_id: null
+    is_auto_generated: false
+  - id: 9f95e235-a9e4-5285-afaa-9df6d4cd8172
+    view_type: workspace
+    name: Vendor Access Blast Radius
+    node_ids:
+    - 76f07e0c-1adf-5153-88be-af8bccee4bbd
+    - 402d0d3e-74f4-521e-ab20-c191badbadd8
+    - a696152b-d944-5c71-a3ea-76c36bd30247
+    - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+    - 45ab1c20-f573-57e4-aedf-7db386a0606a
+    - 5713f5ce-4156-563b-9f86-01b67cf60564
+    - c97cb084-f004-53eb-b467-8aaf4ae92229
+    edge_ids:
+    - 98cddfa1-e846-57c5-856f-24664f444d9b
+    - befeb908-22d6-5084-8008-fc6dcdbad2c5
+    - 7dd4129e-7c36-5618-9b0c-cd1fe8420e1b
+    - 2dcb8d5f-19ce-557c-9909-936469ece381
+    boundary_ids:
+    - 086f7e74-f052-550c-b320-292b4ed927be
+    - dbf9b537-59ad-502a-acea-bf1649e51144
+    - 5827a5f5-806c-572b-a9c0-411f4af6126f
+    - ea745c4b-0f89-55ff-8f86-21d3fff7cede
+    layout_snapshot: {}
+    graph:
+      nodes:
+      - id: 76f07e0c-1adf-5153-88be-af8bccee4bbd
+        node_type: external_entity
+        name: Vendor Support Enclave
+        position_x: 1250
+        position_y: 470
+        trust_boundary_id: 086f7e74-f052-550c-b320-292b4ed927be
+        properties:
+          entity_kind: system
+          entity_scope: external
+          authenticated: true
+          trust_level: vendor_limited
+        security_controls: []
+      - id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+        node_type: process
+        name: Vendor Access Broker
+        position_x: 500
+        position_y: 160
+        trust_boundary_id: dbf9b537-59ad-502a-acea-bf1649e51144
+        properties:
+          uses_auth: true
+          uses_encryption: true
+          privilege_level: elevated
+          logging_level: audit
+        security_controls: []
+      - id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        node_type: process
+        name: SCADA / ADMS Interface
+        position_x: 1010
+        position_y: 220
+        trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        properties:
+          handles_sensitive_data: true
+          uses_encryption: true
+          runtime_type: service
+          isolation_boundary: ot_control_zone
+          network_exposure: internal_cross_zone
+        security_controls: []
+      - id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+        node_type: container
+        name: Substation Edge Gateway
+        position_x: 1010
+        position_y: 360
+        trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        properties:
+          component_template_id: b6089cba-b614-5af7-95f5-2bbc44e64aad
+          runtime_type: container
+          uses_encryption: true
+          isolation_boundary: field_site_gateway
+          network_exposure: dedicated_utility_backhaul
+        security_controls: []
+      - id: a696152b-d944-5c71-a3ea-76c36bd30247
+        node_type: process
+        name: Firmware Signing Service
+        position_x: 1010
+        position_y: 80
+        trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        properties:
+          uses_auth: true
+          uses_encryption: true
+          stores_secrets: true
+          privilege_level: admin
+          logging_level: audit
+        security_controls: []
+      - id: 5713f5ce-4156-563b-9f86-01b67cf60564
+        node_type: data_store
+        name: Grid Telemetry Historian
+        position_x: 1250
+        position_y: 180
+        trust_boundary_id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        properties:
+          encrypted_at_rest: true
+          has_backup: true
+          data_classification: Restricted
+          store_type: historian_cluster
+          store_purpose: topology and switching state
+          integrity_controls: append-only journals and signed snapshots
+        security_controls: []
+      - id: c97cb084-f004-53eb-b467-8aaf4ae92229
+        node_type: data_store
+        name: Audit and Decision Vault
+        position_x: 1250
+        position_y: 420
+        trust_boundary_id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+        properties:
+          encrypted_at_rest: true
+          has_backup: true
+          data_classification: Restricted
+          store_type: immutable_audit
+          store_purpose: operator approvals and break-glass records
+          integrity_controls: WORM retention
+        security_controls: []
+      edges:
+      - id: 98cddfa1-e846-57c5-856f-24664f444d9b
+        source_node_id: 76f07e0c-1adf-5153-88be-af8bccee4bbd
+        target_node_id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+        label: time-boxed maintenance request
+        properties:
+          protocol: HTTPS
+          auth_mechanism: federated SSO
+          data_classification: Confidential
+          lifecycle_stage: ingress
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: synchronous
+          integrity_protected: true
+      - id: befeb908-22d6-5084-8008-fc6dcdbad2c5
+        source_node_id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+        target_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        label: approved vendor diagnostic session
+        properties:
+          protocol: brokered bastion session
+          auth_mechanism: just-in-time session certificate
+          data_classification: Restricted
+          lifecycle_stage: processing
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: synchronous
+          integrity_protected: true
+      - id: 2dcb8d5f-19ce-557c-9909-936469ece381
+        source_node_id: b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        target_node_id: 5713f5ce-4156-563b-9f86-01b67cf60564
+        label: control and topology snapshot
+        properties:
+          protocol: historian write API
+          data_classification: Restricted
+          lifecycle_stage: storage
+          encryption_in_transit: true
+          directionality: request
+          transfer_mode: streaming
+          integrity_protected: true
+      - id: 7dd4129e-7c36-5618-9b0c-cd1fe8420e1b
+        source_node_id: a696152b-d944-5c71-a3ea-76c36bd30247
+        target_node_id: 45ab1c20-f573-57e4-aedf-7db386a0606a
+        label: signed firmware package
+        properties:
+          protocol: artifact release
+          auth_mechanism: signed manifest
+          data_classification: Confidential
+          lifecycle_stage: egress
+          directionality: request
+          transfer_mode: batch
+          integrity_protected: true
+      trust_boundaries:
+      - id: dbf9b537-59ad-502a-acea-bf1649e51144
+        name: Utility Identity and Corporate Core
+        node_ids:
+        - 402d0d3e-74f4-521e-ab20-c191badbadd8
+        position_x: 430
+        position_y: 0
+        width: 210
+        height: 240
+        boundary_type: organizational
+        parent_boundary_id: null
+      - id: 5827a5f5-806c-572b-a9c0-411f4af6126f
+        name: OT Operations Zone
+        node_ids:
+        - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+        - 45ab1c20-f573-57e4-aedf-7db386a0606a
+        - a696152b-d944-5c71-a3ea-76c36bd30247
+        - 5713f5ce-4156-563b-9f86-01b67cf60564
+        position_x: 910
+        position_y: 40
+        width: 420
+        height: 590
+        boundary_type: ot_safety
+        parent_boundary_id: null
+      - id: ea745c4b-0f89-55ff-8f86-21d3fff7cede
+        name: Restricted Customer and Settlement Data Zone
+        node_ids:
+        - c97cb084-f004-53eb-b467-8aaf4ae92229
+        position_x: 1180
+        position_y: 0
+        width: 360
+        height: 640
+        boundary_type: regulatory
+        parent_boundary_id: null
+      - id: 086f7e74-f052-550c-b320-292b4ed927be
+        name: Vendor Support Enclave
+        node_ids:
+        - 76f07e0c-1adf-5153-88be-af8bccee4bbd
+        position_x: 1200
+        position_y: 440
+        width: 260
+        height: 150
+        boundary_type: privilege
+        parent_boundary_id: null
+    is_auto_generated: false
+threats:
+- id: 80c20980-ae9a-57d5-806b-24210b3930d3
+  display_id: AUR-T001
+  description: Forged or replayed DER aggregator availability updates cause unsafe
+    dispatch commitments during a storm restoration window.
+  stride_category: Spoofing
+  threat_subtype: partner callback trust failure
+  severity: Critical
+  source: Manual
+  status: Open
+  rule_id: AUR-01
+  affected_node_ids:
+  - a925a6e3-6503-52e4-87e4-0cdf28838936
+  - 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+  - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+  affected_edge_ids:
+  - 64497e5b-cde6-5ee3-8959-415211db2fd4
+  - 5760906e-e4a2-5e3b-a881-277b511d0eb9
+  relevance_rationale: The platform accepts partner flexibility signals under incident
+    pressure and uses them to commit load relief into market and OT control paths.
+  mitigation_plan: Require deterministic payload signing with replay windows, enforce
+    partner sequence numbers, and quarantine stale flexibility updates during incident
+    mode.
+  mitigation_owner: DER Platform Lead
+  due_date: '2026-06-15'
+  mitigation_notes: Partner currently supports mTLS but not monotonic sequence enforcement.
+  control_effectiveness: partial
+  residual_risk_level: High
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: c4498cec-8d7b-5ea5-88bd-130cbcbaf188
+  display_id: AUR-T002
+  description: An operator abuses emergency dispatch override to issue unreviewed
+    load-shed or feeder reconfiguration commands.
+  stride_category: Elevation of Privilege
+  threat_subtype: break-glass misuse
+  severity: Critical
+  source: Manual
+  status: Open
+  rule_id: AUR-02
+  affected_node_ids:
+  - d388d76d-8270-52ae-93c0-ca78b69f0bfc
+  - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+  - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+  affected_edge_ids:
+  - 4205126b-6e77-5495-b332-bad1ca1a7285
+  - cc491140-88e0-53d3-9881-f035c99c19d6
+  relevance_rationale: Storm mode compresses approvals and explicitly introduces emergency
+    privileges with real operational blast radius.
+  mitigation_plan: Enforce dual-control for emergency overrides, bind approvals to
+    named events, and require post-action attestation within immutable audit.
+  mitigation_owner: Operations Security Manager
+  due_date: '2026-05-31'
+  mitigation_notes: Current console records approvals but does not prevent same-user
+    initiate/approve.
+  control_effectiveness: partial
+  residual_risk_level: Critical
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: acf2f0ac-80e8-5312-a698-5582cddbb1e7
+  display_id: AUR-T003
+  description: A brokered vendor diagnostics session pivots into the OT control plane
+    and reaches switching logic or firmware workflows.
+  stride_category: Tampering
+  threat_subtype: third-party support pivot
+  severity: Critical
+  source: Manual
+  status: Open
+  rule_id: AUR-03
+  affected_node_ids:
+  - 76f07e0c-1adf-5153-88be-af8bccee4bbd
+  - 402d0d3e-74f4-521e-ab20-c191badbadd8
+  - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+  - a696152b-d944-5c71-a3ea-76c36bd30247
+  affected_edge_ids:
+  - 98cddfa1-e846-57c5-856f-24664f444d9b
+  - befeb908-22d6-5084-8008-fc6dcdbad2c5
+  relevance_rationale: The vendor path is legitimate, privileged, and incident-driven,
+    which makes it a high-value lateral-movement candidate.
+  mitigation_plan: Constrain vendor sessions to read-only diagnostics, force signed
+    work orders, and separate firmware release authority from diagnostics.
+  mitigation_owner: OT Security Lead
+  due_date: '2026-06-01'
+  mitigation_notes: Vendor enclave is time-boxed but still reaches shared SCADA service
+    accounts.
+  control_effectiveness: partial
+  residual_risk_level: High
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 72c82837-947d-5676-979a-7a8323fa990f
+  display_id: AUR-T004
+  description: A stale offline work package is replayed from a field tablet after
+    topology changed, causing unsafe switching guidance.
+  stride_category: Tampering
+  threat_subtype: offline replay
+  severity: High
+  source: Manual
+  status: Open
+  rule_id: AUR-04
+  affected_node_ids:
+  - 75524cd1-d0fe-5ed3-815d-3442117ebd13
+  - a429722a-b6d5-5ea9-b521-2df4ba7e1414
+  - e993dddc-cdff-5a09-a23c-e16a071a259b
+  affected_edge_ids:
+  - e3cec7ee-968c-5069-8439-1bb5c3fdc74b
+  - 2552beaf-a372-5ba0-b32a-b5765d1694ca
+  relevance_rationale: Offline-first field operations are essential during storms,
+    but they create stale-authority risk and delayed consensus.
+  mitigation_plan: Add work package epoching, mandatory topology freshness checks,
+    and local tablet invalidation on breaker-state drift.
+  mitigation_owner: Field Operations Product Owner
+  due_date: '2026-06-20'
+  mitigation_notes: Current packages can remain valid for four hours without revalidation.
+  control_effectiveness: none
+  residual_risk_level: High
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: ba0d7453-99a0-524d-a32b-97f2ce1f8aef
+  display_id: AUR-T005
+  description: Manipulated AMI telemetry drives incorrect load-shed recommendations
+    and masks feeder stress in the forecasting pipeline.
+  stride_category: Information Disclosure
+  threat_subtype: telemetry poisoning
+  severity: Critical
+  source: Manual
+  status: Open
+  rule_id: AUR-05
+  affected_node_ids:
+  - 87b6bc1a-7038-545f-9d89-a96ab9f96b52
+  - 9ff91834-81d5-5c2a-bae3-cd060d8a2802
+  - 800c3ca3-742d-52ad-9b42-e5e75eb28eb2
+  affected_edge_ids:
+  - dff0612a-ce87-55f1-bacb-21732afe212c
+  - cc25d22c-4ebc-5873-9220-2f083eb7edf6
+  - 371135ab-dcda-5c0b-be99-208955a3b8b2
+  relevance_rationale: The platform treats telemetry as operational truth, so poisoned
+    measurements create both safety and trust impacts.
+  mitigation_plan: Introduce anomaly scoring across feeder telemetry, signed meter
+    batches, and dispatch hold conditions when telemetry confidence drops.
+  mitigation_owner: Analytics Engineering Manager
+  due_date: '2026-07-01'
+  mitigation_notes: Current validation focuses on message syntax, not cross-feeder
+    plausibility.
+  control_effectiveness: partial
+  residual_risk_level: Critical
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: f29ebd4f-c3b0-577a-a02c-ec975e924432
+  display_id: AUR-T006
+  description: The public outage experience leaks restoration sequencing, feeder naming,
+    or critical-facility prioritization that improves attacker recon.
+  stride_category: Information Disclosure
+  threat_subtype: metadata leakage
+  severity: Medium
+  source: Manual
+  status: Open
+  rule_id: AUR-06
+  affected_node_ids:
+  - e3650994-227e-50cc-885b-6ecb03d4a668
+  - e993dddc-cdff-5a09-a23c-e16a071a259b
+  affected_edge_ids:
+  - 7c3a5375-23f6-5f95-85da-21af5161f653
+  - f14a5859-6496-5250-bd0e-e1ba06d50a32
+  relevance_rationale: No direct compromise is required; over-shared public metadata
+    can expose real operational priorities and timing.
+  mitigation_plan: Separate public incident summaries from internal feeder labels
+    and suppress priority rationale for hospitals and shelters.
+  mitigation_owner: Digital Channels Manager
+  due_date: '2026-05-15'
+  mitigation_notes: Status publisher currently reuses internal feeder labels in some
+    payloads.
+  control_effectiveness: partial
+  residual_risk_level: Medium
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 0101dd73-f426-5216-a353-134aa5c28421
+  display_id: AUR-T007
+  description: Compromise or misuse of firmware signing authority deploys malicious
+    or unstable packages to substation gateways.
+  stride_category: Elevation of Privilege
+  threat_subtype: signing chain compromise
+  severity: Critical
+  source: Manual
+  status: Open
+  rule_id: AUR-07
+  affected_node_ids:
+  - a696152b-d944-5c71-a3ea-76c36bd30247
+  - 45ab1c20-f573-57e4-aedf-7db386a0606a
+  - 402d0d3e-74f4-521e-ab20-c191badbadd8
+  affected_edge_ids:
+  - 7dd4129e-7c36-5618-9b0c-cd1fe8420e1b
+  - befeb908-22d6-5084-8008-fc6dcdbad2c5
+  relevance_rationale: Firmware provenance is a concentrated trust anchor with broad
+    blast radius across field assets.
+  mitigation_plan: Move release signing into dual-party HSM-backed workflow and require
+    out-of-band attestation before field rollout.
+  mitigation_owner: Platform Engineering Director
+  due_date: '2026-06-30'
+  mitigation_notes: Signer custody exists but release approval is still single-admin.
+  control_effectiveness: partial
+  residual_risk_level: High
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 62b81a54-d35c-5ed8-bb00-acbb0d3932d0
+  display_id: AUR-T008
+  description: Settlement records diverge from dispatch intent, enabling repudiation
+    of energy commitments or customer compensation.
+  stride_category: Repudiation
+  threat_subtype: ledger inconsistency
+  severity: High
+  source: Manual
+  status: Open
+  rule_id: AUR-08
+  affected_node_ids:
+  - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+  - 90188cd1-1d4a-53f0-a292-cf2feba7e3f6
+  - c97cb084-f004-53eb-b467-8aaf4ae92229
+  affected_edge_ids:
+  - 4b99d69e-7cd8-5678-9a0e-76181ac87a9f
+  - 5d3c631b-4981-541b-9b5d-d156e8fdb5af
+  relevance_rationale: The utility must prove who decided what, when, and on which
+    telemetry basis across both market and public-restoration workflows.
+  mitigation_plan: Bind settlement writes to immutable decision records and perform
+    hourly reconciliation between market commitments and field execution.
+  mitigation_owner: Market Operations Manager
+  due_date: '2026-06-10'
+  mitigation_notes: Audit data exists but is not yet cryptographically bound to settlement
+    entries.
+  control_effectiveness: substantial
+  residual_risk_level: Medium
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: c8daea09-f443-5d2e-8c08-747c8bfbe7ca
+  display_id: AUR-T009
+  description: Emergency restoration priorities are manipulated to favor non-critical
+    feeders or partner interests over hospitals and shelters.
+  stride_category: Tampering
+  threat_subtype: priority queue abuse
+  severity: High
+  source: Manual
+  status: Open
+  rule_id: AUR-09
+  affected_node_ids:
+  - cd3c0f54-0ffd-526a-8b42-b0acbbee9afd
+  - e993dddc-cdff-5a09-a23c-e16a071a259b
+  - a429722a-b6d5-5ea9-b521-2df4ba7e1414
+  affected_edge_ids:
+  - bb82c03a-69c7-5cd4-a014-c55647a308b0
+  - e3cec7ee-968c-5069-8439-1bb5c3fdc74b
+  relevance_rationale: Priority manipulation is subtle, business-context-driven, and
+    likely to happen during public scrutiny rather than through a noisy exploit.
+  mitigation_plan: Require critical-load registry corroboration and second-party sign-off
+    before high-impact priority overrides propagate to field work.
+  mitigation_owner: Incident Command Lead
+  due_date: '2026-05-25'
+  mitigation_notes: EOC feed is trusted operationally but not always cross-checked
+    against utility critical-load registry.
+  control_effectiveness: partial
+  residual_risk_level: High
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 79e5b670-e301-58f1-84bb-ac8ef9940579
+  display_id: AUR-T010
+  description: Partial historian coverage or delayed telemetry replication hides unauthorized
+    switching and weakens incident reconstruction.
+  stride_category: Denial of Service
+  threat_subtype: telemetry visibility gap
+  severity: High
+  source: Manual
+  status: Open
+  rule_id: AUR-10
+  affected_node_ids:
+  - 5713f5ce-4156-563b-9f86-01b67cf60564
+  - 8f1a38c6-d006-5792-a898-91e3ba673d96
+  - c97cb084-f004-53eb-b467-8aaf4ae92229
+  affected_edge_ids:
+  - 2dcb8d5f-19ce-557c-9909-936469ece381
+  - 3a0eb2c2-ec49-5221-b6ef-c946de84ece4
+  relevance_rationale: Visibility failures create false confidence and make both operational
+    recovery and root-cause analysis materially harder.
+  mitigation_plan: Alert on historian lag by feeder, capture last-known-good topology
+    snapshots, and block sensitive closeouts when telemetry coverage is incomplete.
+  mitigation_owner: Operational Observability Lead
+  due_date: '2026-06-05'
+  mitigation_notes: Telemetry replication currently tolerates fifteen-minute lag without
+    escalation.
+  control_effectiveness: none
+  residual_risk_level: High
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+assumptions:
+- id: 4df2827f-a519-5901-9821-209f04f4fa5a
+  title: Field packages are revoked when topology epochs change materially.
+  description: ThreatGenix should challenge this assumption because tablet sync is
+    intentionally degraded during storms.
+  status: open
+  anchor_kind: edge
+  anchor_id: e3cec7ee-968c-5069-8439-1bb5c3fdc74b
+  anchor_label: offline work package and switching steps
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 02050473-9332-5df3-acdb-1f819595d040
+  title: Vendor diagnostics remain read-only in all storm modes.
+  description: Break-glass and emergency maintenance pressure can erode this assumption.
+  status: challenged
+  anchor_kind: node
+  anchor_id: 402d0d3e-74f4-521e-ab20-c191badbadd8
+  anchor_label: Vendor Access Broker
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 7717810a-1637-58ff-be0e-3bfff32628d6
+  title: Public outage content never exposes feeder identifiers or critical-load rationale.
+  description: The publisher is intended to redact internal details before customer
+    release.
+  status: open
+  anchor_kind: node
+  anchor_id: e3650994-227e-50cc-885b-6ecb03d4a668
+  anchor_label: Public Outage Status Publisher
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 3d11e283-fc9f-56ad-b13a-65f07a0a16dc
+  title: Meter telemetry is trustworthy enough to drive dispatch recommendations without
+    independent corroboration.
+  description: This assumption should be treated as fragile during outage or field-network
+    degradation.
+  status: challenged
+  anchor_kind: edge
+  anchor_id: dff0612a-ce87-55f1-bacb-21732afe212c
+  anchor_label: meter telemetry burst
+  created_at: '2026-04-18T09:00:00Z'
+  updated_at: '2026-04-18T09:00:00Z'
+controls:
+- id: 2a9b9741-488a-5663-bd21-c1dc79e676eb
+  title: Dual-control emergency override workflow
+  description: Break-glass requires a named incident, a second approver, and immutable
+    operator attestation.
+  category: preventive
+  status: partial
+  owner: Operations Security Manager
+  evidence: Quarterly drill logs and broker attestation prototype
+  mapped_threat_ids:
+  - c4498cec-8d7b-5ea5-88bd-130cbcbaf188
+  - c8daea09-f443-5d2e-8c08-747c8bfbe7ca
+  updated_at: '2026-04-18T09:00:00Z'
+- id: c7a7850f-f2b4-50f9-8c91-bde1de6c0c56
+  title: Partner feed signing and replay protection
+  description: DER and market feeds enforce signature validation, monotonic sequence
+    numbers, and stale-window rejection.
+  category: preventive
+  status: implemented
+  owner: DER Platform Lead
+  evidence: API contract and signature validation tests
+  mapped_threat_ids:
+  - 80c20980-ae9a-57d5-806b-24210b3930d3
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 43fc63c9-31b2-52bc-bd4b-60711565f5b9
+  title: Recorded just-in-time vendor diagnostics
+  description: Vendor sessions are brokered, recorded, and denied write access outside
+    approved maintenance windows.
+  category: detective
+  status: partial
+  owner: OT Security Lead
+  evidence: Privileged session broker telemetry
+  mapped_threat_ids:
+  - acf2f0ac-80e8-5312-a698-5582cddbb1e7
+  - 0101dd73-f426-5216-a353-134aa5c28421
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 20f6fa5b-f1a2-5e6a-927e-12682e1b8b73
+  title: Tablet work-package epoch and replay invalidation
+  description: Field packages carry topology epochs and are invalidated when outage
+    topology changes.
+  category: corrective
+  status: planned
+  owner: Field Operations Product Owner
+  evidence: Backlog item OPS-441
+  mapped_threat_ids:
+  - 72c82837-947d-5676-979a-7a8323fa990f
+  updated_at: '2026-04-18T09:00:00Z'
+- id: 2aa1c6a1-26d7-5c62-a850-9a6f51c2494a
+  title: Cross-feeder telemetry plausibility checks
+  description: AMI bursts are cross-validated against historian state and dispatch
+    expectations before high-impact actions.
+  category: detective
+  status: planned
+  owner: Analytics Engineering Manager
+  evidence: Pilot analytics notebook and anomaly thresholds
+  mapped_threat_ids:
+  - ba0d7453-99a0-524d-a32b-97f2ce1f8aef
+  - 79e5b670-e301-58f1-84bb-ac8ef9940579
+  updated_at: '2026-04-18T09:00:00Z'
+- id: c3d98ba6-08f2-5519-a658-f0a9b8a20503
+  title: Public status redaction policy
+  description: Customer-facing outage updates strip feeder identifiers, crew routing
+    data, and critical-load reasoning.
+  category: compensating
+  status: implemented
+  owner: Digital Channels Manager
+  evidence: Content policy and regression snapshot tests
+  mapped_threat_ids:
+  - f29ebd4f-c3b0-577a-a02c-ec975e924432
+  updated_at: '2026-04-18T09:00:00Z'
+component_templates:
+- id: a47e6eee-3e2d-57c3-8c11-e988e4842dfc
+  label: DER Fleet Orchestrator
+  description: Control-plane service that converts market, telemetry, and emergency
+    context into dispatch instructions.
+  semantic_node_type: process
+  semantic_type_label: DER Orchestrator
+  shape: gateway
+  group: Utility Control
+  default_name: DER Fleet Orchestrator
+  default_properties:
+    runtime_type: service
+    uses_encryption: true
+    handles_sensitive_data: true
+  ai_generated: false
+  rationale: Used repeatedly in utility and microgrid control models.
+- id: b6089cba-b614-5af7-95f5-2bbc44e64aad
+  label: Substation Telemetry Gateway
+  description: Field-edge gateway that brokers telemetry, diagnostics, and signed
+    control bundles.
+  semantic_node_type: container
+  semantic_type_label: Substation Gateway
+  shape: stacked
+  group: Utility OT
+  default_name: Substation Gateway
+  default_properties:
+    runtime_type: container
+    network_exposure: dedicated_utility_backhaul
+    uses_encryption: true
+  ai_generated: false
+  rationale: Critical edge pattern for utility OT and remote field sites.
+- id: 24d6ea82-310c-5392-b7bc-7ed8a45cf2f6
+  label: Emergency Dispatch Console
+  description: Privileged console used only during declared outage or safety incidents.
+  semantic_node_type: process
+  semantic_type_label: Emergency Console
+  shape: diamond
+  group: Utility Ops
+  default_name: Emergency Dispatch Console
+  default_properties:
+    privilege_level: emergency_dispatch
+    logging_level: audit
+    uses_auth: true
+  ai_generated: false
+  rationale: Separates emergency-only operator tooling from routine operations tooling.
+- id: 28706144-4a94-5994-ad4e-950d3c4fe054
+  label: Outage Status Publisher
+  description: Public-facing status fan-out component with redaction responsibilities.
+  semantic_node_type: serverless
+  semantic_type_label: Status Publisher
+  shape: cloud
+  group: Customer Experience
+  default_name: Outage Status Publisher
+  default_properties:
+    runtime_type: function
+    logging_level: audit
+    validates_input: true
+  ai_generated: false
+  rationale: Captures the pattern where operational truth is transformed before public
+    release.
+property_options:
+- id: 6cb10ac3-3d1e-52e7-a957-3a75c39a1809
+  field: privilege_level
+  label: Emergency Dispatch
+  canonical_value: emergency_dispatch
+  description: Privilege level reserved for declared outage or safety events.
+  ai_generated: false
+  rationale: Needed to distinguish exceptional control authority from standard admin
+    privileges.
+- id: 1591b1a6-6d4a-5cac-8e2e-c9f81e8636b3
+  field: network_exposure
+  label: Dedicated Utility Backhaul
+  canonical_value: dedicated_utility_backhaul
+  description: Private field network exposure used by utility OT and AMI devices.
+  ai_generated: false
+  rationale: Helps model non-internet but still high-risk field communication paths.
+- id: b9febc8b-8b70-53d2-9457-89155598fb23
+  field: network_exposure
+  label: Internal Cross-Zone
+  canonical_value: internal_cross_zone
+  description: Internal traffic that still crosses material trust or safety zones.
+  ai_generated: false
+  rationale: Captures high-risk east-west paths between cloud, identity, and OT zones.
+- id: 027c98a1-c1e3-59d9-9c96-f662f2f09cb4
+  field: isolation_boundary
+  label: OT Control Zone
+  canonical_value: ot_control_zone
+  description: Isolation class for systems that can influence field switching or feeder
+    state.
+  ai_generated: false
+  rationale: Separates operational-safety control assets from ordinary internal services.
+- id: c08e8d1c-c188-5245-bc28-38a36b0e0325
+  field: responsibility
+  label: Shared with Cloud Provider
+  canonical_value: shared_cloud_provider
+  description: Control ownership is shared with the cloud provider rather than purely
+    customer-managed.
+  ai_generated: false
+  rationale: Useful for shared-responsibility reasoning in hybrid utility platforms.
+- id: a6f9b179-7020-5a63-b6f6-e8f53d6db89d
+  field: trust_level
+  label: Contracted Market Partner
+  canonical_value: contracted_market_partner
+  description: External party trusted for a narrow dispatch or market function, not
+    for broad internal access.
+  ai_generated: false
+  rationale: Distinguishes regulated market feeds from generic partners.
+governance:
+  model_snapshots:
+  - id: dcc6831c-5297-5010-a756-15f039aced40
+    name: Storm Restoration Baseline
+    description: Pre-mutual-aid baseline before seasonal wildfire and contractor expansion.
+    created_at: '2026-04-18T09:00:00Z'
+    created_by: ops.architect@aurora.example
+    node_count: 28
+    edge_count: 32
+    boundary_count: 8
+    threat_count: 3
+    dfd: *id001
+    threats:
+    - id: 80c20980-ae9a-57d5-806b-24210b3930d3
+      display_id: AUR-T001
+      description: Forged or replayed DER aggregator availability updates cause unsafe
+        dispatch commitments during a storm restoration window.
+      severity: Critical
+      stride_category: Spoofing
+      status: Open
+      mitigation_plan: Require deterministic payload signing with replay windows,
+        enforce partner sequence numbers, and quarantine stale flexibility updates
+        during incident mode.
+      mitigation_owner: DER Platform Lead
+      due_date: '2026-06-15'
+      mitigation_notes: Partner currently supports mTLS but not monotonic sequence
+        enforcement.
+      control_effectiveness: partial
+      residual_risk_level: High
+      affected_node_ids:
+      - a925a6e3-6503-52e4-87e4-0cdf28838936
+      - 48060bdd-74b1-5182-8f8b-b0a0a3511f2b
+      - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+      affected_edge_ids:
+      - 64497e5b-cde6-5ee3-8959-415211db2fd4
+      - 5760906e-e4a2-5e3b-a881-277b511d0eb9
+    - id: c4498cec-8d7b-5ea5-88bd-130cbcbaf188
+      display_id: AUR-T002
+      description: An operator abuses emergency dispatch override to issue unreviewed
+        load-shed or feeder reconfiguration commands.
+      severity: Critical
+      stride_category: Elevation of Privilege
+      status: Open
+      mitigation_plan: Enforce dual-control for emergency overrides, bind approvals
+        to named events, and require post-action attestation within immutable audit.
+      mitigation_owner: Operations Security Manager
+      due_date: '2026-05-31'
+      mitigation_notes: Current console records approvals but does not prevent same-user
+        initiate/approve.
+      control_effectiveness: partial
+      residual_risk_level: Critical
+      affected_node_ids:
+      - d388d76d-8270-52ae-93c0-ca78b69f0bfc
+      - 80379613-e2ff-58c5-b8d1-f260bc29fa4f
+      - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+      affected_edge_ids:
+      - 4205126b-6e77-5495-b332-bad1ca1a7285
+      - cc491140-88e0-53d3-9881-f035c99c19d6
+    - id: acf2f0ac-80e8-5312-a698-5582cddbb1e7
+      display_id: AUR-T003
+      description: A brokered vendor diagnostics session pivots into the OT control
+        plane and reaches switching logic or firmware workflows.
+      severity: Critical
+      stride_category: Tampering
+      status: Open
+      mitigation_plan: Constrain vendor sessions to read-only diagnostics, force signed
+        work orders, and separate firmware release authority from diagnostics.
+      mitigation_owner: OT Security Lead
+      due_date: '2026-06-01'
+      mitigation_notes: Vendor enclave is time-boxed but still reaches shared SCADA
+        service accounts.
+      control_effectiveness: partial
+      residual_risk_level: High
+      affected_node_ids:
+      - 76f07e0c-1adf-5153-88be-af8bccee4bbd
+      - 402d0d3e-74f4-521e-ab20-c191badbadd8
+      - b3cc94af-e2fd-57c9-9688-c7606e49dbcc
+      - a696152b-d944-5c71-a3ea-76c36bd30247
+      affected_edge_ids:
+      - 98cddfa1-e846-57c5-856f-24664f444d9b
+      - befeb908-22d6-5084-8008-fc6dcdbad2c5
+  review_records:
+  - id: 9c4d9859-7b1d-52c5-bebb-7a57af7768dc
+    snapshot_id: dcc6831c-5297-5010-a756-15f039aced40
+    title: Storm Board Safety and Security Review
+    status: pending
+    assignee: grid.security.board@aurora.example
+    created_by: ops.architect@aurora.example
+    created_at: '2026-04-18T09:00:00Z'
+    updated_at: '2026-04-18T09:00:00Z'
+    signed_off_at: null
+    comments:
+    - id: 01bbac74-bff8-5862-b71a-7ff9e7d7f821
+      author: chief.dispatch@aurora.example
+      comment: Safety review wants stronger evidence that break-glass cannot push
+        unreviewed switching into field gateways.
+      created_at: '2026-04-18T09:00:00Z'
+collaboration:
+  collaborators:
+  - id: 1d124e05-2f92-54c1-94b6-0c7d9ca41757
+    email: ops.architect@aurora.example
+    role: owner
+    status: active
+    invited_by: ops.architect@aurora.example
+    invited_at: '2026-04-18T09:00:00Z'
+    updated_at: '2026-04-18T09:00:00Z'
+  - id: 55417eee-fd3b-537a-ac59-6dee007fc586
+    email: grid.security.board@aurora.example
+    role: reviewer
+    status: active
+    invited_by: ops.architect@aurora.example
+    invited_at: '2026-04-18T09:00:00Z'
+    updated_at: '2026-04-18T09:00:00Z'
+  - id: ff4f9e8d-13f6-5e32-8edb-defd1bc5095e
+    email: vendor.access@relaygrid.example
+    role: viewer
+    status: invited
+    invited_by: ops.architect@aurora.example
+    invited_at: '2026-04-18T09:00:00Z'
+    updated_at: '2026-04-18T09:00:00Z'
+  assignments:
+  - id: e6fdba77-b71a-567d-9e33-ab33bdbc31cf
+    title: Harden emergency override approvals
+    description: Implement dual-control and named-incident enforcement for break-glass
+      dispatch.
+    assignee: ops.security@aurora.example
+    priority: critical
+    status: open
+    due_date: '2026-05-31T00:00:00Z'
+    threat_id: c4498cec-8d7b-5ea5-88bd-130cbcbaf188
+    review_id: null
+    anchor_kind: threat
+    anchor_id: c4498cec-8d7b-5ea5-88bd-130cbcbaf188
+    anchor_label: AUR-T002
+    created_by: ops.architect@aurora.example
+    created_at: '2026-04-18T09:00:00Z'
+    updated_at: '2026-04-18T09:00:00Z'
+    comments: []
+  - id: 73c865f0-56fb-58c8-b4ff-89c381516473
+    title: Prepare storm board evidence pack
+    description: Collect replay-protection evidence and vendor-session scoping artifacts
+      for the pending board review.
+    assignee: risk.program@aurora.example
+    priority: high
+    status: in_progress
+    due_date: '2026-05-10T00:00:00Z'
+    threat_id: null
+    review_id: 9c4d9859-7b1d-52c5-bebb-7a57af7768dc
+    anchor_kind: review
+    anchor_id: 9c4d9859-7b1d-52c5-bebb-7a57af7768dc
+    anchor_label: Storm Board Safety and Security Review
+    created_by: ops.architect@aurora.example
+    created_at: '2026-04-18T09:00:00Z'
+    updated_at: '2026-04-18T09:00:00Z'
+    comments: []
+  notifications:
+  - id: 8d9758b1-de75-5df7-95f0-3fc604959521
+    type: review_requested
+    title: Storm board review requested
+    message: Please review the pre-season DER storm-restoration model and focus on
+      break-glass and vendor blast radius.
+    status: unread
+    actor: ops.architect@aurora.example
+    target_kind: review
+    target_id: 9c4d9859-7b1d-52c5-bebb-7a57af7768dc
+    created_at: '2026-04-18T09:00:00Z'

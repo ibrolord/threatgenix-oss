@@ -1,0 +1,156 @@
+critical_themes:
+- id: SKY-01
+  title: Unsafe dispatch from tampered aircraft or maintenance state
+  description: Incorrect aircraft-tail status, maintenance state, or turnaround readiness
+    can drive release of an aircraft under invalid conditions.
+  severity: Critical
+  stride_categories:
+  - Tampering
+  affected_assets:
+  - Dispatch Release Service
+  - Maintenance Control Service
+- id: SKY-02
+  title: Break-glass or vendor-support abuse
+  description: Emergency diagnostics and vendor-support paths can bypass normal controls
+    and grant leverage over dispatch or maintenance workflows.
+  severity: Critical
+  stride_categories:
+  - Elevation of Privilege
+  affected_assets:
+  - Privileged Access Broker
+  - Vendor Support Enclave
+- id: SKY-03
+  title: False turnaround readiness
+  description: Semi-trusted partner and station updates can create unsafe departure
+    pressure or conceal incomplete critical tasks.
+  severity: Critical
+  stride_categories:
+  - Tampering
+  - Spoofing
+  affected_assets:
+  - Turnaround Coordination Service
+  - Dispatch Release Service
+- id: SKY-04
+  title: Wrong-tail or stale EFB package distribution
+  description: Crew decisions can be affected by incorrect release packages, notices,
+    or aircraft-specific status data.
+  severity: High
+  stride_categories:
+  - Information Disclosure
+  - Tampering
+  affected_assets:
+  - EFB Sync Service
+  - Electronic Flight Bag Client
+- id: SKY-05
+  title: Crew legality and disruption-recovery manipulation
+  description: Business-logic abuse can force non-compliant crew assignments during
+    irregular operations.
+  severity: High
+  stride_categories:
+  - Elevation of Privilege
+  - Repudiation
+  affected_assets:
+  - Crew Recovery Engine
+- id: SKY-06
+  title: Audit and decision-log suppression
+  description: Loss of trustworthy decision records undermines safety investigation,
+    accountability, and regulatory defense.
+  severity: Critical
+  stride_categories:
+  - Repudiation
+  affected_assets:
+  - Audit and Decision Log
+  - Records Retention Vault
+- id: SKY-07
+  title: Tampered health-feed or MRO updates
+  description: Third-party operational inputs directly influence safety-relevant maintenance
+    decisions.
+  severity: High
+  stride_categories:
+  - Tampering
+  affected_assets:
+  - Maintenance Control Service
+  - Aircraft Health Feed
+  - MRO Vendor System
+- id: SKY-08
+  title: Segregation-of-duties failure across operations roles
+  description: Dispatch, maintenance, station, and privileged roles must remain constrained
+    to prevent unsafe operational control.
+  severity: High
+  stride_categories:
+  - Elevation of Privilege
+  affected_assets:
+  - Station Operations Portal
+  - Maintenance Control Service
+  - Dispatch Release Service
+important_themes:
+- id: SKY-09
+  title: Operational messaging integrity gaps
+  description: Provider acknowledgements and crew messages can be spoofed or altered
+    during handoff.
+  severity: High
+  stride_categories:
+  - Spoofing
+  - Tampering
+  affected_assets:
+  - Operational Messaging Service
+  - ACARS / Satcom Messaging Provider
+- id: SKY-10
+  title: Analytics replica misuse
+  description: Analytics replicas can reveal sensitive operational state and inform
+    fraud or disruption planning.
+  severity: Medium
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Operations Data Lake
+- id: SKY-11
+  title: Weather or airport-feed manipulation
+  description: Manipulated external operational feeds can produce unsafe release or
+    recovery decisions.
+  severity: High
+  stride_categories:
+  - Tampering
+  - Denial of Service
+  affected_assets:
+  - Dispatch Release Service
+  - Weather Intelligence Provider
+- id: SKY-12
+  title: Decision-record concealment by insiders
+  description: Investigative or retention systems can be abused to hide accountability
+    after unsafe decisions.
+  severity: High
+  stride_categories:
+  - Repudiation
+  - Elevation of Privilege
+  affected_assets:
+  - Safety Investigation Workspace
+  - Records Retention Vault
+expected_stride_coverage:
+- Spoofing
+- Tampering
+- Repudiation
+- Information Disclosure
+- Denial of Service
+- Elevation of Privilege
+critical_assets:
+- Dispatch Release Service
+- Maintenance Control Service
+- Turnaround Coordination Service
+- EFB Sync Service
+- Audit and Decision Log
+- Records Retention Vault
+critical_boundaries:
+- Corporate Identity and Core Records Boundary
+- Cloud Operations Platform Boundary
+- Vendor Support and Security Boundary
+top_severity_expectations:
+- SKY-01
+- SKY-02
+- SKY-03
+- SKY-06
+must_not_hallucinate:
+- In-flight consumer shopping cart
+- Passenger loyalty social login
+- Retail point-of-sale skimmer
+- Hotel booking recommendation engine

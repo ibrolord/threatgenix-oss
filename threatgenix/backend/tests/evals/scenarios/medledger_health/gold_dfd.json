@@ -1,0 +1,225 @@
+{
+  "nodes": [
+    {
+      "id": "7cc6b86f-c07b-467d-9852-9c35aa4fa8cc",
+      "node_type": "external_entity",
+      "name": "Patient Portal User",
+      "position_x": 0,
+      "position_y": 20,
+      "trust_boundary_id": null,
+      "properties": {
+        "internet_facing": true
+      }
+    },
+    {
+      "id": "0a4610d0-a558-4652-a4b2-1a7bb352b77f",
+      "node_type": "external_entity",
+      "name": "Insurer API",
+      "position_x": 0,
+      "position_y": 150,
+      "trust_boundary_id": null,
+      "properties": {
+        "trusted": true,
+        "authenticated": true
+      }
+    },
+    {
+      "id": "a488a58c-d07c-4aeb-8cd0-d81580b7dc4f",
+      "node_type": "external_entity",
+      "name": "Vendor Support Technician",
+      "position_x": 0,
+      "position_y": 280,
+      "trust_boundary_id": null,
+      "properties": {
+        "authenticated": true
+      }
+    },
+    {
+      "id": "c6e91376-a59a-45ce-a54d-db62de564795",
+      "node_type": "process",
+      "name": "Identity Gateway",
+      "position_x": 250,
+      "position_y": 90,
+      "trust_boundary_id": "3562f670-74c1-4722-8038-30db524fcd7f",
+      "properties": {
+        "internet_facing": true,
+        "uses_auth": true,
+        "validates_input": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "node_type": "process",
+      "name": "Clinical Integration Bus",
+      "position_x": 520,
+      "position_y": 90,
+      "trust_boundary_id": "2b2498d1-b8b8-4de0-9b7c-112bb9230e5f",
+      "properties": {
+        "handles_sensitive_data": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "630e0e40-e8ec-44b7-b7a0-7808943ec4d7",
+      "node_type": "process",
+      "name": "Break-Glass Service",
+      "position_x": 520,
+      "position_y": 220,
+      "trust_boundary_id": "2b2498d1-b8b8-4de0-9b7c-112bb9230e5f",
+      "properties": {
+        "uses_auth": true,
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "b50f5d6b-34d3-4501-b956-d6f597947930",
+      "node_type": "process",
+      "name": "Vendor Support Bastion",
+      "position_x": 520,
+      "position_y": 340,
+      "trust_boundary_id": "2b2498d1-b8b8-4de0-9b7c-112bb9230e5f",
+      "properties": {
+        "uses_auth": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "859053d1-46aa-443c-9047-96249b02025d",
+      "node_type": "process",
+      "name": "Imaging AI Gateway",
+      "position_x": 760,
+      "position_y": 220,
+      "trust_boundary_id": "2b2498d1-b8b8-4de0-9b7c-112bb9230e5f",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "5b9f1f3a-df5a-4d92-a618-3242ce647a92",
+      "node_type": "data_store",
+      "name": "Electronic Health Record Store",
+      "position_x": 1020,
+      "position_y": 60,
+      "trust_boundary_id": "8db7eb56-2919-472f-b35c-c663ef1f0e80",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "6b3d7e46-5411-4b5f-bd92-d6c046dbd0f6",
+      "node_type": "data_store",
+      "name": "PACS Archive",
+      "position_x": 1020,
+      "position_y": 180,
+      "trust_boundary_id": "8db7eb56-2919-472f-b35c-c663ef1f0e80",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "eb815d10-7dd1-4c0a-8fd3-64f1022cad09",
+      "node_type": "data_store",
+      "name": "Lab Results Repository",
+      "position_x": 1020,
+      "position_y": 300,
+      "trust_boundary_id": "8db7eb56-2919-472f-b35c-c663ef1f0e80",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "eec95bf7-b9c3-4be3-b73e-306d79468da2",
+      "source_node_id": "7cc6b86f-c07b-467d-9852-9c35aa4fa8cc",
+      "target_node_id": "c6e91376-a59a-45ce-a54d-db62de564795",
+      "label": "patient login and records access"
+    },
+    {
+      "id": "053308a0-7696-4eba-894e-2233eb9c0c3e",
+      "source_node_id": "c6e91376-a59a-45ce-a54d-db62de564795",
+      "target_node_id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "label": "authenticated patient session"
+    },
+    {
+      "id": "8434bc20-d41f-46ec-b071-e6bd6edb99ad",
+      "source_node_id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "target_node_id": "5b9f1f3a-df5a-4d92-a618-3242ce647a92",
+      "label": "patient chart query"
+    },
+    {
+      "id": "4542f82e-9091-46f0-a1d0-76719b0cb0dd",
+      "source_node_id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "target_node_id": "6b3d7e46-5411-4b5f-bd92-d6c046dbd0f6",
+      "label": "imaging retrieval"
+    },
+    {
+      "id": "7f23df95-3d33-4bc7-b6db-a52b1ae4a08a",
+      "source_node_id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "target_node_id": "eb815d10-7dd1-4c0a-8fd3-64f1022cad09",
+      "label": "laboratory results query"
+    },
+    {
+      "id": "86ca29f4-eb64-49cc-8e75-a5b0fd91c790",
+      "source_node_id": "0a4610d0-a558-4652-a4b2-1a7bb352b77f",
+      "target_node_id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "label": "eligibility and claims status"
+    },
+    {
+      "id": "1c7aaf5c-2db0-4c29-a0a5-d5933c989c4b",
+      "source_node_id": "630e0e40-e8ec-44b7-b7a0-7808943ec4d7",
+      "target_node_id": "5b9f1f3a-df5a-4d92-a618-3242ce647a92",
+      "label": "emergency override query"
+    },
+    {
+      "id": "40216d7a-f1d8-4e29-9b0d-bf4d0448ee16",
+      "source_node_id": "a488a58c-d07c-4aeb-8cd0-d81580b7dc4f",
+      "target_node_id": "b50f5d6b-34d3-4501-b956-d6f597947930",
+      "label": "privileged vendor session"
+    },
+    {
+      "id": "987325d7-89ab-47bd-b653-650476117e38",
+      "source_node_id": "b50f5d6b-34d3-4501-b956-d6f597947930",
+      "target_node_id": "6b3d7e46-5411-4b5f-bd92-d6c046dbd0f6",
+      "label": "diagnostics session"
+    },
+    {
+      "id": "87f0ba6e-ee7d-4d35-b0f4-79b20b11da36",
+      "source_node_id": "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+      "target_node_id": "859053d1-46aa-443c-9047-96249b02025d",
+      "label": "imaging inference request"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "3562f670-74c1-4722-8038-30db524fcd7f",
+      "name": "Patient and Partner Edge",
+      "node_ids": [
+        "c6e91376-a59a-45ce-a54d-db62de564795"
+      ]
+    },
+    {
+      "id": "2b2498d1-b8b8-4de0-9b7c-112bb9230e5f",
+      "name": "Clinical Operations Zone",
+      "node_ids": [
+        "b4f44224-96a4-4ef6-8ed5-72b0ad5c9a5a",
+        "630e0e40-e8ec-44b7-b7a0-7808943ec4d7",
+        "b50f5d6b-34d3-4501-b956-d6f597947930",
+        "859053d1-46aa-443c-9047-96249b02025d"
+      ]
+    },
+    {
+      "id": "8db7eb56-2919-472f-b35c-c663ef1f0e80",
+      "name": "Restricted Clinical Data Zone",
+      "node_ids": [
+        "5b9f1f3a-df5a-4d92-a618-3242ce647a92",
+        "6b3d7e46-5411-4b5f-bd92-d6c046dbd0f6",
+        "eb815d10-7dd1-4c0a-8fd3-64f1022cad09"
+      ]
+    }
+  ]
+}

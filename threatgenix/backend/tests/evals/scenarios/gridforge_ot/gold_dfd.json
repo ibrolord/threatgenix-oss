@@ -1,0 +1,217 @@
+{
+  "nodes": [
+    {
+      "id": "e181d13c-a169-445d-ae32-85faf8ff3e67",
+      "node_type": "external_entity",
+      "name": "Supplier Portal User",
+      "position_x": 0,
+      "position_y": 30,
+      "trust_boundary_id": null,
+      "properties": {}
+    },
+    {
+      "id": "4ea9fd38-1357-4e32-b5c0-967a8664639e",
+      "node_type": "external_entity",
+      "name": "Remote Maintenance Vendor",
+      "position_x": 0,
+      "position_y": 160,
+      "trust_boundary_id": null,
+      "properties": {
+        "authenticated": true
+      }
+    },
+    {
+      "id": "d5d1233c-1325-4cdc-b841-96dc77b80117",
+      "node_type": "external_entity",
+      "name": "Site Reliability Analyst",
+      "position_x": 0,
+      "position_y": 290,
+      "trust_boundary_id": null,
+      "properties": {
+        "authenticated": true
+      }
+    },
+    {
+      "id": "7b76f5db-e5e9-4673-9146-f3ee9060ad6e",
+      "node_type": "process",
+      "name": "VPN Gateway",
+      "position_x": 250,
+      "position_y": 160,
+      "trust_boundary_id": "b9674a0b-a4c5-43be-9d2e-f2e6f83bc40f",
+      "properties": {
+        "internet_facing": true,
+        "uses_auth": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "ae8dfb2d-c7c8-48f3-a85e-cf07e38ba917",
+      "node_type": "process",
+      "name": "OT Jump Host",
+      "position_x": 520,
+      "position_y": 60,
+      "trust_boundary_id": "5f62737f-c2d8-4ed8-8194-30ff0bfb4597",
+      "properties": {
+        "uses_auth": true
+      }
+    },
+    {
+      "id": "2489a2dc-0f37-498d-a5c1-0c5b2a852fc8",
+      "node_type": "process",
+      "name": "Maintenance Orchestrator",
+      "position_x": 520,
+      "position_y": 200,
+      "trust_boundary_id": "5f62737f-c2d8-4ed8-8194-30ff0bfb4597",
+      "properties": {
+        "uses_auth": true
+      }
+    },
+    {
+      "id": "7ebd3489-f44d-40c7-bd0f-1e42ef59f5b7",
+      "node_type": "process",
+      "name": "Telemetry Broker",
+      "position_x": 520,
+      "position_y": 340,
+      "trust_boundary_id": "5f62737f-c2d8-4ed8-8194-30ff0bfb4597",
+      "properties": {
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "cfbfae80-db06-47ff-b315-aac55ed4ea07",
+      "node_type": "process",
+      "name": "Predictive Analytics Service",
+      "position_x": 780,
+      "position_y": 340,
+      "trust_boundary_id": "5f62737f-c2d8-4ed8-8194-30ff0bfb4597",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "d191d851-b416-472b-9235-9a7252368ae2",
+      "node_type": "process",
+      "name": "Field Gateway",
+      "position_x": 1040,
+      "position_y": 200,
+      "trust_boundary_id": "0a25ba1c-b8a5-4be9-9307-37838d10078d",
+      "properties": {
+        "uses_auth": true
+      }
+    },
+    {
+      "id": "7ce25864-aacf-49c1-bd0c-a04d6d85071b",
+      "node_type": "data_store",
+      "name": "Plant Historian",
+      "position_x": 1040,
+      "position_y": 60,
+      "trust_boundary_id": "0a25ba1c-b8a5-4be9-9307-37838d10078d",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "37f45db1-b6bc-4434-bb6d-90c4d4f8c0cb",
+      "node_type": "data_store",
+      "name": "PLC Command Store",
+      "position_x": 1040,
+      "position_y": 340,
+      "trust_boundary_id": "0a25ba1c-b8a5-4be9-9307-37838d10078d",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "9309ec06-8cfb-4379-bfc9-ec091cc66e63",
+      "source_node_id": "4ea9fd38-1357-4e32-b5c0-967a8664639e",
+      "target_node_id": "7b76f5db-e5e9-4673-9146-f3ee9060ad6e",
+      "label": "remote maintenance tunnel"
+    },
+    {
+      "id": "37ad0580-af49-4f4f-a2ba-e30f1ef653ef",
+      "source_node_id": "d5d1233c-1325-4cdc-b841-96dc77b80117",
+      "target_node_id": "7b76f5db-e5e9-4673-9146-f3ee9060ad6e",
+      "label": "emergency operator session"
+    },
+    {
+      "id": "327cfc65-e077-4241-a5c9-a02a1be06f6c",
+      "source_node_id": "7b76f5db-e5e9-4673-9146-f3ee9060ad6e",
+      "target_node_id": "ae8dfb2d-c7c8-48f3-a85e-cf07e38ba917",
+      "label": "interactive privileged session"
+    },
+    {
+      "id": "8c6501a8-8260-4ffb-a10c-c73377464db4",
+      "source_node_id": "ae8dfb2d-c7c8-48f3-a85e-cf07e38ba917",
+      "target_node_id": "2489a2dc-0f37-498d-a5c1-0c5b2a852fc8",
+      "label": "approved maintenance task"
+    },
+    {
+      "id": "9b7d8d1a-469e-44dd-bff3-48bedb528e5f",
+      "source_node_id": "2489a2dc-0f37-498d-a5c1-0c5b2a852fc8",
+      "target_node_id": "d191d851-b416-472b-9235-9a7252368ae2",
+      "label": "maintenance job dispatch"
+    },
+    {
+      "id": "fc5e5076-0160-4de5-a3f7-177fbafc9cc7",
+      "source_node_id": "d191d851-b416-472b-9235-9a7252368ae2",
+      "target_node_id": "7ebd3489-f44d-40c7-bd0f-1e42ef59f5b7",
+      "label": "plant telemetry stream"
+    },
+    {
+      "id": "33778247-6a7e-40a0-ac55-505dc8d39071",
+      "source_node_id": "7ebd3489-f44d-40c7-bd0f-1e42ef59f5b7",
+      "target_node_id": "7ce25864-aacf-49c1-bd0c-a04d6d85071b",
+      "label": "time-series archive write"
+    },
+    {
+      "id": "7826c1f7-3515-4b58-a862-b155ab954dda",
+      "source_node_id": "cfbfae80-db06-47ff-b315-aac55ed4ea07",
+      "target_node_id": "7ce25864-aacf-49c1-bd0c-a04d6d85071b",
+      "label": "analytics query"
+    },
+    {
+      "id": "24a5062c-94ec-48cb-8a43-aece731ac07e",
+      "source_node_id": "2489a2dc-0f37-498d-a5c1-0c5b2a852fc8",
+      "target_node_id": "37f45db1-b6bc-4434-bb6d-90c4d4f8c0cb",
+      "label": "command package staging"
+    },
+    {
+      "id": "4f5bc365-d35f-4bda-a7c2-2f086e7907f3",
+      "source_node_id": "e181d13c-a169-445d-ae32-85faf8ff3e67",
+      "target_node_id": "2489a2dc-0f37-498d-a5c1-0c5b2a852fc8",
+      "label": "supplier work order upload"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "b9674a0b-a4c5-43be-9d2e-f2e6f83bc40f",
+      "name": "External Access Zone",
+      "node_ids": [
+        "7b76f5db-e5e9-4673-9146-f3ee9060ad6e"
+      ]
+    },
+    {
+      "id": "5f62737f-c2d8-4ed8-8194-30ff0bfb4597",
+      "name": "Plant DMZ",
+      "node_ids": [
+        "ae8dfb2d-c7c8-48f3-a85e-cf07e38ba917",
+        "2489a2dc-0f37-498d-a5c1-0c5b2a852fc8",
+        "7ebd3489-f44d-40c7-bd0f-1e42ef59f5b7",
+        "cfbfae80-db06-47ff-b315-aac55ed4ea07"
+      ]
+    },
+    {
+      "id": "0a25ba1c-b8a5-4be9-9307-37838d10078d",
+      "name": "OT Core Zone",
+      "node_ids": [
+        "d191d851-b416-472b-9235-9a7252368ae2",
+        "7ce25864-aacf-49c1-bd0c-a04d6d85071b",
+        "37f45db1-b6bc-4434-bb6d-90c4d4f8c0cb"
+      ]
+    }
+  ]
+}

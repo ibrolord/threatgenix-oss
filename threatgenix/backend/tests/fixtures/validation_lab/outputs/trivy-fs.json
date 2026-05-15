@@ -1,0 +1,43 @@
+{
+  "Results": [
+    {
+      "Target": "requirements.txt",
+      "Type": "python-pkg",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2022-29217",
+          "PkgName": "pyjwt",
+          "InstalledVersion": "1.7.1",
+          "Severity": "HIGH",
+          "Title": "PyJWT key confusion"
+        }
+      ]
+    },
+    {
+      "Target": "Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "Misconfigurations": [
+        {
+          "ID": "AVD-DS-0002",
+          "Title": "Root user",
+          "Severity": "HIGH",
+          "CauseMetadata": {"Resource": "USER root", "StartLine": 8}
+        }
+      ]
+    },
+    {
+      "Target": "infra/main.tf",
+      "Class": "config",
+      "Type": "terraform",
+      "Misconfigurations": [
+        {
+          "ID": "AVD-AWS-0086",
+          "Title": "S3 bucket public access block is disabled",
+          "Severity": "HIGH",
+          "CauseMetadata": {"Resource": "aws_s3_bucket_public_access_block.statement_exports", "StartLine": 5}
+        }
+      ]
+    }
+  ]
+}

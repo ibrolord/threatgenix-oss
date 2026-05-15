@@ -1,0 +1,25 @@
+{
+  "site": [
+    {
+      "@name": "https://api.example.com",
+      "@host": "api.example.com",
+      "@port": "443",
+      "@ssl": "true",
+      "alerts": [
+        {
+          "pluginid": "10020",
+          "alert": "X-Frame-Options Header Not Set",
+          "riskcode": "2",
+          "riskdesc": "Medium (High)",
+          "cweid": "1021",
+          "instances": [
+            {
+              "uri": "https://api.example.com/login",
+              "method": "GET"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

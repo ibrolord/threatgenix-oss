@@ -1,0 +1,447 @@
+{
+  "nodes": [
+    {
+      "id": "319af7de-6f4d-4711-bd7e-11d45a57111f",
+      "node_type": "process",
+      "name": "Federated Identity Service",
+      "position_x": 80,
+      "position_y": 40,
+      "trust_boundary_id": "77bd8e75-f595-4d0a-aafd-b8107eb0b15d",
+      "properties": {
+        "uses_auth": true
+      }
+    },
+    {
+      "id": "0c78242d-6f4e-4d5d-a731-1ef7533dd66a",
+      "node_type": "process",
+      "name": "Privileged Access Broker",
+      "position_x": 320,
+      "position_y": 40,
+      "trust_boundary_id": "77bd8e75-f595-4d0a-aafd-b8107eb0b15d",
+      "properties": {
+        "uses_auth": true
+      }
+    },
+    {
+      "id": "52a9dfdb-1d7f-4f79-b9ec-a117877ec19f",
+      "node_type": "data_store",
+      "name": "Records Retention Vault",
+      "position_x": 560,
+      "position_y": 40,
+      "trust_boundary_id": "77bd8e75-f595-4d0a-aafd-b8107eb0b15d",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "3fd566d9-5b51-40dc-9d03-ea67ee1f3a7c",
+      "node_type": "data_store",
+      "name": "On-Prem Operational Mirror Database",
+      "position_x": 800,
+      "position_y": 40,
+      "trust_boundary_id": "77bd8e75-f595-4d0a-aafd-b8107eb0b15d",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "0e45a6df-6016-4610-b594-1c63a8ae7f4a",
+      "node_type": "process",
+      "name": "Safety Investigation Workspace",
+      "position_x": 1040,
+      "position_y": 40,
+      "trust_boundary_id": "77bd8e75-f595-4d0a-aafd-b8107eb0b15d",
+      "properties": {}
+    },
+    {
+      "id": "d8c33d0e-c262-4a8d-aec1-8a9cb9c1e4c5",
+      "node_type": "process",
+      "name": "API Gateway",
+      "position_x": 80,
+      "position_y": 220,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {
+        "internet_facing": true,
+        "uses_auth": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "477849dc-c0cb-4982-9ce2-7f69ff1f908e",
+      "node_type": "process",
+      "name": "Operations Workflow Service",
+      "position_x": 320,
+      "position_y": 220,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {}
+    },
+    {
+      "id": "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+      "node_type": "process",
+      "name": "Dispatch Release Service",
+      "position_x": 560,
+      "position_y": 220,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "bdc399df-f35e-4efa-8916-9e2bcfa085b1",
+      "node_type": "process",
+      "name": "Crew Recovery Engine",
+      "position_x": 800,
+      "position_y": 220,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "4b3a68ad-2c73-48f8-96c6-658cdd906cdc",
+      "node_type": "process",
+      "name": "Maintenance Control Service",
+      "position_x": 1040,
+      "position_y": 220,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "fd337053-b01f-49d9-bdd6-9d2af2d97763",
+      "node_type": "process",
+      "name": "Turnaround Coordination Service",
+      "position_x": 80,
+      "position_y": 400,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {}
+    },
+    {
+      "id": "d0f935ff-01fe-42d5-a8c5-20d11e80d26f",
+      "node_type": "process",
+      "name": "EFB Sync Service",
+      "position_x": 320,
+      "position_y": 400,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "c1c38db7-2aa8-4fc2-b415-51da1735272c",
+      "node_type": "process",
+      "name": "Operational Messaging Service",
+      "position_x": 560,
+      "position_y": 400,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {}
+    },
+    {
+      "id": "55abfc48-5a3d-443f-9516-c2246046ae3d",
+      "node_type": "data_store",
+      "name": "Audit and Decision Log",
+      "position_x": 800,
+      "position_y": 400,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "3f50ab1e-fef6-4cfb-a973-cd81295d81e5",
+      "node_type": "data_store",
+      "name": "Operations Data Lake",
+      "position_x": 1040,
+      "position_y": 400,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {}
+    },
+    {
+      "id": "0a74815f-68af-478c-b057-73fe179a7acd",
+      "node_type": "process",
+      "name": "Rules and Policy Engine",
+      "position_x": 1280,
+      "position_y": 400,
+      "trust_boundary_id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "properties": {}
+    },
+    {
+      "id": "34d32b6e-4de5-4bdd-a1d6-d6defd40f2b6",
+      "node_type": "process",
+      "name": "Station Operations Portal",
+      "position_x": 80,
+      "position_y": 580,
+      "trust_boundary_id": "7334d515-a9da-40eb-b8d8-19ab6c4dc4d0",
+      "properties": {}
+    },
+    {
+      "id": "2b79808d-c664-45bb-b3b4-7146a285f76d",
+      "node_type": "process",
+      "name": "Ground Handler Partner API",
+      "position_x": 320,
+      "position_y": 580,
+      "trust_boundary_id": "7334d515-a9da-40eb-b8d8-19ab6c4dc4d0",
+      "properties": {
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "c50bcaf5-b00d-4b4e-91d0-021295b7651e",
+      "node_type": "external_entity",
+      "name": "Electronic Flight Bag Client",
+      "position_x": 560,
+      "position_y": 580,
+      "trust_boundary_id": "f90b1662-bef5-4cac-8fb2-e80715f4d1b3",
+      "properties": {}
+    },
+    {
+      "id": "f95288ef-492d-4619-af7f-25c0f3e1137c",
+      "node_type": "external_entity",
+      "name": "ACARS / Satcom Messaging Provider",
+      "position_x": 800,
+      "position_y": 580,
+      "trust_boundary_id": "f90b1662-bef5-4cac-8fb2-e80715f4d1b3",
+      "properties": {}
+    },
+    {
+      "id": "4d8cf6f6-39fb-4b67-98f1-9614159f2ffc",
+      "node_type": "external_entity",
+      "name": "Aircraft Health Feed",
+      "position_x": 1040,
+      "position_y": 580,
+      "trust_boundary_id": "f90b1662-bef5-4cac-8fb2-e80715f4d1b3",
+      "properties": {}
+    },
+    {
+      "id": "2cb67d0b-f2f1-4655-a145-1d84f1ad1736",
+      "node_type": "external_entity",
+      "name": "Weather Intelligence Provider",
+      "position_x": 1280,
+      "position_y": 580,
+      "trust_boundary_id": "1d3c2c2e-c307-4523-8b8c-bf7c40d6eedb",
+      "properties": {}
+    },
+    {
+      "id": "2a6da97f-c62e-42d0-a9e2-4c5e7634888d",
+      "node_type": "external_entity",
+      "name": "MRO Vendor System",
+      "position_x": 1520,
+      "position_y": 580,
+      "trust_boundary_id": "1d3c2c2e-c307-4523-8b8c-bf7c40d6eedb",
+      "properties": {}
+    },
+    {
+      "id": "ee767592-60c7-4ab4-8f31-3f5f3f5b6fc3",
+      "node_type": "external_entity",
+      "name": "Vendor Support Enclave",
+      "position_x": 1760,
+      "position_y": 580,
+      "trust_boundary_id": "33fd0b1f-e0b1-4fc4-9139-1270895ad59f",
+      "properties": {
+        "authenticated": true
+      }
+    },
+    {
+      "id": "d37bd381-fca6-4eb3-a6ff-f9a8220587cb",
+      "node_type": "external_entity",
+      "name": "SOC Monitoring Platform",
+      "position_x": 2000,
+      "position_y": 580,
+      "trust_boundary_id": "33fd0b1f-e0b1-4fc4-9139-1270895ad59f",
+      "properties": {}
+    },
+    {
+      "id": "488bf7e2-57dc-49a5-b6ee-3cbdd2785b88",
+      "node_type": "process",
+      "name": "SIEM / Telemetry Pipeline",
+      "position_x": 2240,
+      "position_y": 580,
+      "trust_boundary_id": "33fd0b1f-e0b1-4fc4-9139-1270895ad59f",
+      "properties": {}
+    }
+  ],
+  "edges": [
+    {
+      "id": "049fca9c-dba6-47d4-ae5b-f65daa3f8992",
+      "source_node_id": "319af7de-6f4d-4711-bd7e-11d45a57111f",
+      "target_node_id": "0c78242d-6f4e-4d5d-a731-1ef7533dd66a",
+      "label": "workforce MFA assertion"
+    },
+    {
+      "id": "244fd94f-b428-48cf-b9d0-32ad2c625c83",
+      "source_node_id": "d8c33d0e-c262-4a8d-aec1-8a9cb9c1e4c5",
+      "target_node_id": "477849dc-c0cb-4982-9ce2-7f69ff1f908e",
+      "label": "normalized flight operations workflow"
+    },
+    {
+      "id": "a5f0c0da-56ef-4ef6-a8af-9137d219a6ca",
+      "source_node_id": "477849dc-c0cb-4982-9ce2-7f69ff1f908e",
+      "target_node_id": "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+      "label": "flight release workflow"
+    },
+    {
+      "id": "59e9300d-616f-4048-8ca1-3c7df73fc5c9",
+      "source_node_id": "477849dc-c0cb-4982-9ce2-7f69ff1f908e",
+      "target_node_id": "bdc399df-f35e-4efa-8916-9e2bcfa085b1",
+      "label": "disruption recovery action"
+    },
+    {
+      "id": "37fd91f3-53e5-4db7-b755-fb6efed4ab03",
+      "source_node_id": "2b79808d-c664-45bb-b3b4-7146a285f76d",
+      "target_node_id": "fd337053-b01f-49d9-bdd6-9d2af2d97763",
+      "label": "turnaround milestone update"
+    },
+    {
+      "id": "7449512a-84c1-4c39-bbe9-6a53ca0b585f",
+      "source_node_id": "34d32b6e-4de5-4bdd-a1d6-d6defd40f2b6",
+      "target_node_id": "fd337053-b01f-49d9-bdd6-9d2af2d97763",
+      "label": "station readiness update"
+    },
+    {
+      "id": "e71338d8-f875-47e4-b04a-b9f70b77f2b0",
+      "source_node_id": "fd337053-b01f-49d9-bdd6-9d2af2d97763",
+      "target_node_id": "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+      "label": "turnaround readiness state"
+    },
+    {
+      "id": "6cebdb93-cfbb-4d02-8057-ef72a61582f8",
+      "source_node_id": "2cb67d0b-f2f1-4655-a145-1d84f1ad1736",
+      "target_node_id": "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+      "label": "weather and NOTAM package"
+    },
+    {
+      "id": "769eec56-580c-48f4-8eb7-bd012fdd0d48",
+      "source_node_id": "4d8cf6f6-39fb-4b67-98f1-9614159f2ffc",
+      "target_node_id": "4b3a68ad-2c73-48f8-96c6-658cdd906cdc",
+      "label": "aircraft health alert"
+    },
+    {
+      "id": "0fb34162-b935-4046-b3c7-18b9187ca9bf",
+      "source_node_id": "2a6da97f-c62e-42d0-a9e2-4c5e7634888d",
+      "target_node_id": "4b3a68ad-2c73-48f8-96c6-658cdd906cdc",
+      "label": "maintenance recommendation upload"
+    },
+    {
+      "id": "a49ae0fd-0995-4ef5-bd2a-f754667744fc",
+      "source_node_id": "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+      "target_node_id": "55abfc48-5a3d-443f-9516-c2246046ae3d",
+      "label": "dispatch decision record"
+    },
+    {
+      "id": "d87362cb-5007-42a8-b1f1-cec2f1622c38",
+      "source_node_id": "4b3a68ad-2c73-48f8-96c6-658cdd906cdc",
+      "target_node_id": "55abfc48-5a3d-443f-9516-c2246046ae3d",
+      "label": "maintenance deferral decision"
+    },
+    {
+      "id": "78346899-b1c8-4c18-9edf-f49099788b75",
+      "source_node_id": "55abfc48-5a3d-443f-9516-c2246046ae3d",
+      "target_node_id": "52a9dfdb-1d7f-4f79-b9ec-a117877ec19f",
+      "label": "immutable record replication"
+    },
+    {
+      "id": "e2218782-0eb1-4262-bc4c-46a3ad60f7bf",
+      "source_node_id": "d0f935ff-01fe-42d5-a8c5-20d11e80d26f",
+      "target_node_id": "c50bcaf5-b00d-4b4e-91d0-021295b7651e",
+      "label": "dispatch release package"
+    },
+    {
+      "id": "f3c85cd4-5444-4d9c-b4a2-c19b14d16b4e",
+      "source_node_id": "c1c38db7-2aa8-4fc2-b415-51da1735272c",
+      "target_node_id": "f95288ef-492d-4619-af7f-25c0f3e1137c",
+      "label": "crew operational message"
+    },
+    {
+      "id": "8bb5d6db-e143-47e3-8d8e-f8e5e5060c90",
+      "source_node_id": "0c78242d-6f4e-4d5d-a731-1ef7533dd66a",
+      "target_node_id": "ee767592-60c7-4ab4-8f31-3f5f3f5b6fc3",
+      "label": "approved time-boxed diagnostic session"
+    },
+    {
+      "id": "917d6ca6-f2ca-47a9-b938-a86925702eab",
+      "source_node_id": "ee767592-60c7-4ab4-8f31-3f5f3f5b6fc3",
+      "target_node_id": "477849dc-c0cb-4982-9ce2-7f69ff1f908e",
+      "label": "vendor diagnostic query"
+    },
+    {
+      "id": "46f64eb2-2142-476b-b943-a564a940d41d",
+      "source_node_id": "0a74815f-68af-478c-b057-73fe179a7acd",
+      "target_node_id": "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+      "label": "release rule evaluation"
+    },
+    {
+      "id": "96a95d30-7f4a-4753-9252-f647d4c726d6",
+      "source_node_id": "488bf7e2-57dc-49a5-b6ee-3cbdd2785b88",
+      "target_node_id": "d37bd381-fca6-4eb3-a6ff-f9a8220587cb",
+      "label": "security telemetry feed"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "77bd8e75-f595-4d0a-aafd-b8107eb0b15d",
+      "name": "Corporate Identity and Core Records Boundary",
+      "node_ids": [
+        "319af7de-6f4d-4711-bd7e-11d45a57111f",
+        "0c78242d-6f4e-4d5d-a731-1ef7533dd66a",
+        "52a9dfdb-1d7f-4f79-b9ec-a117877ec19f",
+        "3fd566d9-5b51-40dc-9d03-ea67ee1f3a7c",
+        "0e45a6df-6016-4610-b594-1c63a8ae7f4a"
+      ]
+    },
+    {
+      "id": "55ce2f2c-7bcb-4aa6-a892-3ac10c2b2dc3",
+      "name": "Cloud Operations Platform Boundary",
+      "node_ids": [
+        "d8c33d0e-c262-4a8d-aec1-8a9cb9c1e4c5",
+        "477849dc-c0cb-4982-9ce2-7f69ff1f908e",
+        "9fb81886-a52d-4f90-8527-b2785c7ebc4c",
+        "bdc399df-f35e-4efa-8916-9e2bcfa085b1",
+        "4b3a68ad-2c73-48f8-96c6-658cdd906cdc",
+        "fd337053-b01f-49d9-bdd6-9d2af2d97763",
+        "d0f935ff-01fe-42d5-a8c5-20d11e80d26f",
+        "c1c38db7-2aa8-4fc2-b415-51da1735272c",
+        "55abfc48-5a3d-443f-9516-c2246046ae3d",
+        "3f50ab1e-fef6-4cfb-a973-cd81295d81e5",
+        "0a74815f-68af-478c-b057-73fe179a7acd"
+      ]
+    },
+    {
+      "id": "7334d515-a9da-40eb-b8d8-19ab6c4dc4d0",
+      "name": "Airport and Station Operations Boundary",
+      "node_ids": [
+        "34d32b6e-4de5-4bdd-a1d6-d6defd40f2b6",
+        "2b79808d-c664-45bb-b3b4-7146a285f76d"
+      ]
+    },
+    {
+      "id": "f90b1662-bef5-4cac-8fb2-e80715f4d1b3",
+      "name": "Aircraft and Crew Edge Boundary",
+      "node_ids": [
+        "c50bcaf5-b00d-4b4e-91d0-021295b7651e",
+        "f95288ef-492d-4619-af7f-25c0f3e1137c",
+        "4d8cf6f6-39fb-4b67-98f1-9614159f2ffc"
+      ]
+    },
+    {
+      "id": "1d3c2c2e-c307-4523-8b8c-bf7c40d6eedb",
+      "name": "External Aviation Services Boundary",
+      "node_ids": [
+        "2cb67d0b-f2f1-4655-a145-1d84f1ad1736",
+        "2a6da97f-c62e-42d0-a9e2-4c5e7634888d"
+      ]
+    },
+    {
+      "id": "33fd0b1f-e0b1-4fc4-9139-1270895ad59f",
+      "name": "Vendor Support and Security Boundary",
+      "node_ids": [
+        "ee767592-60c7-4ab4-8f31-3f5f3f5b6fc3",
+        "d37bd381-fca6-4eb3-a6ff-f9a8220587cb",
+        "488bf7e2-57dc-49a5-b6ee-3cbdd2785b88"
+      ]
+    }
+  ]
+}

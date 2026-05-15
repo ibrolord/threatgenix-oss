@@ -1,0 +1,230 @@
+{
+  "nodes": [
+    {
+      "id": "6fc299aa-9df0-4c0e-b705-7b8d33f60fa1",
+      "node_type": "external_entity",
+      "name": "Consumer Mobile App",
+      "position_x": 0,
+      "position_y": 40,
+      "trust_boundary_id": null,
+      "properties": {
+        "internet_facing": true
+      }
+    },
+    {
+      "id": "ff59b6d7-6cb0-48ca-a498-8a7f51fd7b86",
+      "node_type": "external_entity",
+      "name": "Open Banking Partner",
+      "position_x": 0,
+      "position_y": 180,
+      "trust_boundary_id": null,
+      "properties": {
+        "trusted": true,
+        "authenticated": true,
+        "internet_facing": true
+      }
+    },
+    {
+      "id": "9a8e6676-6ad4-4625-9be8-6e5b8013c89f",
+      "node_type": "external_entity",
+      "name": "Treasury Portal User",
+      "position_x": 0,
+      "position_y": 320,
+      "trust_boundary_id": null,
+      "properties": {
+        "authenticated": true
+      }
+    },
+    {
+      "id": "ce95b689-96f8-47cc-af99-c5914d724db9",
+      "node_type": "process",
+      "name": "API Gateway",
+      "position_x": 260,
+      "position_y": 160,
+      "trust_boundary_id": "80e99dc9-dcdb-4d72-9a16-f52dcf9beeb7",
+      "properties": {
+        "internet_facing": true,
+        "uses_auth": true,
+        "validates_input": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "node_type": "process",
+      "name": "Payments Orchestrator",
+      "position_x": 520,
+      "position_y": 160,
+      "trust_boundary_id": "31022756-ee22-4a46-8fa1-62b8b9b4ef92",
+      "properties": {
+        "handles_sensitive_data": true,
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "bc54bf5b-371c-4f5a-90e4-15c11d24dd47",
+      "node_type": "process",
+      "name": "Fraud Scoring Engine",
+      "position_x": 760,
+      "position_y": 40,
+      "trust_boundary_id": "31022756-ee22-4a46-8fa1-62b8b9b4ef92",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "6568787f-8d49-4d18-91a2-8bdfeb8ce027",
+      "node_type": "process",
+      "name": "AML Screening Service",
+      "position_x": 760,
+      "position_y": 160,
+      "trust_boundary_id": "31022756-ee22-4a46-8fa1-62b8b9b4ef92",
+      "properties": {
+        "handles_sensitive_data": true
+      }
+    },
+    {
+      "id": "e40f1946-8834-49b9-bd84-f4c15ea30a7d",
+      "node_type": "process",
+      "name": "SWIFT Connector",
+      "position_x": 760,
+      "position_y": 280,
+      "trust_boundary_id": "31022756-ee22-4a46-8fa1-62b8b9b4ef92",
+      "properties": {
+        "uses_encryption": true
+      }
+    },
+    {
+      "id": "d46c7b0e-e2d6-4b89-92f2-9c308754e665",
+      "node_type": "data_store",
+      "name": "Core Banking Ledger",
+      "position_x": 1020,
+      "position_y": 120,
+      "trust_boundary_id": "d80af2ee-56f8-43f7-81b0-45fdd4fd59c2",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    },
+    {
+      "id": "9d151410-ac1f-4a83-8d4f-fcc3d7cf8f35",
+      "node_type": "data_store",
+      "name": "Card Token Vault",
+      "position_x": 1020,
+      "position_y": 220,
+      "trust_boundary_id": "d80af2ee-56f8-43f7-81b0-45fdd4fd59c2",
+      "properties": {
+        "stores_credentials": true,
+        "encrypted_at_rest": true
+      }
+    },
+    {
+      "id": "5eac611c-b6a5-4634-96b7-a619fd0abf86",
+      "node_type": "data_store",
+      "name": "Case Management Store",
+      "position_x": 1020,
+      "position_y": 20,
+      "trust_boundary_id": "d80af2ee-56f8-43f7-81b0-45fdd4fd59c2",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "8013145f-32d2-49d1-a3db-06039a2d35ef",
+      "source_node_id": "6fc299aa-9df0-4c0e-b705-7b8d33f60fa1",
+      "target_node_id": "ce95b689-96f8-47cc-af99-c5914d724db9",
+      "label": "OAuth2 + payment initiation"
+    },
+    {
+      "id": "88a12f20-36e7-45c5-a1f7-f6fe68532b83",
+      "source_node_id": "ff59b6d7-6cb0-48ca-a498-8a7f51fd7b86",
+      "target_node_id": "ce95b689-96f8-47cc-af99-c5914d724db9",
+      "label": "mTLS signed payment request"
+    },
+    {
+      "id": "0043ae4b-0ab0-4c2e-ad4c-4f0fc519dc72",
+      "source_node_id": "9a8e6676-6ad4-4625-9be8-6e5b8013c89f",
+      "target_node_id": "ce95b689-96f8-47cc-af99-c5914d724db9",
+      "label": "privileged batch approval"
+    },
+    {
+      "id": "393c42d4-aa60-4b8b-b115-d329ab6d958f",
+      "source_node_id": "ce95b689-96f8-47cc-af99-c5914d724db9",
+      "target_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "label": "normalized payment instruction"
+    },
+    {
+      "id": "ae961466-c3d7-430c-b997-bc6c29b0cbbc",
+      "source_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "target_node_id": "bc54bf5b-371c-4f5a-90e4-15c11d24dd47",
+      "label": "transaction scoring request"
+    },
+    {
+      "id": "d9d99c5d-e112-4597-b4f2-5ca830bd480f",
+      "source_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "target_node_id": "6568787f-8d49-4d18-91a2-8bdfeb8ce027",
+      "label": "sanctions screening request"
+    },
+    {
+      "id": "cb3599cc-8f92-4e6c-981e-a8a7f7504dfe",
+      "source_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "target_node_id": "e40f1946-8834-49b9-bd84-f4c15ea30a7d",
+      "label": "signed SWIFT payment message"
+    },
+    {
+      "id": "35dd489b-6490-41a1-a6da-ebc8131b6e3d",
+      "source_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "target_node_id": "d46c7b0e-e2d6-4b89-92f2-9c308754e665",
+      "label": "posting and balance update"
+    },
+    {
+      "id": "81afbde8-c35b-4330-8a44-b6f4005133e2",
+      "source_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "target_node_id": "9d151410-ac1f-4a83-8d4f-fcc3d7cf8f35",
+      "label": "tokenization lookup"
+    },
+    {
+      "id": "957835b5-44d5-4c63-a0e2-cd40c10bd05a",
+      "source_node_id": "bc54bf5b-371c-4f5a-90e4-15c11d24dd47",
+      "target_node_id": "5eac611c-b6a5-4634-96b7-a619fd0abf86",
+      "label": "investigation case record"
+    },
+    {
+      "id": "cae2b753-f7eb-441d-b720-24a9961f8151",
+      "source_node_id": "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+      "target_node_id": "ff59b6d7-6cb0-48ca-a498-8a7f51fd7b86",
+      "label": "payment status callback"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "80e99dc9-dcdb-4d72-9a16-f52dcf9beeb7",
+      "name": "Customer and Partner Edge",
+      "node_ids": [
+        "ce95b689-96f8-47cc-af99-c5914d724db9"
+      ]
+    },
+    {
+      "id": "31022756-ee22-4a46-8fa1-62b8b9b4ef92",
+      "name": "Payments Control Plane",
+      "node_ids": [
+        "c592eec8-5347-4c2f-8f6b-cf1326d8976f",
+        "bc54bf5b-371c-4f5a-90e4-15c11d24dd47",
+        "6568787f-8d49-4d18-91a2-8bdfeb8ce027",
+        "e40f1946-8834-49b9-bd84-f4c15ea30a7d"
+      ]
+    },
+    {
+      "id": "d80af2ee-56f8-43f7-81b0-45fdd4fd59c2",
+      "name": "Restricted Data Zone",
+      "node_ids": [
+        "d46c7b0e-e2d6-4b89-92f2-9c308754e665",
+        "9d151410-ac1f-4a83-8d4f-fcc3d7cf8f35",
+        "5eac611c-b6a5-4634-96b7-a619fd0abf86"
+      ]
+    }
+  ]
+}

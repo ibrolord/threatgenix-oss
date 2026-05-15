@@ -1,0 +1,41 @@
+scenario_id: aurora_utility_der
+title: Aurora Utility DER Orchestration and Storm Response Platform
+industry: Electric utility / distributed energy
+difficulty: extreme
+analyst_persona: Principal grid security architect preparing a storm-restoration and
+  safety-control review
+description: Hybrid utility control platform spanning customer outage channels, DER
+  dispatch, OT switching, vendor diagnostics, field mobility, emergency coordination,
+  and immutable records.
+system_name: Aurora Utility DER Orchestration and Storm Response Platform
+data_classification: Restricted
+regulatory_scope:
+- NERC CIP
+- NIST
+- ISO 27001
+- PCI DSS
+deployment_model: hybrid
+critical_components:
+- DER Orchestration Engine
+- Outage Command Center
+- SCADA / ADMS Interface
+- Break-Glass Dispatch Console
+- Vendor Access Broker
+- Market Settlement Ledger
+- Audit and Decision Vault
+critical_flows:
+- DER Aggregator Partner -> API Mediation Gateway (DER flexibility availability feed)
+- Load Forecasting Service -> DER Orchestration Engine (load shed and restoration
+  recommendation)
+- DER Orchestration Engine -> SCADA / ADMS Interface (DER setpoint and feeder reconfiguration
+  request)
+- Vendor Access Broker -> SCADA / ADMS Interface (approved vendor diagnostic session)
+- Break-Glass Dispatch Console -> DER Orchestration Engine (emergency override command)
+critical_boundaries:
+- Cloud Operations Control Plane
+- OT Operations Zone
+- Restricted Customer and Settlement Data Zone
+- Vendor Support Enclave
+narrative_doc: narrative.pdf
+structured_doc: structured.pdf
+delta_doc: delta.pdf

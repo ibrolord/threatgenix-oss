@@ -1,0 +1,36 @@
+scenario_id: medledger_health
+title: MedLedger Health Exchange
+industry: Healthcare
+difficulty: extreme
+analyst_persona: Principal healthcare threat analyst preparing for ransomware tabletop
+  and privacy review
+description: Clinical integration platform joining patient portal, insurer APIs, PACS,
+  lab results, vendor support, and break-glass workflows.
+system_name: MedLedger Clinical Exchange
+data_classification: Restricted
+regulatory_scope:
+- PIPEDA
+- ISO 27001
+- NIST
+deployment_model: hybrid
+critical_components:
+- Identity Gateway
+- Clinical Integration Bus
+- Break-Glass Service
+- Vendor Support Bastion
+- Electronic Health Record Store
+- PACS Archive
+- Lab Results Repository
+critical_flows:
+- Patient Portal User -> Identity Gateway (patient login and records access)
+- Clinical Integration Bus -> Electronic Health Record Store (patient chart query)
+- Clinical Integration Bus -> PACS Archive (imaging retrieval)
+- Vendor Support Technician -> Vendor Support Bastion (privileged vendor session)
+- Break-Glass Service -> Electronic Health Record Store (emergency override query)
+critical_boundaries:
+- Patient and Partner Edge
+- Clinical Operations Zone
+- Restricted Clinical Data Zone
+narrative_doc: narrative.pdf
+structured_doc: structured.pdf
+delta_doc: delta.pdf

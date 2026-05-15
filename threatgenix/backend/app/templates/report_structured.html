@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ cover_title }} - {{ system_name }}</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 1.8cm;
+    @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #64748b; }
+    @bottom-right { content: "ThreatGenix v{{ app_version }}"; font-size: 7pt; color: #94a3b8; }
+  }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    color: #172033;
+    line-height: 1.5;
+  }
+  h1, h2, h3, h4 { color: #0f274f; margin: 0; }
+  h1 { font-size: 30pt; margin-top: 6pt; }
+  h2 { font-size: 17pt; margin-bottom: 8pt; }
+  h3 { font-size: 12pt; margin: 16pt 0 8pt; }
+  h4 { font-size: 10pt; margin: 0 0 4pt; text-transform: uppercase; letter-spacing: 0.08em; color: #53627a; }
+  p { margin: 0 0 10pt; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 9.5pt; }
+  th, td { border: 1px solid #d9e1ec; padding: 6pt 8pt; text-align: left; vertical-align: top; }
+  th { background: #0f274f; color: #ffffff; font-weight: bold; }
+  tr:nth-child(even) { background: #f8fafc; }
+  .title-page { page-break-after: always; padding-top: 18%; text-align: center; }
+  .title-logo { margin-bottom: 22pt; }
+  .title-logo img { max-height: 62pt; max-width: 220pt; }
+  .cover-kicker { font-size: 9pt; letter-spacing: 0.14em; text-transform: uppercase; color: #64748b; }
+  .cover-subtitle { font-size: 13pt; color: #475569; margin-top: 10pt; }
+  .cover-description { margin: 14pt auto 0; max-width: 30rem; color: #4b5563; }
+  .cover-meta { margin-top: 28pt; font-size: 10pt; color: #334155; }
+  .classification-badge {
+    display: inline-block;
+    margin-top: 14pt;
+    padding: 4pt 12pt;
+    border-radius: 999px;
+    font-size: 9pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .classification-Public { background: #dcfce7; color: #166534; }
+  .classification-Internal { background: #dbeafe; color: #1d4ed8; }
+  .classification-Confidential { background: #fef3c7; color: #92400e; }
+  .classification-Restricted { background: #fee2e2; color: #991b1b; }
+  .section { page-break-inside: avoid; margin-top: 22pt; }
+  .section-heading {
+    border-bottom: 2px solid #0f274f;
+    padding-bottom: 5pt;
+    margin-bottom: 10pt;
+  }
+  .section-label {
+    font-size: 8.5pt;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #64748b;
+    margin-bottom: 4pt;
+  }
+  .section-intro {
+    color: #475569;
+    margin-bottom: 10pt;
+  }
+  .stat-grid {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin-top: 12pt;
+    margin-bottom: 10pt;
+  }
+  .stat-card {
+    display: table-cell;
+    border: 1px solid #d9e1ec;
+    background: #f8fafc;
+    padding: 12pt 10pt;
+    text-align: center;
+  }
+  .stat-card + .stat-card { border-left: none; }
+  .stat-number { display: block; font-size: 24pt; font-weight: bold; color: #0f274f; }
+  .stat-number.danger { color: #b91c1c; }
+  .stat-label { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.08em; color: #64748b; }
+  .key-value-grid {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin-top: 8pt;
+  }
+  .key-value-item {
+    display: table-row;
+  }
+  .key-value-key, .key-value-value {
+    display: table-cell;
+    border: 1px solid #d9e1ec;
+    padding: 7pt 9pt;
+    vertical-align: top;
+  }
+  .key-value-key {
+    width: 32%;
+    font-weight: bold;
+    background: #f8fafc;
+  }
+  .chips { margin: 6pt 0 0; }
+  .chip {
+    display: inline-block;
+    background: #eef2ff;
+    color: #3730a3;
+    border-radius: 999px;
+    padding: 2pt 8pt;
+    margin: 0 6pt 6pt 0;
+    font-size: 8.5pt;
+  }
+  .chip.warn { background: #fef3c7; color: #92400e; }
+  .empty-state {
+    border: 1px dashed #cbd5e1;
+    border-radius: 8pt;
+    padding: 16pt;
+    color: #64748b;
+    text-align: center;
+    background: #f8fafc;
+  }
+  .dfd-image, .arch-image {
+    text-align: center;
+    margin-top: 10pt;
+  }
+  .dfd-image img, .arch-image img {
+    max-width: 100%;
+    border: 1px solid #d9e1ec;
+    border-radius: 8pt;
+  }
+  .arch-card { margin-top: 12pt; page-break-inside: avoid; }
+  .arch-title { font-weight: bold; color: #334155; margin-bottom: 6pt; }
+  .pill {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 2pt 8pt;
+    font-size: 8.5pt;
+    font-weight: bold;
+    background: #e2e8f0;
+    color: #334155;
+  }
+  .severity-Critical, .severity-High { color: #b91c1c; font-weight: bold; }
+  .severity-Medium { color: #b45309; font-weight: bold; }
+  .severity-Low, .severity-Negligible { color: #166534; font-weight: bold; }
+  .source-badge { display: inline-block; padding: 2pt 7pt; border-radius: 999px; font-size: 8pt; font-weight: bold; background: #e2e8f0; color: #334155; }
+  .provider-split {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin-top: 10pt;
+  }
+  .provider-column {
+    display: table-cell;
+    width: 50%;
+    vertical-align: top;
+    border: 1px solid #d9e1ec;
+    padding: 10pt;
+    background: #f8fafc;
+  }
+  .provider-column + .provider-column { border-left: none; }
+  .provider-column ul { margin: 8pt 0 0 18pt; padding: 0; }
+  .provider-column li { margin-bottom: 4pt; }
+  .prewrap { white-space: pre-wrap; }
+  .watermark {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: rotate(-38deg) translate(-50%, -50%);
+    font-size: 72pt;
+    opacity: 0.06;
+    color: #0f172a;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+{% if report_watermark_text %}
+<div class="watermark">{{ report_watermark_text }}</div>
+{% endif %}
+
+<div class="title-page">
+  {% if report_logo_base64 %}
+  <div class="title-logo">
+    <img src="data:image/png;base64,{{ report_logo_base64 }}" alt="Logo" />
+  </div>
+  {% endif %}
+  <div class="cover-kicker">{{ template_audience | replace("_", " ") }}</div>
+  <h1>{{ system_name }}</h1>
+  <div class="cover-subtitle">{{ cover_title }}</div>
+  {% if cover_subtitle %}
+  <div class="cover-description">{{ cover_subtitle }}</div>
+  {% elif template_description %}
+  <div class="cover-description">{{ template_description }}</div>
+  {% endif %}
+  <div class="cover-meta">
+    <div>Generated: {{ generated_at }}</div>
+    <div>Created: {{ created_at }}</div>
+    <div class="classification-badge classification-{{ data_classification }}">{{ data_classification }}</div>
+  </div>
+</div>
+
+{% for section in render_sections %}
+<section class="section">
+  <div class="section-heading">
+    <div class="section-label">Section {{ section.number }}</div>
+    <h2>{{ section.title }}</h2>
+  </div>
+  {% if section.intro_text %}
+  <p class="section-intro">{{ section.intro_text }}</p>
+  {% endif %}
+
+  {% if section.kind == "executive_summary" %}
+  <div class="stat-grid">
+    <div class="stat-card">
+      <span class="stat-number {% if section.critical_high_count > 0 %}danger{% endif %}">{{ section.critical_high_count }}</span>
+      <span class="stat-label">Critical / High</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{{ section.total_threats }}</span>
+      <span class="stat-label">Total Threats</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{{ section.open_count }}</span>
+      <span class="stat-label">Open</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{{ section.accepted_count }}</span>
+      <span class="stat-label">Accepted Risk</span>
+    </div>
+  </div>
+  <table>
+    <thead>
+      <tr><th>Critical</th><th>High</th><th>Medium</th><th>Low</th><th>Negligible</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ section.residual_risk_summary.Critical }}</td>
+        <td>{{ section.residual_risk_summary.High }}</td>
+        <td>{{ section.residual_risk_summary.Medium }}</td>
+        <td>{{ section.residual_risk_summary.Low }}</td>
+        <td>{{ section.residual_risk_summary.Negligible }}</td>
+      </tr>
+    </tbody>
+  </table>
+  {% if section.accepted_count > 0 %}
+  <h3>Accepted Risk Summary</h3>
+  <p>{{ section.accepted_count }} threat{{ "s" if section.accepted_count != 1 else "" }} {{ "have" if section.accepted_count != 1 else "has" }} been reviewed and accepted as residual risk. Accepted threats remain in the risk register and are included in compliance mapping but are not considered actionable for immediate mitigation.</p>
+  {% if section.accepted_threats %}
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Severity</th><th>Residual</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      {% for threat in section.accepted_threats %}
+      <tr>
+        <td>{{ threat.display_id }}</td>
+        <td class="severity-{{ threat.severity }}">{{ threat.severity }}</td>
+        <td>{{ threat.residual_risk_level }}</td>
+        <td>{{ threat.description[:120] }}{% if threat.description|length > 120 %}...{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% endif %}
+
+  {% if section.total_threats > 0 %}
+  <h3>Severity Distribution</h3>
+  <div style="margin:8pt 0 14pt;display:table;width:100%;table-layout:fixed;">
+    {% set sev_levels = [("Critical", section.residual_risk_summary.Critical, "#b91c1c"),
+                         ("High", section.residual_risk_summary.High, "#dc2626"),
+                         ("Medium", section.residual_risk_summary.Medium, "#d97706"),
+                         ("Low", section.residual_risk_summary.Low, "#16a34a"),
+                         ("Negligible", section.residual_risk_summary.Negligible, "#64748b")] %}
+    {% for label, count, color in sev_levels %}
+    <div style="display:table-cell;text-align:center;vertical-align:bottom;padding:0 4pt;">
+      <div style="font-size:11pt;font-weight:bold;color:{{ color }};margin-bottom:3pt;">{{ count }}</div>
+      {% set bar_pct = (count / section.total_threats * 100) | int if section.total_threats > 0 else 0 %}
+      <div style="margin:0 auto;width:60%;height:{{ [bar_pct, 4] | max }}pt;background:{{ color }};border-radius:3pt;"></div>
+      <div style="font-size:7.5pt;color:#64748b;margin-top:4pt;text-transform:uppercase;letter-spacing:0.06em;">{{ label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if section.critical_high_threats %}
+  <h3>Highest Priority Threats</h3>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>STRIDE</th><th>Severity</th><th>Description</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      {% for threat in section.critical_high_threats %}
+      <tr>
+        <td>{{ threat.display_id }}</td>
+        <td>{{ threat.stride_category }}</td>
+        <td class="severity-{{ threat.severity }}">{{ threat.severity }}</td>
+        <td>{{ threat.description }}</td>
+        <td>{{ threat.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% elif section.kind == "scope" %}
+  <div class="key-value-grid">
+    {% for item in section["items"] %}
+    <div class="key-value-item">
+      <div class="key-value-key">{{ item[0] }}</div>
+      <div class="key-value-value">{{ item[1] }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% elif section.kind == "system_context" %}
+  <div class="key-value-grid">
+    <div class="key-value-item">
+      <div class="key-value-key">Deployment model</div>
+      <div class="key-value-value">{{ section.context.deployment_model }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Regulatory scope</div>
+      <div class="key-value-value">
+        {% if section.context.regulatory_scope %}
+        <div class="chips">
+          {% for item in section.context.regulatory_scope %}
+          <span class="chip">{{ item }}</span>
+          {% endfor %}
+        </div>
+        {% else %}
+        No regulatory scope selected.
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% if section.context.environment_context_summary %}
+  <h3>Environment Summary</h3>
+  <p class="prewrap">{{ section.context.environment_context_summary }}</p>
+  {% endif %}
+  {% set groups = [
+    ("Languages", section.context.languages),
+    ("Frameworks", section.context.frameworks),
+    ("Entrypoints", section.context.entrypoints),
+    ("API routes", section.context.api_routes),
+    ("Auth mechanisms", section.context.auth_mechanisms),
+    ("Data stores", section.context.data_stores),
+    ("Queues", section.context.queues),
+    ("External integrations", section.context.external_integrations),
+    ("Deployment clues", section.context.deployment_clues),
+    ("Infrastructure resources", section.context.infrastructure_resources),
+    ("Exposed services", section.context.exposed_services),
+    ("Identity risks", section.context.identity_risks),
+    ("Encryption gaps", section.context.encryption_gaps),
+    ("Public exposure", section.context.public_exposure),
+    ("IAM bindings", section.context.iam_bindings),
+    ("Network paths", section.context.network_paths),
+    ("Secret references", section.context.secret_refs),
+    ("Warnings", section.context.warnings),
+  ] %}
+  {% for label, values in groups %}
+    {% if values %}
+    <h3>{{ label }}</h3>
+    <div class="chips">
+      {% for item in values %}
+      <span class="chip {% if label == 'Warnings' or label == 'Encryption gaps' %}warn{% endif %}">{{ item }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endfor %}
+
+  {% elif section.kind == "dfd" %}
+  {% if section.dfd_image_base64 %}
+  <div class="dfd-image">
+    <img src="data:image/png;base64,{{ section.dfd_image_base64 }}" alt="Data Flow Diagram" />
+  </div>
+  {% else %}
+  <div class="empty-state">DFD image was not captured for this export.</div>
+  {% endif %}
+  {% if section.dfd_integrity_sha256 %}
+  <p class="muted">Authoritative DFD JSON SHA-256: {{ section.dfd_integrity_sha256 }}</p>
+  {% endif %}
+
+  {% elif section.kind == "arch_diagrams" %}
+  {% if section.arch_diagrams %}
+    {% for diagram in section.arch_diagrams %}
+    <div class="arch-card">
+      <div class="arch-title">{{ loop.index }}. {{ diagram.name }}</div>
+      <div class="arch-image">
+        <img src="data:image/png;base64,{{ diagram.image_base64 }}" alt="{{ diagram.name }}" />
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="empty-state">No architectural diagrams were attached to this model.</div>
+  {% endif %}
+
+  {% elif section.kind == "threats" %}
+  {% if section.threats %}
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>STRIDE</th>
+        <th>Severity</th>
+        <th>Residual</th>
+        <th>Description</th>
+        <th>Source</th>
+        <th>Status</th>
+        <th>Control Effectiveness</th>
+        <th>Mitigation Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for threat in section.threats %}
+      <tr>
+        <td>{{ threat.display_id }}{% if threat.rule_id %}<div style="font-size:8pt;color:#64748b;">{{ threat.rule_id }}</div>{% endif %}</td>
+        <td>{{ threat.stride_category }}</td>
+        <td class="severity-{{ threat.severity }}">{{ threat.severity }}</td>
+        <td>{{ threat.residual_risk_level }}</td>
+        <td>
+          {{ threat.description }}
+          {% if threat.relevance_rationale %}
+          <div style="margin-top:6pt;padding:6pt 8pt;background:#f0f9ff;border-left:3px solid #2563eb;border-radius:0 4pt 4pt 0;font-size:9pt;color:#1e40af;">
+            <strong>Why This Matters:</strong> {{ threat.relevance_rationale }}
+          </div>
+          {% endif %}
+          {% if threat.citations %}
+          <div style="margin-top:4pt;font-size:8pt;color:#4338ca;">
+            {% for cid in threat.citations %}<span class="chip" style="font-size:7.5pt;margin:2pt 3pt 0 0;">{{ cid }}</span>{% endfor %}
+          </div>
+          {% endif %}
+        </td>
+        <td><span class="source-badge">{{ threat.source }}</span></td>
+        <td>{{ threat.status }}</td>
+        <td>{{ threat.control_effectiveness }}</td>
+        <td>{{ threat.mitigation_status or "-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">No reportable threats were available for this model.</div>
+  {% endif %}
+
+  {% elif section.kind == "controls" %}
+  {% if section.controls %}
+  <table>
+    <thead>
+      <tr><th>Control</th><th>Category</th><th>Status</th><th>Owner</th><th>Mapped Threats</th><th>Evidence</th></tr>
+    </thead>
+    <tbody>
+      {% for control in section.controls %}
+      <tr>
+        <td><strong>{{ control.title }}</strong>{% if control.description %}<div>{{ control.description }}</div>{% endif %}</td>
+        <td>{{ control.category }}</td>
+        <td>{{ control.status }}</td>
+        <td>{{ control.owner or "-" }}</td>
+        <td>{{ control.mapped_threat_count }}</td>
+        <td>{{ control.evidence or "-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">No structured control library entries were recorded for this model.</div>
+  {% endif %}
+
+  {% elif section.kind == "assumptions" %}
+  {% if section.assumptions %}
+  <table>
+    <thead>
+      <tr><th>Assumption</th><th>Status</th><th>Anchor</th><th>Updated</th></tr>
+    </thead>
+    <tbody>
+      {% for assumption in section.assumptions %}
+      <tr>
+        <td><strong>{{ assumption.title }}</strong>{% if assumption.description %}<div>{{ assumption.description }}</div>{% endif %}</td>
+        <td>{{ assumption.status }}</td>
+        <td>{{ assumption.anchor_label }}</td>
+        <td>{{ assumption.updated_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">No assumptions were explicitly recorded for this model.</div>
+  {% endif %}
+
+  {% elif section.kind == "compliance" %}
+  {% if section.compliance_by_threat %}
+  <table>
+    <thead>
+      <tr><th>Threat</th><th>STRIDE</th><th>Mapped controls</th></tr>
+    </thead>
+    <tbody>
+      {% for item in section.compliance_by_threat %}
+      <tr>
+        <td>{{ item.display_id }}</td>
+        <td>{{ item.stride_category }}</td>
+        <td>
+          {% if item.controls %}
+            {% for control in item.controls %}
+            <div{% if control.framework == "OSFI B-13" %} style="font-weight:700;color:#0f274f;"{% endif %}>[{{ control.framework }}] {{ control.control_id }}{% if control.control_name %} - {{ control.control_name }}{% endif %}</div>
+            {% endfor %}
+          {% else %}
+          <span style="color:#b45309;font-weight:600;">&#9888; No compliance controls mapped.</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">No compliance mappings were available.</div>
+  {% endif %}
+
+  {% elif section.kind == "scan_validation" %}
+  <div class="key-value-grid">
+    <div class="key-value-item">
+      <div class="key-value-key">Latest scan</div>
+      <div class="key-value-value">
+        {% if section.scan_summary.has_scan %}
+        {{ section.scan_summary.scan_date }}
+        {% else %}
+        No completed validation scan.
+        {% endif %}
+      </div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Validation counts</div>
+      <div class="key-value-value">
+        Confirmed: {{ section.scan_summary.confirmed_count }} ·
+        Mitigated: {{ section.scan_summary.mitigated_count }} ·
+        Not found: {{ section.scan_summary.not_found_count }} ·
+        Unverifiable: {{ section.scan_summary.unverifiable_count }}
+      </div>
+    </div>
+  </div>
+  {% if section.validation_runbook %}
+  <div class="key-value-grid">
+    <div class="key-value-item">
+      <div class="key-value-key">Validated threats</div>
+      <div class="key-value-value">{{ section.validation_runbook.coverage.validated_threat_count }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Indicated threats</div>
+      <div class="key-value-value">{{ section.validation_runbook.coverage.indicated_threat_count }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Unbound evidence</div>
+      <div class="key-value-value">{{ section.validation_runbook.coverage.unbound_finding_count }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Untested threats</div>
+      <div class="key-value-value">{{ section.validation_runbook.coverage.untested_threat_count }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Validated risk score</div>
+      <div class="key-value-value">{{ section.validation_runbook.coverage.validated_risk_score }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Indicated risk score</div>
+      <div class="key-value-value">{{ section.validation_runbook.coverage.indicated_risk_score }}</div>
+    </div>
+  </div>
+  <p>{{ section.validation_runbook.executive_summary }}</p>
+  {% if section.validation_runbook.mapped_threats %}
+  <table>
+    <thead>
+      <tr><th>Threat</th><th>Confidence</th><th>Risk</th><th>Evidence quality</th><th>Next action</th></tr>
+    </thead>
+    <tbody>
+      {% for item in section.validation_runbook.mapped_threats[:8] %}
+      <tr>
+        <td>{{ item.threat_display_id }}</td>
+        <td>{{ item.confidence_label }}</td>
+        <td>{{ item.risk_score }}</td>
+        <td>{{ item.evidence_quality }}</td>
+        <td>{{ item.next_action }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% if section.validation_runbook.gaps %}
+  <ul>
+    {% for gap in section.validation_runbook.gaps[:5] %}
+    <li>{{ gap }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+  {% if section.validation_runbook.unbound_findings %}
+  <table>
+    <thead>
+      <tr><th>Unbound finding</th><th>Severity</th><th>Tool</th><th>Matched at</th></tr>
+    </thead>
+    <tbody>
+      {% for item in section.validation_runbook.unbound_findings[:8] %}
+      <tr>
+        <td>{{ item.title }}</td>
+        <td class="severity-{{ item.severity }}">{{ item.severity }}</td>
+        <td>{{ item.tool_name or "-" }}</td>
+        <td>{{ item.matched_at }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% endif %}
+  {% if section.scan_threat_results %}
+  <table>
+    <thead>
+      <tr><th>Threat</th><th>Severity</th><th>Scan status</th><th>CVE IDs</th></tr>
+    </thead>
+    <tbody>
+      {% for item in section.scan_threat_results %}
+      <tr>
+        <td>{{ item.display_id }}</td>
+        <td class="severity-{{ item.severity }}">{{ item.severity }}</td>
+        <td>{{ item.scan_status }}</td>
+        <td>{{ item.cve_ids | join(", ") if item.cve_ids else "-" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+  {% if section.agent_validation_results %}
+  <h3>Agent Validation Outcomes</h3>
+  <p>These rows summarize evidence-backed validation runs for individual threats. They do not assert that the whole application is secure or that remediation is complete.</p>
+  <table>
+    <thead>
+      <tr><th>Threat</th><th>Conclusion</th><th>Exploitability</th><th>Confidence</th><th>Evidence</th><th>Domain agents</th><th>Handoff</th></tr>
+    </thead>
+    <tbody>
+      {% for item in section.agent_validation_results %}
+      <tr>
+        <td>{{ item.display_id }}</td>
+        <td>{{ item.conclusion }}</td>
+        <td>{{ item.exploitability_status }}<br/>{{ item.attacker_profile }}</td>
+        <td>{{ item.confidence }}</td>
+        <td>{{ item.evidence_count }}</td>
+        <td>
+          {% for agent in item.domain_agents %}
+          {{ agent.label }}: {{ agent.tools }}{% if not loop.last %}<br/>{% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {{ item.handoff_delivery_status }}
+          {% if item.external_ticket_url %}
+          <br/>{{ item.external_ticket_url }}
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% elif section.kind == "responsibility_matrix" %}
+  <div class="provider-split">
+    <div class="provider-column">
+      <h3>Provider-managed</h3>
+      {% if section.responsibility_matrix.provider %}
+      <ul>
+        {% for item in section.responsibility_matrix.provider[:12] %}
+        <li>{{ item.display_id }} - {{ item.description }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No provider-managed threats are flagged.</p>
+      {% endif %}
+    </div>
+    <div class="provider-column">
+      <h3>Institution-managed</h3>
+      {% if section.responsibility_matrix.customer %}
+      <ul>
+        {% for item in section.responsibility_matrix.customer[:12] %}
+        <li>{{ item.display_id }} - {{ item.description }}</li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No institution-managed threats are flagged.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  {% elif section.kind == "methodology" %}
+  <p class="prewrap">{{ section.methodology_text }}</p>
+
+  {% elif section.kind == "attestation" %}
+  <div class="key-value-grid">
+    <div class="key-value-item">
+      <div class="key-value-key">Analyst</div>
+      <div class="key-value-value">{{ section.analyst_name or "Not specified" }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Report Date</div>
+      <div class="key-value-value">{{ section.generated_at }}</div>
+    </div>
+    <div class="key-value-item">
+      <div class="key-value-key">Next Review</div>
+      <div class="key-value-value">{{ section.next_review_date or "Not scheduled" }}</div>
+    </div>
+  </div>
+  {% if section.analyst_attestation %}
+  <div style="margin-top:12pt;padding:10pt 14pt;border:1px solid #0f274f;border-radius:4pt;background:#f0f4f8;">
+    <strong>Statement:</strong> {{ section.analyst_attestation }}
+  </div>
+  {% else %}
+  <div style="margin-top:12pt;padding:10pt 14pt;border:1px dashed #94a3b8;border-radius:4pt;color:#64748b;">
+    <em>Attestation statement not yet recorded. Complete via Report Settings before final submission.</em>
+  </div>
+  {% endif %}
+  <div style="margin-top:28pt;display:table;width:100%;">
+    <div style="display:table-cell;width:45%;border-top:1px solid #334155;padding-top:6pt;font-size:9pt;color:#475569;">Analyst Signature &amp; Date</div>
+    <div style="display:table-cell;width:10%;"></div>
+    <div style="display:table-cell;width:45%;border-top:1px solid #334155;padding-top:6pt;font-size:9pt;color:#475569;">Reviewer Signature &amp; Date</div>
+  </div>
+
+  {% elif section.kind == "threat_intel_refs" %}
+  {% if section.entries %}
+  <table>
+    <thead>
+      <tr><th>Threat ID</th><th>STRIDE</th><th>Severity</th><th>Intelligence References</th></tr>
+    </thead>
+    <tbody>
+      {% for entry in section.entries %}
+      <tr>
+        <td>{{ entry.display_id }}</td>
+        <td>{{ entry.stride_category }}</td>
+        <td class="severity-{{ entry.severity }}">{{ entry.severity }}</td>
+        <td>
+          {% for cid in entry.citations %}
+          <span class="chip" style="font-size:8pt;margin:2pt 3pt 2pt 0;display:inline-block;">{{ cid }}</span>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">No threat intelligence references were associated with this threat model.</div>
+  {% endif %}
+
+  {% elif section.kind == "custom_text" %}
+  <p class="prewrap">{{ section.body }}</p>
+  {% endif %}
+</section>
+{% endfor %}
+
+</body>
+</html>

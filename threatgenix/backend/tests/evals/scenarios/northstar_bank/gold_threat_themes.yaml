@@ -1,0 +1,148 @@
+critical_themes:
+- id: NSTAR-01
+  title: Partner callback spoofing
+  description: A forged partner callback or replay can corrupt payment status and
+    customer notification state.
+  severity: High
+  stride_categories:
+  - Spoofing
+  - Tampering
+  affected_assets:
+  - API Gateway
+  - Payments Orchestrator
+- id: NSTAR-02
+  title: Privileged repair workflow abuse
+  description: Emergency repair or override flows can bypass AML or payment approval
+    controls.
+  severity: Critical
+  stride_categories:
+  - Elevation of Privilege
+  - Tampering
+  affected_assets:
+  - Payments Orchestrator
+  - SWIFT Connector
+- id: NSTAR-03
+  title: SWIFT message manipulation
+  description: An attacker who reaches the SWIFT path can alter cross-border payment
+    instructions or beneficiary data.
+  severity: Critical
+  stride_categories:
+  - Tampering
+  - Repudiation
+  affected_assets:
+  - SWIFT Connector
+- id: NSTAR-04
+  title: Token vault exposure
+  description: Improper access to tokenization services can expose PAN-derived data
+    or enable fraudulent detokenization.
+  severity: Critical
+  stride_categories:
+  - Information Disclosure
+  - Elevation of Privilege
+  affected_assets:
+  - Card Token Vault
+- id: NSTAR-05
+  title: Case data leakage
+  description: Fraud investigation notes and enriched case narratives can expose highly
+    sensitive payment or identity details.
+  severity: High
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Case Management Store
+- id: NSTAR-06
+  title: Core ledger integrity failure
+  description: Posting or replay logic errors can result in double posting, out-of-balance
+    accounts, or unreconciled ledger state.
+  severity: Critical
+  stride_categories:
+  - Tampering
+  - Denial of Service
+  affected_assets:
+  - Core Banking Ledger
+- id: NSTAR-07
+  title: Fraud/AML override drift
+  description: Operational pressure can lead to misuse of investigation or screening
+    override functions.
+  severity: High
+  stride_categories:
+  - Elevation of Privilege
+  - Repudiation
+  affected_assets:
+  - Fraud Scoring Engine
+  - AML Screening Service
+- id: NSTAR-08
+  title: High-volume partner flood
+  description: Payroll or partner bursts can overwhelm synchronous scoring and screening
+    dependencies.
+  severity: High
+  stride_categories:
+  - Denial of Service
+  affected_assets:
+  - API Gateway
+  - Payments Orchestrator
+important_themes:
+- id: NSTAR-09
+  title: Treasury impersonation risk
+  description: Treasury sessions represent high-value operator identities and batch
+    approval capability.
+  severity: High
+  stride_categories:
+  - Spoofing
+  affected_assets:
+  - Treasury Portal User
+  - API Gateway
+- id: NSTAR-10
+  title: Partner payload validation gaps
+  description: Malformed or malicious partner payloads can propagate into orchestration
+    or screening pipelines.
+  severity: Medium
+  stride_categories:
+  - Tampering
+  affected_assets:
+  - API Gateway
+- id: NSTAR-11
+  title: Sensitive callback disclosure
+  description: Status callbacks can leak internal adjudication or failure details
+    to external parties.
+  severity: Medium
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Open Banking Partner
+- id: NSTAR-12
+  title: Scoring dependency outage
+  description: Fraud or AML service degradation can cause delayed posting or unsafe
+    fail-open behavior.
+  severity: High
+  stride_categories:
+  - Denial of Service
+  affected_assets:
+  - Fraud Scoring Engine
+  - AML Screening Service
+expected_stride_coverage:
+- Spoofing
+- Tampering
+- Repudiation
+- Information Disclosure
+- Denial of Service
+- Elevation of Privilege
+critical_assets:
+- Payments Orchestrator
+- SWIFT Connector
+- Core Banking Ledger
+- Card Token Vault
+critical_boundaries:
+- Customer and Partner Edge
+- Payments Control Plane
+- Restricted Data Zone
+top_severity_expectations:
+- NSTAR-02
+- NSTAR-03
+- NSTAR-04
+- NSTAR-06
+must_not_hallucinate:
+- Public blockchain settlement
+- Smart contract exploit paths
+- Consumer social media login
+- Biometric edge sensor compromise

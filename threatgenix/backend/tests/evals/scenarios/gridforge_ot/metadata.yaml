@@ -1,0 +1,34 @@
+scenario_id: gridforge_ot
+title: GridForge OT Telemetry and Maintenance Platform
+industry: Industrial / operational technology
+difficulty: extreme
+analyst_persona: Lead OT security analyst preparing a remote maintenance risk review
+description: Industrial telemetry and maintenance platform spanning supplier portal,
+  VPN jump hosts, plant DMZ, historian, field gateways, and predictive analytics.
+system_name: GridForge Plant Operations Platform
+data_classification: Confidential
+regulatory_scope:
+- NIST
+- ISO 27001
+deployment_model: hybrid
+critical_components:
+- VPN Gateway
+- OT Jump Host
+- Maintenance Orchestrator
+- Telemetry Broker
+- Plant Historian
+- Field Gateway
+- PLC Command Store
+critical_flows:
+- Remote Maintenance Vendor -> VPN Gateway (remote maintenance tunnel)
+- VPN Gateway -> OT Jump Host (interactive privileged session)
+- Maintenance Orchestrator -> Field Gateway (maintenance job dispatch)
+- Field Gateway -> Telemetry Broker (plant telemetry stream)
+- Telemetry Broker -> Plant Historian (time-series archive write)
+critical_boundaries:
+- External Access Zone
+- Plant DMZ
+- OT Core Zone
+narrative_doc: narrative.pdf
+structured_doc: structured.pdf
+delta_doc: delta.pdf

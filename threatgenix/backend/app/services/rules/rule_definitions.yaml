@@ -1,0 +1,643 @@
+rules:
+  # ===========================================================================
+  # Spoofing (S)
+  # ===========================================================================
+  - rule_id: "S-01"
+    stride_category: "Spoofing"
+    threat_subtype: "Identity spoofing across trust boundary"
+    description_template: >-
+      An attacker could spoof the identity of {source_name} ({source_type}) to
+      send forged {edge_label} to {target_name} across the {boundary_name} trust
+      boundary.
+    severity: "High"
+    condition_function: "condition_s01"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "S-02"
+    stride_category: "Spoofing"
+    threat_subtype: "Spoofed data flow across boundary"
+    description_template: >-
+      The {edge_label} data flow from {source_name} ({source_type}) to
+      {target_name} ({target_type}) crosses the {boundary_name} trust boundary
+      and could be spoofed by an attacker to inject forged requests, state
+      changes, or other unauthorized control signals.
+    severity: "Medium"
+    condition_function: "condition_s02"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "S-03"
+    stride_category: "Spoofing"
+    threat_subtype: "High-value external actor spoofing"
+    description_template: >-
+      {node_name} ({node_type}) participates in high-value external workflows
+      without explicit identity assurance. An attacker could impersonate this
+      actor to submit fraudulent approvals, callbacks, or control requests.
+    severity: "High"
+    condition_function: "condition_s03"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  # ===========================================================================
+  # Tampering (T)
+  # ===========================================================================
+  - rule_id: "T-01"
+    stride_category: "Tampering"
+    threat_subtype: "Data tampering in transit across boundary"
+    description_template: >-
+      The {edge_label} data flow from {source_name} to {target_name} crosses the
+      {boundary_name} trust boundary and could be intercepted and modified in
+      transit, compromising data integrity.
+    severity: "High"
+    condition_function: "condition_t01"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "T-02"
+    stride_category: "Tampering"
+    threat_subtype: "Unauthorized data store modification by external entity"
+    description_template: >-
+      {source_name} ({source_type}) sends {edge_label} directly to {target_name}
+      data store. An external entity writing to a data store without proper
+      validation could corrupt financial records or account data.
+    severity: "High"
+    condition_function: "condition_t02"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-03"
+    stride_category: "Tampering"
+    threat_subtype: "Data store write integrity risk"
+    description_template: >-
+      {source_name} sends {edge_label} to {target_name} ({target_type}) data
+      store. Without proper integrity checks, this write operation could result
+      in unauthorized modifications to stored data.
+    severity: "Medium"
+    condition_function: "condition_t03"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-04"
+    stride_category: "Tampering"
+    threat_subtype: "Cross-boundary data store tampering"
+    description_template: >-
+      {target_name} data store could be tampered with by {source_name} sending
+      {edge_label} across the {boundary_name} trust boundary. This cross-boundary
+      write poses a high risk to data integrity.
+    severity: "High"
+    condition_function: "condition_t04"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+    priority: 40
+
+  # ===========================================================================
+  # Repudiation (R)
+  # ===========================================================================
+  - rule_id: "R-01"
+    stride_category: "Repudiation"
+    threat_subtype: "Unaudited external entity interaction"
+    description_template: >-
+      The interaction between {source_name} and {target_name} via {edge_label}
+      involves an external entity. Without adequate logging, this party could
+      deny having performed a transaction or action.
+    severity: "Medium"
+    condition_function: "condition_r01"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "R-02"
+    stride_category: "Repudiation"
+    threat_subtype: "Weak auditability on critical workflow"
+    description_template: >-
+      The {edge_label} flow between {source_name} and {target_name} is part of
+      a privileged or high-impact control workflow. Without strong audit trails
+      and non-repudiation evidence, disputed actions could not be reconstructed
+      reliably.
+    severity: "High"
+    condition_function: "condition_r02"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "R-03"
+    stride_category: "Repudiation"
+    threat_subtype: "Unaudited data store modification"
+    description_template: >-
+      {source_name} modifies {target_name} via {edge_label} without guaranteed
+      audit logging. Changes to stored data could be denied or go unnoticed,
+      hindering forensic investigation.
+    severity: "Medium"
+    condition_function: "condition_r03"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  # ===========================================================================
+  # Information Disclosure (I)
+  # ===========================================================================
+  - rule_id: "I-01"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Data exposure in transit across boundary"
+    description_template: >-
+      The {edge_label} data flow from {source_name} to {target_name} crosses the
+      {boundary_name} trust boundary and could expose sensitive information if
+      not properly encrypted in transit.
+    severity: "High"
+    condition_function: "condition_i01"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "I-02"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Sensitive data leaked to external entity"
+    description_template: >-
+      {source_name} ({source_type}) sends {edge_label} to {target_name}
+      ({target_type}), an external entity. Sensitive data from internal stores
+      could be leaked to unauthorized external parties.
+    severity: "High"
+    condition_function: "condition_i02"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "I-03"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Data store exposure across boundary"
+    description_template: >-
+      {source_name} data store sends {edge_label} to {target_name} across the
+      {boundary_name} trust boundary. Stored data crossing a trust boundary
+      poses a critical information disclosure risk.
+    severity: "Critical"
+    condition_function: "condition_i03"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "I-04"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Sensitive data in flow label"
+    description_template: >-
+      The {edge_label} data flow from {source_name} to {target_name} contains
+      sensitive keywords in its label, suggesting that credentials, tokens, or
+      personally identifiable information may be transmitted.
+    severity: "High"
+    condition_function: "condition_i04"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  # ===========================================================================
+  # Denial of Service (D)
+  # ===========================================================================
+  - rule_id: "D-01"
+    stride_category: "Denial of Service"
+    threat_subtype: "External entity flood attack on process"
+    description_template: >-
+      {source_name} ({source_type}) sends {edge_label} to {target_name}
+      ({target_type}). An external entity could flood the target process with
+      excessive requests, causing service degradation or outage.
+    severity: "Medium"
+    condition_function: "condition_d01"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "D-02"
+    stride_category: "Denial of Service"
+    threat_subtype: "Critical workflow process exhaustion"
+    description_template: >-
+      {node_name} ({node_type}) is an internet-facing or high-dependency process
+      in a critical workflow. Resource exhaustion here could stall downstream
+      dispatch, maintenance, screening, or other critical operations.
+    severity: "High"
+    condition_function: "condition_d02"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "D-03"
+    stride_category: "Denial of Service"
+    threat_subtype: "Single point of failure"
+    description_template: >-
+      {node_name} ({node_type}) is a potential single point of failure with high
+      connectivity. Disruption could cascade through dependent components.
+    severity: "High"
+    condition_function: "condition_d03"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  # ===========================================================================
+  # Elevation of Privilege (E)
+  # ===========================================================================
+  - rule_id: "E-01"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Privilege escalation via external access across boundary"
+    description_template: >-
+      {source_name} ({source_type}) accesses {target_name} ({target_type}) via
+      {edge_label} across the {boundary_name} trust boundary. An external entity
+      crossing a trust boundary to reach a process could exploit it to gain
+      elevated privileges within the system.
+    severity: "High"
+    condition_function: "condition_e01"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "E-02"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Privileged workflow abuse across boundary"
+    description_template: >-
+      The {edge_label} flow from {source_name} to {target_name} crosses the
+      {boundary_name} trust boundary as a privileged or override path. Abuse of
+      this workflow could bypass approval, screening, or repair controls and
+      grant elevated access.
+    severity: "Critical"
+    condition_function: "condition_e02"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "E-03"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Multiple entry points to trust boundary"
+    description_template: >-
+      The {boundary_name} trust boundary has {entry_count} entry points. Multiple
+      entry points increase the attack surface and the likelihood that an
+      attacker can find a path to escalate privileges.
+    severity: "Medium"
+    condition_function: "condition_e03"
+    condition_type: "boundary"
+    requires_boundary_crossing: false
+
+  # ===========================================================================
+  # Property-Dependent Rules (F-07+)
+  # ===========================================================================
+
+  # --- Spoofing ---
+  - rule_id: "S-04"
+    stride_category: "Spoofing"
+    threat_subtype: "Unauthenticated process receives cross-boundary flow"
+    description_template: >-
+      {target_name} ({target_type}) receives {edge_label} from {source_name}
+      across the {boundary_name} trust boundary without authentication enabled.
+      An attacker could spoof requests to this unprotected process.
+    severity: "High"
+    condition_function: "condition_s04"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "S-05"
+    stride_category: "Spoofing"
+    threat_subtype: "Unauthenticated external entity writes to data store"
+    description_template: >-
+      {source_name} ({source_type}) sends {edge_label} to {target_name}
+      ({target_type}) without authentication. An unauthenticated external entity
+      writing to a data store could inject malicious or fraudulent data.
+    severity: "High"
+    condition_function: "condition_s05"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "S-06"
+    stride_category: "Spoofing"
+    threat_subtype: "Internet-facing process without authentication"
+    description_template: >-
+      {node_name} ({node_type}) is internet-facing but does not use
+      authentication. An attacker from the internet could impersonate
+      legitimate users to access this process.
+    severity: "Critical"
+    condition_function: "condition_s06"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  # --- Tampering ---
+  - rule_id: "T-05"
+    stride_category: "Tampering"
+    threat_subtype: "Missing input validation on external input"
+    description_template: >-
+      {target_name} ({target_type}) receives {edge_label} from {source_name}
+      ({source_type}) without input validation. Unvalidated external input
+      could be used for injection attacks (SQL, command, XSS).
+    severity: "High"
+    condition_function: "condition_t05"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-06"
+    stride_category: "Tampering"
+    threat_subtype: "Unencrypted data store"
+    description_template: >-
+      {node_name} ({node_type}) does not use encryption at rest. Stored data
+      could be tampered with by an attacker who gains access to the underlying
+      storage medium or database.
+    severity: "High"
+    condition_function: "condition_t06"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-07"
+    stride_category: "Tampering"
+    threat_subtype: "Internet-facing process without encryption"
+    description_template: >-
+      {node_name} ({node_type}) is internet-facing but does not use encryption.
+      Data processed by this component could be intercepted and modified by
+      man-in-the-middle attacks.
+    severity: "Critical"
+    condition_function: "condition_t07"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-08"
+    stride_category: "Tampering"
+    threat_subtype: "High-risk control message tampering"
+    description_template: >-
+      The {edge_label} flow from {source_name} to {target_name} is a privileged
+      or high-impact control path. If an attacker tampers with this message,
+      they could alter approvals, control state, or other high-impact
+      decisions that the system treats as authoritative.
+    severity: "Critical"
+    condition_function: "condition_t08"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+    priority: 20
+
+  # --- Repudiation ---
+  - rule_id: "R-04"
+    stride_category: "Repudiation"
+    threat_subtype: "Sensitive data process audit gap"
+    description_template: >-
+      {node_name} ({node_type}) handles sensitive data. Without comprehensive
+      audit logging, actions on sensitive data could be denied or go undetected,
+      undermining forensic accountability and compliance evidence.
+    severity: "High"
+    condition_function: "condition_r04"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "R-05"
+    stride_category: "Repudiation"
+    threat_subtype: "Credential store without backup"
+    description_template: >-
+      {node_name} ({node_type}) stores credentials but lacks backup. Loss of
+      this data store could destroy audit evidence of credential usage, enabling
+      repudiation of authentication events.
+    severity: "Medium"
+    condition_function: "condition_r05"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "R-06"
+    stride_category: "Repudiation"
+    threat_subtype: "Internet-facing process audit risk"
+    description_template: >-
+      {node_name} ({node_type}) is internet-facing. Actions performed through
+      this public-facing process are high-value audit targets. Without adequate
+      logging, external actors could deny malicious actions.
+    severity: "Medium"
+    condition_function: "condition_r06"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  # --- Information Disclosure ---
+  - rule_id: "I-05"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Unencrypted credential storage"
+    description_template: >-
+      {node_name} ({node_type}) stores credentials without encryption at rest.
+      An attacker gaining access to this store could read passwords, tokens, or
+      API keys in plaintext, violating PCI DSS Requirement 8.3.
+    severity: "Critical"
+    condition_function: "condition_i05"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "I-06"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Sensitive data processed without encryption"
+    description_template: >-
+      {node_name} ({node_type}) handles sensitive data without encryption.
+      Sensitive information could be exposed in memory, logs, or error messages
+      during processing.
+    severity: "High"
+    condition_function: "condition_i06"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "I-07"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Token vault exposure"
+    description_template: >-
+      {node_name} ({node_type}) participates in tokenization or detokenization
+      workflows. Weak access control or path exposure here could leak
+      PAN-derived data or enable fraudulent token lookups.
+    severity: "Critical"
+    condition_function: "condition_i07"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "I-08"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Data leakage to untrusted external entity"
+    description_template: >-
+      {source_name} ({source_type}) sends {edge_label} to {target_name}
+      ({target_type}), an untrusted external entity. Internal data could be
+      leaked to an external party that has not been verified as trustworthy.
+    severity: "High"
+    condition_function: "condition_i08"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  # --- Denial of Service ---
+  - rule_id: "D-04"
+    stride_category: "Denial of Service"
+    threat_subtype: "Internet-facing process without input validation"
+    description_template: >-
+      {node_name} ({node_type}) is internet-facing without input validation.
+      An attacker could craft malicious payloads to crash or slow down this
+      process, causing denial of service.
+    severity: "High"
+    condition_function: "condition_d04"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "D-05"
+    stride_category: "Denial of Service"
+    threat_subtype: "Internet-exposed flood vector"
+    description_template: >-
+      {source_name} ({source_type}) is internet-facing and sends {edge_label}
+      to {target_name} ({target_type}). Internet-exposed entry points are
+      primary targets for volumetric flood attacks.
+    severity: "High"
+    condition_function: "condition_d05"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "D-06"
+    stride_category: "Denial of Service"
+    threat_subtype: "Core ledger resilience failure"
+    description_template: >-
+      {node_name} ({node_type}) is part of the posting and ledger path. If this
+      store becomes unavailable or falls behind during replay/recovery, payment
+      operations can stall and accounts can drift out of reconciliation.
+    severity: "Critical"
+    condition_function: "condition_d06"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  # --- Elevation of Privilege ---
+  - rule_id: "E-04"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Internet-facing process privilege escalation"
+    description_template: >-
+      {node_name} ({node_type}) is internet-facing without authentication.
+      An attacker could exploit this unauthenticated public endpoint to
+      escalate privileges and access internal resources.
+    severity: "Critical"
+    condition_function: "condition_e04"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "E-05"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Unauthenticated cross-boundary data store access"
+    description_template: >-
+      {source_name} ({source_type}) accesses {target_name} ({target_type}) via
+      {edge_label} across the {boundary_name} trust boundary without
+      authentication. This cross-boundary data store access could be exploited
+      to escalate privileges.
+    severity: "Critical"
+    condition_function: "condition_e05"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "E-06"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Missing input validation on cross-boundary process"
+    description_template: >-
+      {target_name} ({target_type}) receives {edge_label} from {source_name}
+      across the {boundary_name} trust boundary without input validation.
+      Unvalidated cross-boundary input is a primary vector for privilege
+      escalation via injection attacks.
+    severity: "High"
+    condition_function: "condition_e06"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "E-07"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Untrusted unauthenticated data store access"
+    description_template: >-
+      {source_name} ({source_type}) is an untrusted, unauthenticated external
+      entity with direct access to {target_name} ({target_type}) via
+      {edge_label}. This combination of no trust and no authentication on a
+      data store is a critical privilege escalation risk.
+    severity: "Critical"
+    condition_function: "condition_e07"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  # ===========================================================================
+  # Cloud-native rules (C-01 to C-05)
+  # ===========================================================================
+
+  - rule_id: "C-01"
+    stride_category: "Information Disclosure"
+    threat_subtype: "Managed service without encryption at rest"
+    description_template: >-
+      {node_name} is a managed cloud service ({node_type}) without encryption at
+      rest. Data stored in unencrypted managed services is accessible to cloud
+      provider staff, co-tenants via misconfiguration, and attackers who obtain
+      storage-layer access. Enable provider-native encryption (e.g., SSE-S3,
+      RDS encryption) and verify key management.
+    severity: "High"
+    condition_function: "condition_c01"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "C-02"
+    stride_category: "Elevation of Privilege"
+    threat_subtype: "Serverless function crossing trust boundary without authentication"
+    description_template: >-
+      {source_name} ({source_type}) crosses the {boundary_name} trust boundary
+      via {edge_label} without authentication controls. Serverless functions
+      with overly permissive IAM roles or missing auth checks can be invoked
+      by unintended callers, allowing privilege escalation within cloud
+      infrastructure.
+    severity: "High"
+    condition_function: "condition_c02"
+    condition_type: "tuple"
+    requires_boundary_crossing: true
+
+  - rule_id: "C-03"
+    stride_category: "Spoofing"
+    threat_subtype: "IAM role not enforcing authentication"
+    description_template: >-
+      {node_name} ({node_type}) is not marked as enforcing authentication.
+      Identity providers and IAM roles that do not enforce MFA or strong
+      authentication allow attackers to spoof identities and assume roles,
+      escalating access across the entire cloud environment.
+    severity: "High"
+    condition_function: "condition_c03"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "C-04"
+    stride_category: "Tampering"
+    threat_subtype: "API gateway accepting unvalidated input"
+    description_template: >-
+      {node_name} ({node_type}) does not validate input before routing requests.
+      API gateways that pass through unvalidated payloads expose downstream
+      services to injection attacks, schema violations, and malformed data
+      that can tamper with business logic or persist malicious content.
+    severity: "High"
+    condition_function: "condition_c04"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "C-05"
+    stride_category: "Tampering"
+    threat_subtype: "Internet-facing container without encryption"
+    description_template: >-
+      {node_name} ({node_type}) is internet-facing without encryption controls.
+      Containers deployed without TLS or encrypted communication channels
+      expose traffic to interception and tampering. Verify image signing,
+      enforce TLS for all ingress/egress, and use a verified container
+      registry with image scanning.
+    severity: "Medium"
+    condition_function: "condition_c05"
+    condition_type: "standalone"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-TLS-01"
+    stride_category: "Tampering"
+    threat_subtype: "Deprecated TLS 1.0 on data flow"
+    description_template: >-
+      Data flow '{edge_label}' from {source_name} ({source_type}) to
+      {target_name} ({target_type}) uses deprecated TLS 1.0, which has known
+      vulnerabilities (POODLE, BEAST). PCI DSS 4.0 Requirement 4.2.1 prohibits
+      TLS 1.0 for cardholder data. Upgrade to TLS 1.2 minimum (TLS 1.3
+      preferred). Update server and client configurations.
+    severity: "High"
+    condition_function: "condition_t_tls_01"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "T-TLS-02"
+    stride_category: "Tampering"
+    threat_subtype: "Deprecated TLS 1.1 on data flow"
+    description_template: >-
+      Data flow '{edge_label}' from {source_name} ({source_type}) to
+      {target_name} ({target_type}) uses deprecated TLS 1.1, which is
+      prohibited by PCI DSS 4.0 and NIST. Migrate to TLS 1.2 or TLS 1.3.
+      PCI DSS 4.0 Requirement 4.2.1 prohibits TLS 1.1 for cardholder data
+      environments.
+    severity: "High"
+    condition_function: "condition_t_tls_02"
+    condition_type: "tuple"
+    requires_boundary_crossing: false
+
+  - rule_id: "I-TLS-01"
+    stride_category: "Information Disclosure"
+    threat_subtype: "No TLS on sensitive data flow"
+    description_template: >-
+      Data flow '{edge_label}' from {source_name} ({source_type}) to
+      {target_name} ({target_type}) carries sensitive data with no TLS
+      configured. Any passive observer on the network path can read
+      credentials, PII, or financial data in cleartext. Enable TLS 1.2+
+      on all flows carrying sensitive data and enforce certificate validation.
+    severity: "Critical"
+    condition_function: "condition_i_tls_01"
+    condition_type: "tuple"
+    requires_boundary_crossing: false

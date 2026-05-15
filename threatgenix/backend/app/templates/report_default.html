@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Threat Model Report &mdash; {{ system_name }}</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 2cm;
+    @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #666; }
+  }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; line-height: 1.5; }
+  h1 { font-size: 24pt; margin-bottom: 4pt; }
+  h2 { font-size: 16pt; border-bottom: 2px solid #003366; padding-bottom: 4pt; margin-top: 28pt; color: #003366; }
+  h3 { font-size: 13pt; color: #003366; margin-top: 18pt; }
+  .title-page { page-break-after: always; text-align: center; padding-top: 20%; }
+  .title-page h1 { font-size: 32pt; color: #003366; }
+  .title-page .subtitle { font-size: 14pt; color: #555; margin-top: 8pt; }
+  .title-page .meta { margin-top: 40pt; font-size: 11pt; color: #333; }
+  .title-logo { margin-bottom: 24pt; }
+  .title-logo img { max-height: 60pt; max-width: 200pt; }
+  .classification-badge {
+    display: inline-block; padding: 4pt 12pt; border-radius: 4pt;
+    font-weight: bold; font-size: 10pt; text-transform: uppercase; margin-top: 16pt;
+  }
+  .classification-Public { background: #d4edda; color: #155724; }
+  .classification-Internal { background: #cce5ff; color: #004085; }
+  .classification-Confidential { background: #fff3cd; color: #856404; }
+  .classification-Restricted { background: #f8d7da; color: #721c24; }
+
+  /* Threat table: 7-column layout (mitigation detail in sub-row) */
+  table { width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 9.5pt; }
+  th, td { border: 1px solid #ccc; padding: 5pt 7pt; text-align: left; vertical-align: top; }
+  th { background: #003366; color: #fff; font-weight: bold; }
+  tr:nth-child(even) { background: #f7f9fc; }
+  .mitigation-row td { background: #f0f4f8; font-size: 9pt; border-top: none; padding-top: 3pt; }
+  .mitigation-label { font-weight: bold; color: #003366; }
+
+  .severity-Critical { color: #721c24; font-weight: bold; }
+  .severity-High { color: #c0392b; font-weight: bold; }
+  .severity-Medium { color: #e67e22; font-weight: bold; }
+  .severity-Low { color: #27ae60; }
+  .source-badge { display: inline-block; padding: 2pt 6pt; border-radius: 3pt; font-size: 8pt; font-weight: bold; }
+  .source-Rules { background: #e8eaf6; color: #283593; }
+  .source-AI { background: #fce4ec; color: #880e4f; }
+  .source-AI-Rules { background: #f3e5f5; color: #6a1b9a; }
+  .methodology { font-style: italic; color: #555; margin-top: 10pt; }
+  .dfd-placeholder { text-align: center; padding: 40pt; border: 2px dashed #aaa; color: #777; margin: 16pt 0; border-radius: 6pt; }
+  .scope-table td:first-child { font-weight: bold; width: 30%; background: #f0f4f8; }
+
+  /* Executive summary stats */
+  .exec-stats { display: table; width: 100%; margin: 16pt 0; }
+  .stat-box { display: table-cell; text-align: center; border: 1px solid #ccc; padding: 12pt; width: 25%; }
+  .stat-number { font-size: 28pt; font-weight: bold; color: #003366; display: block; }
+  .stat-number.danger { color: #c0392b; }
+  .stat-label { font-size: 9pt; color: #555; }
+
+  /* Compliance: grouped by framework */
+  .framework-section { margin-top: 16pt; }
+  .framework-title { font-size: 11pt; font-weight: bold; color: #003366; background: #eef2f7;
+    padding: 4pt 8pt; border-left: 4px solid #003366; margin-bottom: 4pt; }
+
+  /* Architectural diagrams */
+  .arch-diagram { margin: 16pt 0; page-break-inside: avoid; }
+  .arch-diagram-title { font-size: 11pt; font-weight: bold; color: #555; margin-bottom: 6pt; }
+  .arch-diagram img { max-width: 100%; border: 1px solid #ddd; border-radius: 4pt; }
+
+  .watermark {
+    position: fixed; top: 50%; left: 50%;
+    transform: rotate(-45deg) translate(-50%, -50%);
+    font-size: 72pt; opacity: 0.07; color: #000;
+    white-space: nowrap; pointer-events: none; z-index: 1000;
+  }
+  .page-break { page-break-before: always; }
+</style>
+</head>
+<body>
+
+{% if report_watermark_text %}
+<div class="watermark">{{ report_watermark_text }}</div>
+{% endif %}
+
+<!-- Title Page -->
+<div class="title-page">
+  {% if report_logo_base64 %}
+  <div class="title-logo">
+    <img src="data:image/png;base64,{{ report_logo_base64 }}" alt="Logo" />
+  </div>
+  {% endif %}
+  <h1>{{ system_name }}</h1>
+  <div class="subtitle">Threat Model Report</div>
+  <div class="meta">
+    <div>Generated: {{ generated_at }}</div>
+    <div>Created: {{ created_at }}</div>
+    <div class="classification-badge classification-{{ data_classification }}">{{ data_classification }}</div>
+  </div>
+</div>
+
+<!-- Executive Summary (always shown — key stats for the CISO) -->
+<h2>Executive Summary</h2>
+<div class="exec-stats">
+  <div class="stat-box">
+    <span class="stat-number {% if critical_high_count > 0 %}danger{% endif %}">{{ critical_high_count }}</span>
+    <span class="stat-label">Critical / High Threats</span>
+  </div>
+  <div class="stat-box">
+    <span class="stat-number">{{ threats | length }}</span>
+    <span class="stat-label">Total Threats</span>
+  </div>
+  <div class="stat-box">
+    <span class="stat-number">{{ open_count }}</span>
+    <span class="stat-label">Open</span>
+  </div>
+  <div class="stat-box">
+    <span class="stat-number">{{ accepted_count }}</span>
+    <span class="stat-label">Accepted Risk</span>
+  </div>
+</div>
+<h3>Residual Risk Summary</h3>
+<table>
+  <thead>
+    <tr><th>Critical</th><th>High</th><th>Medium</th><th>Low</th><th>Negligible</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{ residual_risk_summary.Critical }}</td>
+      <td>{{ residual_risk_summary.High }}</td>
+      <td>{{ residual_risk_summary.Medium }}</td>
+      <td>{{ residual_risk_summary.Low }}</td>
+      <td>{{ residual_risk_summary.Negligible }}</td>
+    </tr>
+  </tbody>
+</table>
+{% if critical_high_threats %}
+<h3>Top Critical &amp; High Threats</h3>
+<table>
+  <thead>
+    <tr><th>ID</th><th>STRIDE</th><th>Severity</th><th>Description</th><th>Status</th></tr>
+  </thead>
+  <tbody>
+    {% for t in critical_high_threats %}
+    <tr>
+      <td>{{ t.display_id }}</td>
+      <td>{{ t.stride_category }}</td>
+      <td class="severity-{{ t.severity }}">{{ t.severity }}</td>
+      <td>{{ t.description }}</td>
+      <td>{{ t.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<!-- Scope -->
+{% if "scope" in sections %}
+<div class="page-break"></div>
+<h2>{{ section_numbers.scope }}. Scope</h2>
+<table class="scope-table">
+  <tr><td>System Name</td><td>{{ system_name }}</td></tr>
+  <tr><td>Description</td><td>{{ description or "No description provided." }}</td></tr>
+  <tr><td>Data Classification</td><td>{{ data_classification }}</td></tr>
+</table>
+{% endif %}
+
+<!-- Data Flow Diagram -->
+{% if "dfd" in sections %}
+<h2>{{ section_numbers.dfd }}. Data Flow Diagram</h2>
+{% if dfd_image_base64 %}
+<div style="text-align:center;">
+  <img src="data:image/png;base64,{{ dfd_image_base64 }}" alt="Data Flow Diagram" style="max-width:100%; max-height:580pt;" />
+</div>
+{% else %}
+<div class="dfd-placeholder">
+  DFD diagram not captured &mdash; open the application, view the diagram, then re-export.
+</div>
+{% endif %}
+{% endif %}
+
+<!-- Architectural Diagrams -->
+{% if "arch_diagrams" in sections %}
+<h2>{{ section_numbers.arch_diagrams }}. Architectural Diagrams</h2>
+{% if arch_diagrams %}
+{% for diagram in arch_diagrams %}
+<div class="arch-diagram">
+  <div class="arch-diagram-title">{{ loop.index }}. {{ diagram.name }}</div>
+  <img src="data:image/png;base64,{{ diagram.image_base64 }}" alt="{{ diagram.name }}" />
+</div>
+{% endfor %}
+{% else %}
+<div class="dfd-placeholder">
+  No architectural diagrams uploaded. Upload diagrams via Report Settings.
+</div>
+{% endif %}
+{% endif %}
+
+<!-- Threats -->
+{% if "threats" in sections %}
+<div class="page-break"></div>
+<h2>{{ section_numbers.threats }}. Threats</h2>
+  <p>Total threats: {{ threats | length }} (Open, In Progress, Mitigated, Accepted)</p>
+{% if threats %}
+<table>
+  <thead>
+    <tr>
+      <th style="width:5%">ID</th>
+      <th style="width:12%">STRIDE</th>
+      <th style="width:8%">Severity</th>
+      <th style="width:10%">Residual</th>
+      <th style="width:35%">Description</th>
+      <th style="width:8%">Source</th>
+      <th style="width:10%">Status</th>
+      <th style="width:12%">Control Effectiveness</th>
+      <th style="width:12%">Mitigation Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in threats %}
+    <tr>
+      <td>{{ t.display_id }}</td>
+      <td>{{ t.stride_category }}</td>
+      <td class="severity-{{ t.severity }}">{{ t.severity }}</td>
+      <td>{{ t.residual_risk_level }}</td>
+      <td>{{ t.description }}</td>
+      <td><span class="source-badge source-{{ t.source | replace('+', '-') }}">{{ t.source }}</span></td>
+      <td>{{ t.status }}</td>
+      <td>{{ t.control_effectiveness }}</td>
+      <td>{{ t.mitigation_status or "&mdash;" }}</td>
+    </tr>
+    {% if t.mitigation_plan or t.mitigation_owner or t.mitigation_due_date %}
+    <tr class="mitigation-row">
+      <td colspan="9">
+        {% if t.mitigation_plan %}<span class="mitigation-label">Plan:</span> {{ t.mitigation_plan }}&nbsp;&nbsp;{% endif %}
+        {% if t.mitigation_owner %}<span class="mitigation-label">Owner:</span> {{ t.mitigation_owner }}&nbsp;&nbsp;{% endif %}
+        {% if t.mitigation_due_date %}<span class="mitigation-label">Due:</span> {{ t.mitigation_due_date }}{% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No threats to display.</p>
+{% endif %}
+{% endif %}
+
+<!-- Compliance Mapping -->
+{% if "compliance" in sections %}
+<div class="page-break"></div>
+<h2>{{ section_numbers.compliance }}. Compliance Mapping</h2>
+{% if compliance_by_threat %}
+{% set frameworks = namespace(seen=[]) %}
+{% for item in compliance_by_threat %}
+  {% for ctrl in item.controls %}
+    {% if ctrl.framework not in frameworks.seen %}
+      {% set frameworks.seen = frameworks.seen + [ctrl.framework] %}
+    {% endif %}
+  {% endfor %}
+{% endfor %}
+
+{% if frameworks.seen %}
+{% for fw in frameworks.seen %}
+<div class="framework-section">
+  <div class="framework-title">{{ fw }}</div>
+  <table>
+    <thead>
+      <tr><th style="width:8%">Threat ID</th><th style="width:15%">STRIDE</th><th>Controls</th></tr>
+    </thead>
+    <tbody>
+      {% for item in compliance_by_threat %}
+        {% set fw_controls = item.controls | selectattr("framework", "equalto", fw) | list %}
+        {% if fw_controls %}
+        <tr>
+          <td>{{ item.display_id }}</td>
+          <td>{{ item.stride_category }}</td>
+          <td>{% for ctrl in fw_controls %}{{ ctrl.control_id }} &mdash; {{ ctrl.control_name }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endfor %}
+{% else %}
+<p>No compliance controls mapped.</p>
+{% endif %}
+{% else %}
+<p>No compliance mappings available.</p>
+{% endif %}
+{% endif %}
+
+<!-- Scan Validation -->
+{% if "scan_validation" in sections %}
+<div class="page-break"></div>
+<h2>{{ section_numbers.scan_validation }}. Scan Validation</h2>
+{% if scan_summary.has_scan %}
+<p>Automated vulnerability scan completed on {{ scan_summary.scan_date }}. Results below show which threats were confirmed by active testing, validated as mitigated, or could not be verified.</p>
+<table>
+  <thead>
+    <tr>
+      <th style="width:8%">ID</th>
+      <th style="width:20%">STRIDE</th>
+      <th style="width:10%">Severity</th>
+      <th style="width:12%">Scan Status</th>
+      <th>CVEs</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in scan_threat_results %}
+    <tr>
+      <td>{{ t.display_id }}</td>
+      <td>{{ t.stride_category }}</td>
+      <td>{{ t.severity }}</td>
+      <td style="font-weight:{% if t.scan_status == 'confirmed' %}700{% else %}400{% endif %}; color:{% if t.scan_status == 'confirmed' %}#dc2626{% elif t.scan_status == 'mitigated' %}#16a34a{% else %}#6b7280{% endif %}">
+        {{ t.scan_status | replace('_', ' ') | title }}
+      </td>
+      <td>{{ t.cve_ids | join(', ') if t.cve_ids else '—' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<p style="margin-top:10pt; font-size:9pt; color:#555">
+  Confirmed: {{ scan_summary.confirmed_count }} &nbsp;|&nbsp;
+  Mitigated: {{ scan_summary.mitigated_count }} &nbsp;|&nbsp;
+  Not Found: {{ scan_summary.not_found_count }} &nbsp;|&nbsp;
+  Unverifiable: {{ scan_summary.unverifiable_count }} &nbsp;|&nbsp;
+  Total Findings: {{ scan_summary.finding_count }}
+</p>
+{% else %}
+<p>No vulnerability scan has been run for this threat model. To add scan validation, configure scan target URLs on DFD nodes and run a scan.</p>
+{% endif %}
+{% endif %}
+
+<!-- Shared Responsibility Matrix -->
+{% if "responsibility_matrix" in sections %}
+<div class="page-break"></div>
+<h2>{{ section_numbers.responsibility_matrix }}. Cloud Shared Responsibility</h2>
+{% if responsibility_matrix.has_cloud_threats %}
+<p>
+  The following threats involve cloud-managed infrastructure where the cloud provider bears
+  primary operational responsibility. These threats should still be monitored and tracked
+  in your risk register — provider responsibility does not eliminate customer obligation
+  to verify controls.
+</p>
+<table>
+  <thead>
+    <tr>
+      <th style="width:8%">Threat ID</th>
+      <th style="width:15%">STRIDE</th>
+      <th style="width:10%">Severity</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in responsibility_matrix.provider %}
+    <tr>
+      <td>{{ t.display_id }}</td>
+      <td>{{ t.stride_category }}</td>
+      <td>{{ t.severity }}</td>
+      <td>{{ t.description }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<p style="margin-top:12pt">
+  <strong>Customer-responsibility threats:</strong> {{ responsibility_matrix.customer | length }} &nbsp;|&nbsp;
+  <strong>Provider-managed threats:</strong> {{ responsibility_matrix.provider | length }}
+</p>
+{% else %}
+<p>No cloud provider-managed threats were identified for this system. All threats carry customer responsibility.</p>
+{% endif %}
+{% endif %}
+
+<!-- Methodology -->
+{% if "methodology" in sections %}
+<h2>{{ section_numbers.methodology }}. Methodology</h2>
+<p class="methodology">{{ methodology_text }}</p>
+{% endif %}
+
+</body>
+</html>

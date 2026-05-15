@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Executive Threat Summary &mdash; {{ system_name }}</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 2cm;
+    @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #666; }
+  }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; line-height: 1.5; }
+  h1 { font-size: 24pt; margin-bottom: 4pt; }
+  h2 { font-size: 16pt; border-bottom: 2px solid #003366; padding-bottom: 4pt; margin-top: 28pt; color: #003366; }
+  .title-page { page-break-after: always; text-align: center; padding-top: 20%; }
+  .title-page h1 { font-size: 32pt; color: #003366; }
+  .title-page .subtitle { font-size: 14pt; color: #555; margin-top: 8pt; }
+  .title-page .meta { margin-top: 40pt; font-size: 11pt; color: #333; }
+  .title-logo { margin-bottom: 24pt; }
+  .title-logo img { max-height: 80pt; max-width: 240pt; }
+  .classification-badge {
+    display: inline-block; padding: 4pt 12pt; border-radius: 4pt;
+    font-weight: bold; font-size: 10pt; text-transform: uppercase; margin-top: 16pt;
+  }
+  .classification-Public { background: #d4edda; color: #155724; }
+  .classification-Internal { background: #cce5ff; color: #004085; }
+  .classification-Confidential { background: #fff3cd; color: #856404; }
+  .classification-Restricted { background: #f8d7da; color: #721c24; }
+  .stat-cards { display: flex; gap: 12pt; margin: 16pt 0; }
+  .stat-card {
+    flex: 1; padding: 16pt; border-radius: 6pt; text-align: center;
+    border: 1px solid #ddd; background: #f8f9fa;
+  }
+  .stat-card .stat-number { font-size: 28pt; font-weight: bold; color: #003366; }
+  .stat-card .stat-label { font-size: 9pt; color: #666; text-transform: uppercase; margin-top: 4pt; }
+  .stat-card.critical { border-color: #f8d7da; background: #fff5f5; }
+  .stat-card.critical .stat-number { color: #c0392b; }
+  .narrative { font-size: 11pt; color: #333; line-height: 1.7; margin: 16pt 0; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 10pt; }
+  th, td { border: 1px solid #ccc; padding: 6pt 8pt; text-align: left; vertical-align: top; }
+  th { background: #003366; color: #fff; font-weight: bold; }
+  tr:nth-child(even) { background: #f7f9fc; }
+  .severity-Critical { color: #721c24; font-weight: bold; }
+  .severity-High { color: #c0392b; font-weight: bold; }
+  .severity-Medium { color: #e67e22; font-weight: bold; }
+  .severity-Low { color: #27ae60; }
+  .source-badge { display: inline-block; padding: 2pt 6pt; border-radius: 3pt; font-size: 8pt; font-weight: bold; }
+  .source-Rules { background: #e8eaf6; color: #283593; }
+  .source-AI { background: #fce4ec; color: #880e4f; }
+  .source-AI-Rules { background: #f3e5f5; color: #6a1b9a; }
+  .note { font-size: 9pt; color: #888; margin-top: 8pt; font-style: italic; }
+  .methodology { font-style: italic; color: #555; margin-top: 10pt; }
+  .dfd-placeholder { text-align: center; padding: 40pt; border: 2px dashed #aaa; color: #777; margin: 16pt 0; border-radius: 6pt; }
+  .watermark {
+    position: fixed; top: 50%; left: 50%;
+    transform: rotate(-45deg) translate(-50%, -50%);
+    font-size: 72pt; opacity: 0.07; color: #000;
+    white-space: nowrap; pointer-events: none; z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+{% if report_watermark_text %}
+<div class="watermark">{{ report_watermark_text }}</div>
+{% endif %}
+
+<!-- Title Page -->
+<div class="title-page">
+  {% if report_logo_base64 %}
+  <div class="title-logo">
+    <img src="data:image/png;base64,{{ report_logo_base64 }}" alt="Logo" />
+  </div>
+  {% endif %}
+  <h1>{{ system_name }}</h1>
+  <div class="subtitle">Executive Threat Summary</div>
+  <div class="meta">
+    <div>Generated: {{ generated_at }}</div>
+    <div>Created: {{ created_at }}</div>
+    <div class="classification-badge classification-{{ data_classification }}">{{ data_classification }}</div>
+  </div>
+</div>
+
+<!-- Executive Summary -->
+<h2>Executive Summary</h2>
+
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="stat-number">{{ threats | length }}</div>
+    <div class="stat-label">Total Threats</div>
+  </div>
+  <div class="stat-card critical">
+    <div class="stat-number">{{ critical_high_count }}</div>
+    <div class="stat-label">Critical + High</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ open_count }}</div>
+    <div class="stat-label">Open</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ accepted_count }}</div>
+    <div class="stat-label">Accepted</div>
+  </div>
+</div>
+
+<h2>Residual Risk Summary</h2>
+<table>
+  <thead>
+    <tr><th>Critical</th><th>High</th><th>Medium</th><th>Low</th><th>Negligible</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{ residual_risk_summary.Critical }}</td>
+      <td>{{ residual_risk_summary.High }}</td>
+      <td>{{ residual_risk_summary.Medium }}</td>
+      <td>{{ residual_risk_summary.Low }}</td>
+      <td>{{ residual_risk_summary.Negligible }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="narrative">
+  <strong>{{ system_name }}</strong> has been assessed using the STRIDE methodology.
+  The analysis identified <strong>{{ threats | length }}</strong> threats, of which
+  <strong>{{ critical_high_count }}</strong> are rated Critical or High severity.
+  {% if critical_high_count > 0 %}
+  Immediate attention is recommended for high-severity findings.
+  {% else %}
+  No Critical or High severity threats were identified.
+  {% endif %}
+  Data classification: <strong>{{ data_classification }}</strong>.
+</div>
+
+<!-- DFD Section -->
+<h2>Data Flow Diagram</h2>
+{% if dfd_image_base64 %}
+<div style="text-align:center;">
+  <img src="data:image/png;base64,{{ dfd_image_base64 }}" alt="Data Flow Diagram" style="max-width:100%; max-height:500pt;" />
+</div>
+{% else %}
+<div class="dfd-placeholder">
+  DFD diagram &mdash; see application for interactive view.
+</div>
+{% endif %}
+
+<!-- Critical/High Threats Only -->
+<h2>High Priority Threats</h2>
+{% if critical_high_threats %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>STRIDE</th>
+      <th>Severity</th>
+      <th>Description</th>
+      <th>Source</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in critical_high_threats %}
+    <tr>
+      <td>{{ t.display_id }}</td>
+      <td>{{ t.stride_category }}</td>
+      <td class="severity-{{ t.severity }}">{{ t.severity }}</td>
+      <td>{{ t.description }}</td>
+      <td><span class="source-badge source-{{ t.source | replace('+', '-') }}">{{ t.source }}</span></td>
+      <td>{{ t.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if (threats | length) > (critical_high_threats | length) %}
+<p class="note">{{ (threats | length) - (critical_high_threats | length) }} additional Medium/Low severity threats are included in the full report.</p>
+{% endif %}
+{% else %}
+<p>No Critical or High severity threats identified.</p>
+{% endif %}
+
+<!-- Compliance Mapping -->
+<h2>Compliance Mapping</h2>
+{% if compliance_by_threat %}
+<table>
+  <thead>
+    <tr>
+      <th>Threat ID</th>
+      <th>STRIDE Category</th>
+      <th>Compliance Controls</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in compliance_by_threat %}
+    <tr>
+      <td>{{ item.display_id }}</td>
+      <td>{{ item.stride_category }}</td>
+      <td>
+        {% for ctrl in item.controls %}
+          [{{ ctrl.framework }}] {{ ctrl.control_id }} ({{ ctrl.control_name }}){% if not loop.last %}, {% endif %}
+        {% endfor %}
+        {% if not item.controls %}
+          <em>No mapped controls</em>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No compliance mappings available.</p>
+{% endif %}
+
+<!-- Methodology -->
+<h2>Methodology</h2>
+<p class="methodology">{{ methodology_text }}</p>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+"""Add domain agent plan to threat validation runs.
+
+Revision ID: 082
+Revises: 081
+Create Date: 2026-05-03
+"""
+
+from __future__ import annotations
+
+import sqlalchemy as sa
+from alembic import op
+from sqlalchemy.dialects import postgresql
+
+revision = "082"
+down_revision = "081"
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    if "threat_validation_runs" not in inspector.get_table_names():
+        return
+    existing_columns = {
+        column["name"] for column in inspector.get_columns("threat_validation_runs")
+    }
+    if "domain_agent_plan" not in existing_columns:
+        op.add_column(
+            "threat_validation_runs",
+            sa.Column(
+                "domain_agent_plan",
+                postgresql.JSONB(astext_type=sa.Text()),
+                nullable=False,
+                server_default=sa.text("'[]'::jsonb"),
+            ),
+        )
+
+
+def downgrade() -> None:
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    if "threat_validation_runs" not in inspector.get_table_names():
+        return
+    existing_columns = {
+        column["name"] for column in inspector.get_columns("threat_validation_runs")
+    }
+    if "domain_agent_plan" in existing_columns:
+        op.drop_column("threat_validation_runs", "domain_agent_plan")

@@ -1,0 +1,132 @@
+critical_themes:
+- id: MED-01
+  title: Break-glass misuse
+  description: Emergency override capability can be abused for unjustified chart access.
+  severity: Critical
+  stride_categories:
+  - Elevation of Privilege
+  - Repudiation
+  affected_assets:
+  - Break-Glass Service
+  - Electronic Health Record Store
+- id: MED-02
+  title: Vendor ransomware ingress
+  description: Remote diagnostics can provide a path for ransomware or destructive
+    tooling into clinical systems.
+  severity: Critical
+  stride_categories:
+  - Tampering
+  - Denial of Service
+  affected_assets:
+  - Vendor Support Bastion
+  - PACS Archive
+- id: MED-03
+  title: Patient record overexposure
+  description: Portal or integration queries can expose broader datasets than the
+    requesting user should see.
+  severity: High
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Clinical Integration Bus
+  - Electronic Health Record Store
+- id: MED-04
+  title: Insurer callback trust failure
+  description: Partner eligibility or claim callbacks can be spoofed or tampered with.
+  severity: High
+  stride_categories:
+  - Spoofing
+  - Tampering
+  affected_assets:
+  - Clinical Integration Bus
+- id: MED-05
+  title: Imaging AI privacy spill
+  description: Inference payloads can disclose patient identity or diagnostic details
+    outside approved clinical use.
+  severity: High
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Imaging AI Gateway
+  - PACS Archive
+- id: MED-06
+  title: Clinical archive outage
+  description: PACS or lab repository disruption can directly impact care continuity
+    and emergency treatment.
+  severity: Critical
+  stride_categories:
+  - Denial of Service
+  affected_assets:
+  - PACS Archive
+  - Lab Results Repository
+- id: MED-07
+  title: Audit bypass in emergency mode
+  description: Under incident conditions the organization may fail to preserve adequate
+    audit evidence for sensitive access.
+  severity: High
+  stride_categories:
+  - Repudiation
+  affected_assets:
+  - Break-Glass Service
+  - Vendor Support Bastion
+important_themes:
+- id: MED-08
+  title: Patient impersonation
+  description: Compromised patient sessions can expose records or authorize downstream
+    actions.
+  severity: Medium
+  stride_categories:
+  - Spoofing
+  affected_assets:
+  - Identity Gateway
+- id: MED-09
+  title: Support note leakage
+  description: Diagnostic bundles or case notes can contain PHI or sensitive operational
+    details.
+  severity: Medium
+  stride_categories:
+  - Information Disclosure
+  affected_assets:
+  - Vendor Support Bastion
+- id: MED-10
+  title: Data reconciliation drift
+  description: Async insurer or lab updates can desynchronize clinical state and payer
+    state.
+  severity: Medium
+  stride_categories:
+  - Tampering
+  affected_assets:
+  - Clinical Integration Bus
+- id: MED-11
+  title: AI dependency backlog
+  description: Imaging pipeline congestion can delay patient care if inference becomes
+    an operational dependency.
+  severity: High
+  stride_categories:
+  - Denial of Service
+  affected_assets:
+  - Imaging AI Gateway
+expected_stride_coverage:
+- Spoofing
+- Tampering
+- Repudiation
+- Information Disclosure
+- Denial of Service
+- Elevation of Privilege
+critical_assets:
+- Electronic Health Record Store
+- PACS Archive
+- Break-Glass Service
+- Vendor Support Bastion
+critical_boundaries:
+- Patient and Partner Edge
+- Clinical Operations Zone
+- Restricted Clinical Data Zone
+top_severity_expectations:
+- MED-01
+- MED-02
+- MED-06
+must_not_hallucinate:
+- Consumer ad-tech tracking pixel
+- Cryptocurrency claims settlement
+- Retail point-of-sale malware

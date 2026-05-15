@@ -1,0 +1,34 @@
+{
+  "results": [
+    {
+      "source": {"path": "package-lock.json", "type": "lockfile"},
+      "packages": [
+        {
+          "package": {"name": "left-pad", "version": "1.3.0", "ecosystem": "npm"},
+          "vulnerabilities": [
+            {
+              "id": "GHSA-aaaa-bbbb-cccc",
+              "aliases": ["CVE-2026-2222"],
+              "summary": "Prototype pollution",
+              "severity": [{"type": "CVSS_V3", "score": "7.5/CVSS:3.1"}]
+            },
+            {
+              "aliases": ["CVE-2026-9999"],
+              "summary": "Missing OSV id should be ignored"
+            }
+          ]
+        },
+        {
+          "package": {"name": "noise-only", "version": "0.0.1", "ecosystem": "npm"},
+          "vulnerabilities": ["truncated vulnerability entry", {"id": ""}]
+        },
+        "truncated package entry"
+      ]
+    },
+    {
+      "source": "not a source object",
+      "packages": [{"package": {"name": "empty-vulns"}, "vulnerabilities": []}]
+    },
+    "scanner stderr: lockfile line was truncated"
+  ]
+}

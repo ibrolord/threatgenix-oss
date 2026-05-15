@@ -1,0 +1,24 @@
+id: threatgenix-missing-security-headers
+
+info:
+  name: ThreatGenix safe HTTP baseline - missing security headers
+  author: threatgenix
+  severity: low
+  description: Low-impact validation check for missing common browser hardening headers.
+  tags: threatgenix,baseline,http,headers,misconfig
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}/"
+
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: header
+        words:
+          - "X-Content-Type-Options"
+        negative: true
+      - type: status
+        status:
+          - 200

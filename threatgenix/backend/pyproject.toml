@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "threatgenix-cli"
+version = "0.1.0"
+description = "ThreatGenix CLI and MCP tools for tenant-scoped security reviews."
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "ThreatGenix contributors" }]
+dependencies = []
+
+[project.scripts]
+threatgenix = "threatgenix_cli.entrypoints:threatgenix_main"
+threatgenix-mcp = "threatgenix_cli.entrypoints:threatgenix_mcp_main"
+
+[tool.setuptools.packages.find]
+include = ["app", "app.cli", "threatgenix_cli"]

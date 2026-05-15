@@ -1,0 +1,71 @@
+{
+  "trace_id": "invoke-anywhere-performance-scale-v1",
+  "source_version": "synthetic-performance-scale-gate",
+  "observations": [
+    {
+      "scenario": "small_diff",
+      "status": "pass",
+      "p95_seconds": 132,
+      "max_seconds": 149,
+      "metrics": {
+        "cli_status_p95_seconds": 1.2,
+        "web_review_page_p95_seconds": 2.1
+      }
+    },
+    {
+      "scenario": "large_diff",
+      "status": "pass",
+      "p95_seconds": 421,
+      "max_seconds": 515,
+      "metrics": {
+        "queued_for_async_review": true,
+        "cli_status_p95_seconds": 1.5,
+        "web_review_page_p95_seconds": 2.4
+      }
+    },
+    {
+      "scenario": "medium_snapshot",
+      "status": "pass",
+      "p95_seconds": 548,
+      "max_seconds": 590,
+      "metrics": {
+        "cli_status_p95_seconds": 1.8,
+        "web_review_page_p95_seconds": 2.7
+      }
+    },
+    {
+      "scenario": "large_scanner_output",
+      "status": "pass",
+      "p95_seconds": 91,
+      "max_seconds": 107,
+      "metrics": {
+        "parser_completed_seconds": 87,
+        "secret_leak_count": 0,
+        "evidence_hash_verified": true,
+        "output_chunked_or_truncated": true
+      }
+    },
+    {
+      "scenario": "concurrent_reviews",
+      "status": "pass",
+      "p95_seconds": 566,
+      "max_seconds": 598,
+      "metrics": {
+        "tenant_isolation_violations": 0,
+        "failed_review_count": 1,
+        "queue_accepted_all_reviews": true
+      }
+    },
+    {
+      "scenario": "repeated_webhook_delivery",
+      "status": "pass",
+      "p95_seconds": 44,
+      "max_seconds": 61,
+      "metrics": {
+        "duplicate_comment_count": 0,
+        "status_updates_idempotent": true,
+        "signature_replay_rejected": true
+      }
+    }
+  ]
+}

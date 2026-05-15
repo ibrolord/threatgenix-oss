@@ -1,0 +1,43 @@
+# Environment variables (contains secrets)
+.env
+*.env
+.env.*
+!*.env.example
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node
+node_modules
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.tsbuildinfo
+
+# Debug logs
+firebase-debug.log
+*.log
+
+# Test artifacts
+tests/e2e/__pycache__/
+tests/__pycache__/
+.pytest_cache/
+htmlcov/
+.coverage
+.local/

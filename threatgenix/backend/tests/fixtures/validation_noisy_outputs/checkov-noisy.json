@@ -1,0 +1,31 @@
+[
+  {
+    "results": {
+      "failed_checks": [
+        {
+          "check_id": "CKV_AWS_20",
+          "check_name": "S3 bucket allows public read",
+          "file_path": "/s3.tf",
+          "file_line_range": [8, 20],
+          "resource": "aws_s3_bucket.public",
+          "severity": "HIGH"
+        },
+        {
+          "check_name": "Missing check id should be ignored",
+          "file_path": "/vpc.tf",
+          "file_line_range": [3, 5],
+          "resource": "aws_vpc.main",
+          "severity": "HIGH"
+        },
+        "truncated failed check entry",
+        {"check_id": ""}
+      ],
+      "passed_checks": [
+        {"check_id": "CKV_AWS_999", "check_name": "Passing checks are not findings"}
+      ]
+    },
+    "parsing_errors": ["main.tf: unexpected token near line 99"]
+  },
+  "scanner warning: JSON block truncated",
+  {"summary": {"failed": 1, "parsing_errors": 1}}
+]

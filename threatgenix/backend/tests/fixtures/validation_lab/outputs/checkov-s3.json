@@ -1,0 +1,16 @@
+{
+  "results": {
+    "failed_checks": [
+      {
+        "check_id": "CKV_AWS_55",
+        "bc_check_id": "BC_AWS_S3_20",
+        "check_name": "Ensure S3 bucket has public access block enabled",
+        "file_path": "/infra/main.tf",
+        "file_line_range": [5, 11],
+        "resource": "aws_s3_bucket_public_access_block.statement_exports",
+        "severity": "HIGH",
+        "guideline": "Public access should be blocked for customer statement exports."
+      }
+    ]
+  }
+}

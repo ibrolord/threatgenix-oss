@@ -1,0 +1,41 @@
+# Environment and secrets — never bake into image layers
+.env
+.env.*
+!.env.example
+
+# Python virtual environment
+.venv
+venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+
+# Development artifacts
+.vercel
+.vercel/
+**/.vercel
+**/.vercel/
+.mypy_cache
+.ruff_cache
+.coverage
+coverage.xml
+htmlcov/
+
+# Tests — never ship test code in the production image
+tests/
+
+# Git
+.git
+.gitignore
+
+# IDE configs
+.vscode
+.idea
+
+# Docker itself
+Dockerfile
+.dockerignore
+
+# alembic.ini is required in the container for `alembic upgrade head` (env.py overrides the DB URL at runtime)

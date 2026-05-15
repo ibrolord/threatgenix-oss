@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: threatgenix
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: threatgenix
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: threatgenix/backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        working-directory: threatgenix/backend
+
+      - name: Lint
+        run: ruff check app tests
+        working-directory: threatgenix/backend
+
+      - name: Test
+        run: python -m pytest -q
+        working-directory: threatgenix/backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://threatgenix:password@localhost:5432/threatgenix
+          API_TITLE: ThreatGenix
+          RUNTIME_NAME: threatgenix
+
+      - name: CLI package install smoke
+        run: |
+          python -m pip wheel . --no-deps -w /tmp/threatgenix-wheelhouse
+          python -m venv /tmp/threatgenix-cli-venv
+          /tmp/threatgenix-cli-venv/bin/python -m pip install \
+            --force-reinstall /tmp/threatgenix-wheelhouse/threatgenix_cli-*.whl
+          /tmp/threatgenix-cli-venv/bin/threatgenix mcp-config \
+            --server-url http://localhost:8000 > /tmp/threatgenix-mcp.json
+          /tmp/threatgenix-cli-venv/bin/python -m json.tool /tmp/threatgenix-mcp.json > /dev/null
+        working-directory: threatgenix/backend
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: threatgenix/frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: threatgenix/frontend
+
+      - name: Type check
+        run: npm run typecheck
+        working-directory: threatgenix/frontend
+
+      - name: Lint
+        run: npm run lint
+        working-directory: threatgenix/frontend
+
+      - name: Test
+        run: npm test
+        working-directory: threatgenix/frontend
+
+      - name: Build
+        run: npm run build
+        working-directory: threatgenix/frontend

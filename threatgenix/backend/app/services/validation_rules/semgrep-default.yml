@@ -1,0 +1,37 @@
+rules:
+  - id: threatgenix.python.fastapi-restricted-export-missing-authz
+    message: Sensitive export route returns restricted customer data without scoped authorization
+    severity: ERROR
+    languages: [python]
+    metadata:
+      category: security
+      technology: [python, fastapi]
+      cwe: [CWE-862]
+      threatgenix:
+        finding_kind: missing authorization
+        data_classification: restricted customer export
+    patterns:
+      - pattern-inside: |
+          @router.get(...)
+          def $FUNC(...):
+              ...
+      - pattern: |
+          return {
+              ...,
+              "classification": "Restricted",
+              ...,
+          }
+      - pattern-not-inside: |
+          def $FUNC(...):
+              ...
+              require_export_permission(...)
+              ...
+  - id: threatgenix.python.jwt-decode-without-verify
+    message: JWT signature verification is disabled
+    severity: ERROR
+    languages: [python]
+    metadata:
+      category: security
+      technology: [python, jwt]
+      cwe: [CWE-347]
+    pattern: 'jwt.decode($TOKEN, options={"verify_signature": False})'

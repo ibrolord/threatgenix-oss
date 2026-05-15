@@ -1,0 +1,734 @@
+{
+  "nodes": [
+    {
+      "id": "ba800d23-d3f1-5dc3-810e-b8f466588a50",
+      "node_type": "external_entity",
+      "name": "Customer Mobile App",
+      "position_x": 0,
+      "position_y": 30,
+      "trust_boundary_id": null,
+      "properties": {
+        "entity_kind": "device",
+        "entity_scope": "external",
+        "trust_level": "semi_trusted",
+        "handles_pii": true
+      }
+    },
+    {
+      "id": "4bc4ef0e-3f8c-5418-849a-2fedfdb2c248",
+      "node_type": "external_entity",
+      "name": "Customer Web Portal",
+      "position_x": 0,
+      "position_y": 120,
+      "trust_boundary_id": null,
+      "properties": {
+        "entity_kind": "system",
+        "entity_scope": "external",
+        "trust_level": "semi_trusted",
+        "handles_pii": true
+      }
+    },
+    {
+      "id": "a925a6e3-6503-52e4-87e4-0cdf28838936",
+      "node_type": "external_entity",
+      "name": "DER Aggregator Partner",
+      "position_x": 0,
+      "position_y": 220,
+      "trust_boundary_id": null,
+      "properties": {
+        "entity_kind": "api",
+        "entity_scope": "external",
+        "authenticated": true,
+        "trust_level": "contracted_market_partner"
+      }
+    },
+    {
+      "id": "4f5d755b-11fd-573f-b6a2-c8a52b7e7d90",
+      "node_type": "external_entity",
+      "name": "Weather Intelligence Provider",
+      "position_x": 0,
+      "position_y": 320,
+      "trust_boundary_id": null,
+      "properties": {
+        "entity_kind": "api",
+        "entity_scope": "external",
+        "authenticated": true,
+        "trust_level": "semi_trusted"
+      }
+    },
+    {
+      "id": "31db6198-03e1-585d-966d-395d2404cbeb",
+      "node_type": "external_entity",
+      "name": "ISO Market Operator API",
+      "position_x": 0,
+      "position_y": 420,
+      "trust_boundary_id": "e133d504-707a-579e-bc79-544881df4b8f",
+      "properties": {
+        "entity_kind": "api",
+        "entity_scope": "external",
+        "authenticated": true,
+        "trust_level": "regulated_operator"
+      }
+    },
+    {
+      "id": "cd3c0f54-0ffd-526a-8b42-b0acbbee9afd",
+      "node_type": "external_entity",
+      "name": "Municipal Emergency Operations Center",
+      "position_x": 0,
+      "position_y": 520,
+      "trust_boundary_id": "e133d504-707a-579e-bc79-544881df4b8f",
+      "properties": {
+        "entity_kind": "human",
+        "entity_scope": "external",
+        "authenticated": true,
+        "trust_level": "mutual_aid_authority"
+      }
+    },
+    {
+      "id": "75524cd1-d0fe-5ed3-815d-3442117ebd13",
+      "node_type": "human_actor",
+      "name": "Field Technician Tablet",
+      "position_x": 320,
+      "position_y": 560,
+      "trust_boundary_id": "f6121228-6951-596c-b3aa-09a7a8809393",
+      "properties": {
+        "entity_scope": "internal",
+        "authenticated": true,
+        "trust_level": "trusted",
+        "network_exposure": "mobile_utility_lte"
+      }
+    },
+    {
+      "id": "76f07e0c-1adf-5153-88be-af8bccee4bbd",
+      "node_type": "external_entity",
+      "name": "Vendor Support Enclave",
+      "position_x": 1250,
+      "position_y": 470,
+      "trust_boundary_id": "086f7e74-f052-550c-b320-292b4ed927be",
+      "properties": {
+        "entity_kind": "system",
+        "entity_scope": "external",
+        "authenticated": true,
+        "trust_level": "vendor_limited"
+      }
+    },
+    {
+      "id": "87b6bc1a-7038-545f-9d89-a96ab9f96b52",
+      "node_type": "external_entity",
+      "name": "AMI Meter Mesh",
+      "position_x": 890,
+      "position_y": 560,
+      "trust_boundary_id": "5827a5f5-806c-572b-a9c0-411f4af6126f",
+      "properties": {
+        "entity_kind": "device",
+        "entity_scope": "external",
+        "authenticated": true,
+        "trust_level": "telemetry_only",
+        "network_exposure": "dedicated_utility_backhaul"
+      }
+    },
+    {
+      "id": "22e58d88-53b5-5b11-b3e4-ae7a1482ba52",
+      "node_type": "api_gateway",
+      "name": "Identity Gateway",
+      "position_x": 250,
+      "position_y": 80,
+      "trust_boundary_id": "81d63583-9507-5259-b175-17caf1a973b3",
+      "properties": {
+        "authentication_type": "oauth2",
+        "authorization_model": "policy",
+        "internet_facing": true,
+        "uses_auth": true,
+        "uses_encryption": true,
+        "validates_input": true,
+        "runtime_type": "gateway"
+      }
+    },
+    {
+      "id": "48060bdd-74b1-5182-8f8b-b0a0a3511f2b",
+      "node_type": "api_gateway",
+      "name": "API Mediation Gateway",
+      "position_x": 250,
+      "position_y": 220,
+      "trust_boundary_id": "81d63583-9507-5259-b175-17caf1a973b3",
+      "properties": {
+        "internet_facing": true,
+        "uses_auth": true,
+        "uses_encryption": true,
+        "validates_input": true,
+        "runtime_type": "gateway",
+        "network_exposure": "internet"
+      }
+    },
+    {
+      "id": "e3650994-227e-50cc-885b-6ecb03d4a668",
+      "node_type": "serverless",
+      "name": "Public Outage Status Publisher",
+      "position_x": 250,
+      "position_y": 340,
+      "trust_boundary_id": "81d63583-9507-5259-b175-17caf1a973b3",
+      "properties": {
+        "component_template_id": "28706144-4a94-5994-ad4e-950d3c4fe054",
+        "runtime_type": "function",
+        "uses_encryption": true,
+        "validates_input": true,
+        "logging_level": "audit"
+      }
+    },
+    {
+      "id": "a0baef43-a6e7-52ec-88a5-9c1e6a8b5d41",
+      "node_type": "managed_service",
+      "name": "Workforce Identity Directory",
+      "position_x": 500,
+      "position_y": 40,
+      "trust_boundary_id": "dbf9b537-59ad-502a-acea-bf1649e51144",
+      "properties": {
+        "authentication_type": "saml",
+        "authorization_model": "rbac",
+        "responsibility": "shared_cloud_provider",
+        "service_name": "Enterprise IdP"
+      }
+    },
+    {
+      "id": "402d0d3e-74f4-521e-ab20-c191badbadd8",
+      "node_type": "process",
+      "name": "Vendor Access Broker",
+      "position_x": 500,
+      "position_y": 160,
+      "trust_boundary_id": "dbf9b537-59ad-502a-acea-bf1649e51144",
+      "properties": {
+        "uses_auth": true,
+        "uses_encryption": true,
+        "privilege_level": "elevated",
+        "logging_level": "audit"
+      }
+    },
+    {
+      "id": "e993dddc-cdff-5a09-a23c-e16a071a259b",
+      "node_type": "process",
+      "name": "Outage Command Center",
+      "position_x": 520,
+      "position_y": 280,
+      "trust_boundary_id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "properties": {
+        "handles_sensitive_data": true,
+        "uses_encryption": true,
+        "runtime_type": "service",
+        "responsibility": "shared"
+      }
+    },
+    {
+      "id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "node_type": "process",
+      "name": "DER Orchestration Engine",
+      "position_x": 760,
+      "position_y": 240,
+      "trust_boundary_id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "properties": {
+        "component_template_id": "a47e6eee-3e2d-57c3-8c11-e988e4842dfc",
+        "handles_sensitive_data": true,
+        "uses_encryption": true,
+        "runtime_type": "service",
+        "network_exposure": "internal_cross_zone"
+      }
+    },
+    {
+      "id": "800c3ca3-742d-52ad-9b42-e5e75eb28eb2",
+      "node_type": "process",
+      "name": "Load Forecasting Service",
+      "position_x": 760,
+      "position_y": 120,
+      "trust_boundary_id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "properties": {
+        "handles_sensitive_data": false,
+        "uses_encryption": true,
+        "runtime_type": "worker",
+        "logging_level": "full"
+      }
+    },
+    {
+      "id": "a429722a-b6d5-5ea9-b521-2df4ba7e1414",
+      "node_type": "process",
+      "name": "Work Order Dispatch Service",
+      "position_x": 520,
+      "position_y": 420,
+      "trust_boundary_id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "properties": {
+        "handles_sensitive_data": true,
+        "uses_encryption": true,
+        "runtime_type": "service",
+        "logging_level": "audit"
+      }
+    },
+    {
+      "id": "d388d76d-8270-52ae-93c0-ca78b69f0bfc",
+      "node_type": "process",
+      "name": "Break-Glass Dispatch Console",
+      "position_x": 760,
+      "position_y": 360,
+      "trust_boundary_id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "properties": {
+        "component_template_id": "24d6ea82-310c-5392-b7bc-7ed8a45cf2f6",
+        "uses_auth": true,
+        "uses_encryption": true,
+        "privilege_level": "emergency_dispatch",
+        "logging_level": "audit"
+      }
+    },
+    {
+      "id": "9ff91834-81d5-5c2a-bae3-cd060d8a2802",
+      "node_type": "managed_service",
+      "name": "AMI Ingestion Broker",
+      "position_x": 760,
+      "position_y": 500,
+      "trust_boundary_id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "properties": {
+        "service_name": "Telemetry Ingestion Bus",
+        "runtime_type": "worker",
+        "uses_encryption": true,
+        "logging_level": "full"
+      }
+    },
+    {
+      "id": "b3cc94af-e2fd-57c9-9688-c7606e49dbcc",
+      "node_type": "process",
+      "name": "SCADA / ADMS Interface",
+      "position_x": 1010,
+      "position_y": 220,
+      "trust_boundary_id": "5827a5f5-806c-572b-a9c0-411f4af6126f",
+      "properties": {
+        "handles_sensitive_data": true,
+        "uses_encryption": true,
+        "runtime_type": "service",
+        "isolation_boundary": "ot_control_zone",
+        "network_exposure": "internal_cross_zone"
+      }
+    },
+    {
+      "id": "45ab1c20-f573-57e4-aedf-7db386a0606a",
+      "node_type": "container",
+      "name": "Substation Edge Gateway",
+      "position_x": 1010,
+      "position_y": 360,
+      "trust_boundary_id": "5827a5f5-806c-572b-a9c0-411f4af6126f",
+      "properties": {
+        "component_template_id": "b6089cba-b614-5af7-95f5-2bbc44e64aad",
+        "runtime_type": "container",
+        "uses_encryption": true,
+        "isolation_boundary": "field_site_gateway",
+        "network_exposure": "dedicated_utility_backhaul"
+      }
+    },
+    {
+      "id": "a696152b-d944-5c71-a3ea-76c36bd30247",
+      "node_type": "process",
+      "name": "Firmware Signing Service",
+      "position_x": 1010,
+      "position_y": 80,
+      "trust_boundary_id": "5827a5f5-806c-572b-a9c0-411f4af6126f",
+      "properties": {
+        "uses_auth": true,
+        "uses_encryption": true,
+        "stores_secrets": true,
+        "privilege_level": "admin",
+        "logging_level": "audit"
+      }
+    },
+    {
+      "id": "5713f5ce-4156-563b-9f86-01b67cf60564",
+      "node_type": "data_store",
+      "name": "Grid Telemetry Historian",
+      "position_x": 1250,
+      "position_y": 180,
+      "trust_boundary_id": "5827a5f5-806c-572b-a9c0-411f4af6126f",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true,
+        "data_classification": "Restricted",
+        "store_type": "historian_cluster",
+        "store_purpose": "topology and switching state",
+        "integrity_controls": "append-only journals and signed snapshots"
+      }
+    },
+    {
+      "id": "71c2b261-04b7-5395-bb70-fa50523e65ec",
+      "node_type": "data_store",
+      "name": "Customer and Billing Data Hub",
+      "position_x": 1250,
+      "position_y": 40,
+      "trust_boundary_id": "ea745c4b-0f89-55ff-8f86-21d3fff7cede",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true,
+        "data_classification": "Restricted",
+        "store_type": "customer_master",
+        "store_purpose": "service points and billing context",
+        "read_access_scope": "api and outage operations",
+        "write_access_scope": "billing sync only"
+      }
+    },
+    {
+      "id": "90188cd1-1d4a-53f0-a292-cf2feba7e3f6",
+      "node_type": "data_store",
+      "name": "Market Settlement Ledger",
+      "position_x": 1250,
+      "position_y": 300,
+      "trust_boundary_id": "ea745c4b-0f89-55ff-8f86-21d3fff7cede",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true,
+        "data_classification": "Restricted",
+        "store_type": "settlement_ledger",
+        "store_purpose": "DER dispatch settlement and audit",
+        "integrity_controls": "dual-ledger reconciliation"
+      }
+    },
+    {
+      "id": "c97cb084-f004-53eb-b467-8aaf4ae92229",
+      "node_type": "data_store",
+      "name": "Audit and Decision Vault",
+      "position_x": 1250,
+      "position_y": 420,
+      "trust_boundary_id": "ea745c4b-0f89-55ff-8f86-21d3fff7cede",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true,
+        "data_classification": "Restricted",
+        "store_type": "immutable_audit",
+        "store_purpose": "operator approvals and break-glass records",
+        "integrity_controls": "WORM retention"
+      }
+    },
+    {
+      "id": "8f1a38c6-d006-5792-a898-91e3ba673d96",
+      "node_type": "data_store",
+      "name": "Operations Data Lake",
+      "position_x": 1250,
+      "position_y": 540,
+      "trust_boundary_id": "ea745c4b-0f89-55ff-8f86-21d3fff7cede",
+      "properties": {
+        "encrypted_at_rest": true,
+        "has_backup": true,
+        "data_classification": "Confidential",
+        "store_type": "analytics_lake",
+        "store_purpose": "telemetry analytics and post-incident review"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "cba615ca-542b-58ed-a151-6dce0362363b",
+      "source_node_id": "ba800d23-d3f1-5dc3-810e-b8f466588a50",
+      "target_node_id": "22e58d88-53b5-5b11-b3e4-ae7a1482ba52",
+      "label": "mobile authentication request"
+    },
+    {
+      "id": "1698a9da-aa5e-56ac-b80e-8f7ce8d39621",
+      "source_node_id": "4bc4ef0e-3f8c-5418-849a-2fedfdb2c248",
+      "target_node_id": "22e58d88-53b5-5b11-b3e4-ae7a1482ba52",
+      "label": "portal authentication request"
+    },
+    {
+      "id": "6ba1b830-02f8-513f-aa7b-f6db4ba63d5e",
+      "source_node_id": "22e58d88-53b5-5b11-b3e4-ae7a1482ba52",
+      "target_node_id": "48060bdd-74b1-5182-8f8b-b0a0a3511f2b",
+      "label": "signed customer session token"
+    },
+    {
+      "id": "dbbb1d25-6975-56b5-a783-791addd741d3",
+      "source_node_id": "22e58d88-53b5-5b11-b3e4-ae7a1482ba52",
+      "target_node_id": "a0baef43-a6e7-52ec-88a5-9c1e6a8b5d41",
+      "label": "federated workforce directory lookup"
+    },
+    {
+      "id": "64497e5b-cde6-5ee3-8959-415211db2fd4",
+      "source_node_id": "a925a6e3-6503-52e4-87e4-0cdf28838936",
+      "target_node_id": "48060bdd-74b1-5182-8f8b-b0a0a3511f2b",
+      "label": "DER flexibility availability feed"
+    },
+    {
+      "id": "a9a6fd58-0c53-53d4-8bed-ecd960732511",
+      "source_node_id": "4f5d755b-11fd-573f-b6a2-c8a52b7e7d90",
+      "target_node_id": "800c3ca3-742d-52ad-9b42-e5e75eb28eb2",
+      "label": "severe weather forecast ingest"
+    },
+    {
+      "id": "0425fbb5-4279-5082-b30e-8a1074729e22",
+      "source_node_id": "31db6198-03e1-585d-966d-395d2404cbeb",
+      "target_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "label": "market dispatch and curtailment schedule"
+    },
+    {
+      "id": "bb82c03a-69c7-5cd4-a014-c55647a308b0",
+      "source_node_id": "cd3c0f54-0ffd-526a-8b42-b0acbbee9afd",
+      "target_node_id": "e993dddc-cdff-5a09-a23c-e16a071a259b",
+      "label": "emergency restoration priority request"
+    },
+    {
+      "id": "f3232b2b-5b53-5266-9112-a753ba81702f",
+      "source_node_id": "75524cd1-d0fe-5ed3-815d-3442117ebd13",
+      "target_node_id": "a429722a-b6d5-5ea9-b521-2df4ba7e1414",
+      "label": "technician sync and status ack"
+    },
+    {
+      "id": "e3cec7ee-968c-5069-8439-1bb5c3fdc74b",
+      "source_node_id": "a429722a-b6d5-5ea9-b521-2df4ba7e1414",
+      "target_node_id": "75524cd1-d0fe-5ed3-815d-3442117ebd13",
+      "label": "offline work package and switching steps"
+    },
+    {
+      "id": "2dc8c6ed-4348-5bb0-9290-cd0d26ee224b",
+      "source_node_id": "48060bdd-74b1-5182-8f8b-b0a0a3511f2b",
+      "target_node_id": "e993dddc-cdff-5a09-a23c-e16a071a259b",
+      "label": "customer outage report and restoration query"
+    },
+    {
+      "id": "90d0c7c7-0610-5768-a2c6-05f7c09bc1a4",
+      "source_node_id": "48060bdd-74b1-5182-8f8b-b0a0a3511f2b",
+      "target_node_id": "71c2b261-04b7-5395-bb70-fa50523e65ec",
+      "label": "customer premise and service point lookup"
+    },
+    {
+      "id": "7c3a5375-23f6-5f95-85da-21af5161f653",
+      "source_node_id": "e993dddc-cdff-5a09-a23c-e16a071a259b",
+      "target_node_id": "e3650994-227e-50cc-885b-6ecb03d4a668",
+      "label": "outage status summary publish"
+    },
+    {
+      "id": "f14a5859-6496-5250-bd0e-e1ba06d50a32",
+      "source_node_id": "e3650994-227e-50cc-885b-6ecb03d4a668",
+      "target_node_id": "ba800d23-d3f1-5dc3-810e-b8f466588a50",
+      "label": "push outage notification"
+    },
+    {
+      "id": "dff0612a-ce87-55f1-bacb-21732afe212c",
+      "source_node_id": "87b6bc1a-7038-545f-9d89-a96ab9f96b52",
+      "target_node_id": "9ff91834-81d5-5c2a-bae3-cd060d8a2802",
+      "label": "meter telemetry burst"
+    },
+    {
+      "id": "cc25d22c-4ebc-5873-9220-2f083eb7edf6",
+      "source_node_id": "9ff91834-81d5-5c2a-bae3-cd060d8a2802",
+      "target_node_id": "800c3ca3-742d-52ad-9b42-e5e75eb28eb2",
+      "label": "normalized meter and DER telemetry"
+    },
+    {
+      "id": "371135ab-dcda-5c0b-be99-208955a3b8b2",
+      "source_node_id": "800c3ca3-742d-52ad-9b42-e5e75eb28eb2",
+      "target_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "label": "load shed and restoration recommendation"
+    },
+    {
+      "id": "cc491140-88e0-53d3-9881-f035c99c19d6",
+      "source_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "target_node_id": "b3cc94af-e2fd-57c9-9688-c7606e49dbcc",
+      "label": "DER setpoint and feeder reconfiguration request"
+    },
+    {
+      "id": "23cfc988-f1f3-5052-9a50-1452d5ce8753",
+      "source_node_id": "b3cc94af-e2fd-57c9-9688-c7606e49dbcc",
+      "target_node_id": "45ab1c20-f573-57e4-aedf-7db386a0606a",
+      "label": "signed field command bundle"
+    },
+    {
+      "id": "98cddfa1-e846-57c5-856f-24664f444d9b",
+      "source_node_id": "76f07e0c-1adf-5153-88be-af8bccee4bbd",
+      "target_node_id": "402d0d3e-74f4-521e-ab20-c191badbadd8",
+      "label": "time-boxed maintenance request"
+    },
+    {
+      "id": "befeb908-22d6-5084-8008-fc6dcdbad2c5",
+      "source_node_id": "402d0d3e-74f4-521e-ab20-c191badbadd8",
+      "target_node_id": "b3cc94af-e2fd-57c9-9688-c7606e49dbcc",
+      "label": "approved vendor diagnostic session"
+    },
+    {
+      "id": "4205126b-6e77-5495-b332-bad1ca1a7285",
+      "source_node_id": "d388d76d-8270-52ae-93c0-ca78b69f0bfc",
+      "target_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "label": "emergency override command"
+    },
+    {
+      "id": "f4bcf402-718e-55a8-be7c-c6293f34a90f",
+      "source_node_id": "d388d76d-8270-52ae-93c0-ca78b69f0bfc",
+      "target_node_id": "c97cb084-f004-53eb-b467-8aaf4ae92229",
+      "label": "break-glass approval record"
+    },
+    {
+      "id": "5d3c631b-4981-541b-9b5d-d156e8fdb5af",
+      "source_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "target_node_id": "c97cb084-f004-53eb-b467-8aaf4ae92229",
+      "label": "dispatch and load shed decision record"
+    },
+    {
+      "id": "c96b4bc2-2524-5639-8591-168194917679",
+      "source_node_id": "e993dddc-cdff-5a09-a23c-e16a071a259b",
+      "target_node_id": "c97cb084-f004-53eb-b467-8aaf4ae92229",
+      "label": "switching and restoration decision record"
+    },
+    {
+      "id": "4b99d69e-7cd8-5678-9a0e-76181ac87a9f",
+      "source_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "target_node_id": "90188cd1-1d4a-53f0-a292-cf2feba7e3f6",
+      "label": "dispatch and settlement event"
+    },
+    {
+      "id": "5457e99f-7f1b-5f95-b9c8-1f78bfa3b414",
+      "source_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "target_node_id": "71c2b261-04b7-5395-bb70-fa50523e65ec",
+      "label": "premise participation and tariff lookup"
+    },
+    {
+      "id": "5760906e-e4a2-5e3b-a881-277b511d0eb9",
+      "source_node_id": "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+      "target_node_id": "31db6198-03e1-585d-966d-395d2404cbeb",
+      "label": "committed flexibility response"
+    },
+    {
+      "id": "2dcb8d5f-19ce-557c-9909-936469ece381",
+      "source_node_id": "b3cc94af-e2fd-57c9-9688-c7606e49dbcc",
+      "target_node_id": "5713f5ce-4156-563b-9f86-01b67cf60564",
+      "label": "control and topology snapshot"
+    },
+    {
+      "id": "3a0eb2c2-ec49-5221-b6ef-c946de84ece4",
+      "source_node_id": "5713f5ce-4156-563b-9f86-01b67cf60564",
+      "target_node_id": "8f1a38c6-d006-5792-a898-91e3ba673d96",
+      "label": "telemetry replication for analytics"
+    },
+    {
+      "id": "7dd4129e-7c36-5618-9b0c-cd1fe8420e1b",
+      "source_node_id": "a696152b-d944-5c71-a3ea-76c36bd30247",
+      "target_node_id": "45ab1c20-f573-57e4-aedf-7db386a0606a",
+      "label": "signed firmware package"
+    },
+    {
+      "id": "2552beaf-a372-5ba0-b32a-b5765d1694ca",
+      "source_node_id": "75524cd1-d0fe-5ed3-815d-3442117ebd13",
+      "target_node_id": "e993dddc-cdff-5a09-a23c-e16a071a259b",
+      "label": "crew hazard note and local isolation status"
+    }
+  ],
+  "trust_boundaries": [
+    {
+      "id": "81d63583-9507-5259-b175-17caf1a973b3",
+      "name": "Public Customer and External Partner Edge",
+      "node_ids": [
+        "22e58d88-53b5-5b11-b3e4-ae7a1482ba52",
+        "48060bdd-74b1-5182-8f8b-b0a0a3511f2b",
+        "e3650994-227e-50cc-885b-6ecb03d4a668"
+      ],
+      "position_x": 180,
+      "position_y": 10,
+      "width": 240,
+      "height": 420,
+      "boundary_type": "network",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "dbf9b537-59ad-502a-acea-bf1649e51144",
+      "name": "Utility Identity and Corporate Core",
+      "node_ids": [
+        "a0baef43-a6e7-52ec-88a5-9c1e6a8b5d41",
+        "402d0d3e-74f4-521e-ab20-c191badbadd8"
+      ],
+      "position_x": 430,
+      "position_y": 0,
+      "width": 210,
+      "height": 240,
+      "boundary_type": "organizational",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "2f706e61-9b66-5e35-a58b-cb107f811884",
+      "name": "Cloud Operations Control Plane",
+      "node_ids": [
+        "e993dddc-cdff-5a09-a23c-e16a071a259b",
+        "80379613-e2ff-58c5-b8d1-f260bc29fa4f",
+        "800c3ca3-742d-52ad-9b42-e5e75eb28eb2",
+        "a429722a-b6d5-5ea9-b521-2df4ba7e1414",
+        "d388d76d-8270-52ae-93c0-ca78b69f0bfc",
+        "9ff91834-81d5-5c2a-bae3-cd060d8a2802"
+      ],
+      "position_x": 440,
+      "position_y": 90,
+      "width": 470,
+      "height": 500,
+      "boundary_type": "cloud",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "5827a5f5-806c-572b-a9c0-411f4af6126f",
+      "name": "OT Operations Zone",
+      "node_ids": [
+        "87b6bc1a-7038-545f-9d89-a96ab9f96b52",
+        "b3cc94af-e2fd-57c9-9688-c7606e49dbcc",
+        "45ab1c20-f573-57e4-aedf-7db386a0606a",
+        "a696152b-d944-5c71-a3ea-76c36bd30247",
+        "5713f5ce-4156-563b-9f86-01b67cf60564"
+      ],
+      "position_x": 910,
+      "position_y": 40,
+      "width": 420,
+      "height": 590,
+      "boundary_type": "ot_safety",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "ea745c4b-0f89-55ff-8f86-21d3fff7cede",
+      "name": "Restricted Customer and Settlement Data Zone",
+      "node_ids": [
+        "71c2b261-04b7-5395-bb70-fa50523e65ec",
+        "90188cd1-1d4a-53f0-a292-cf2feba7e3f6",
+        "c97cb084-f004-53eb-b467-8aaf4ae92229",
+        "8f1a38c6-d006-5792-a898-91e3ba673d96"
+      ],
+      "position_x": 1180,
+      "position_y": 0,
+      "width": 360,
+      "height": 640,
+      "boundary_type": "regulatory",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "f6121228-6951-596c-b3aa-09a7a8809393",
+      "name": "Field and Mobile Edge",
+      "node_ids": [
+        "75524cd1-d0fe-5ed3-815d-3442117ebd13"
+      ],
+      "position_x": 260,
+      "position_y": 500,
+      "width": 250,
+      "height": 150,
+      "boundary_type": "organizational",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "086f7e74-f052-550c-b320-292b4ed927be",
+      "name": "Vendor Support Enclave",
+      "node_ids": [
+        "76f07e0c-1adf-5153-88be-af8bccee4bbd"
+      ],
+      "position_x": 1200,
+      "position_y": 440,
+      "width": 260,
+      "height": 150,
+      "boundary_type": "privilege",
+      "parent_boundary_id": null
+    },
+    {
+      "id": "e133d504-707a-579e-bc79-544881df4b8f",
+      "name": "Regulatory and Emergency Coordination Exchange",
+      "node_ids": [
+        "31db6198-03e1-585d-966d-395d2404cbeb",
+        "cd3c0f54-0ffd-526a-8b42-b0acbbee9afd"
+      ],
+      "position_x": -30,
+      "position_y": 380,
+      "width": 240,
+      "height": 220,
+      "boundary_type": "regulatory",
+      "parent_boundary_id": null
+    }
+  ]
+}

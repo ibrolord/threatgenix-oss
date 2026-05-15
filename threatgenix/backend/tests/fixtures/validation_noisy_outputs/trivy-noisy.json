@@ -1,0 +1,45 @@
+{
+  "SchemaVersion": 2,
+  "Results": [
+    {
+      "Target": "Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "Misconfigurations": [
+        {
+          "ID": "AVD-DS-0002",
+          "Title": "Root user",
+          "Severity": "HIGH",
+          "CauseMetadata": {"Resource": "USER root", "StartLine": 12}
+        },
+        {
+          "Title": "Missing rule id should be ignored",
+          "Severity": "HIGH",
+          "CauseMetadata": {"Resource": "RUN curl example"}
+        }
+      ],
+      "Vulnerabilities": "truncated vulnerability list"
+    },
+    {
+      "Target": "requirements.txt",
+      "Type": "python-pkg",
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "CVE-2026-3333",
+          "PkgName": "requests",
+          "InstalledVersion": "2.0.0",
+          "Severity": "CRITICAL",
+          "Title": "TLS bypass"
+        },
+        {
+          "PkgName": "urllib3",
+          "InstalledVersion": "1.0.0",
+          "Severity": "HIGH",
+          "Title": "Missing vulnerability id should be ignored"
+        }
+      ],
+      "Misconfigurations": ["truncated misconfiguration entry"]
+    },
+    "scanner warning: result object truncated"
+  ]
+}

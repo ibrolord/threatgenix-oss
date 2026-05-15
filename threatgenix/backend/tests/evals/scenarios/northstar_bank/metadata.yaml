@@ -1,0 +1,36 @@
+scenario_id: northstar_bank
+title: NorthStar Bank Omnichannel Payments
+industry: Financial services
+difficulty: extreme
+analyst_persona: Senior payments security architect supporting OSFI and PCI DSS readiness
+description: Hybrid Canadian banking payments platform with consumer, partner, treasury,
+  fraud, AML, SWIFT, and tokenization paths crossing cloud and on-prem boundaries.
+system_name: NorthStar Omnichannel Payments Platform
+data_classification: Restricted
+regulatory_scope:
+- OSFI B-13
+- PCI DSS
+- PIPEDA
+- FINTRAC
+deployment_model: hybrid
+critical_components:
+- API Gateway
+- Payments Orchestrator
+- Fraud Scoring Engine
+- AML Screening Service
+- SWIFT Connector
+- Core Banking Ledger
+- Card Token Vault
+critical_flows:
+- Consumer Mobile App -> API Gateway (OAuth2 + payment initiation)
+- Open Banking Partner -> API Gateway (signed payment requests)
+- Payments Orchestrator -> Core Banking Ledger (posting and balance updates)
+- Payments Orchestrator -> SWIFT Connector (international payment messages)
+- Payments Orchestrator -> Card Token Vault (PAN tokenization lookup)
+critical_boundaries:
+- Customer and Partner Edge
+- Payments Control Plane
+- Restricted Data Zone
+narrative_doc: narrative.pdf
+structured_doc: structured.pdf
+delta_doc: delta.pdf

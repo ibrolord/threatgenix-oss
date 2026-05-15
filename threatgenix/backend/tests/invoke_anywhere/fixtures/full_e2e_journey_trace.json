@@ -1,0 +1,35 @@
+{
+  "journey_id": "invoke-anywhere-full-journey-v1",
+  "review_id": "review-123",
+  "web_url": "https://threatgenix.vercel.app/reviews/review-123",
+  "pr_comment_url": "https://github.com/acme/example-app/pull/42#issuecomment-1",
+  "report_exported": true,
+  "decisions": {
+    "cli": "block",
+    "web": "block",
+    "mcp": "block",
+    "after_fix": "pass"
+  },
+  "events": [
+    {"step": "fresh_repo", "status": "pass"},
+    {"step": "cli_review_started", "status": "pass"},
+    {"step": "intake_completed", "status": "pass"},
+    {"step": "upload_approved", "status": "pass"},
+    {"step": "bundle_created", "status": "pass"},
+    {"step": "managed_scanners_completed", "status": "pass"},
+    {"step": "code_context_extracted", "status": "pass"},
+    {"step": "evidence_graph_rebuilt", "status": "pass"},
+    {"step": "context_index_updated", "status": "pass"},
+    {"step": "cli_decision_returned", "status": "pass"},
+    {"step": "web_review_opened", "status": "pass"},
+    {"step": "evidence_chain_and_fix_plan_visible", "status": "pass"},
+    {"step": "mcp_ship_decision_requested", "status": "pass"},
+    {"step": "mcp_matches_web_cli", "status": "pass"},
+    {"step": "github_pr_webhook_simulated", "status": "pass"},
+    {"step": "pr_comment_and_status_posted", "status": "pass"},
+    {"step": "fix_applied", "status": "pass"},
+    {"step": "review_rerun", "status": "pass"},
+    {"step": "decision_improved", "status": "pass"},
+    {"step": "report_exported", "status": "pass"}
+  ]
+}

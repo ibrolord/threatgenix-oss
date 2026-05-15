@@ -1,0 +1,10 @@
+rules:
+  - id: python.jwt.security.jwt-decode-without-verify
+    message: JWT signature verification is disabled
+    severity: ERROR
+    languages: [python]
+    metadata:
+      category: security
+      technology: [python, jwt]
+      cwe: [CWE-347]
+    pattern: 'jwt.decode($TOKEN, options={"verify_signature": False})'

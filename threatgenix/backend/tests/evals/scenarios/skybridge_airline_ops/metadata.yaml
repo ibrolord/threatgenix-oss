@@ -1,0 +1,39 @@
+scenario_id: skybridge_airline_ops
+title: SkyBridge Airways Integrated Flight Operations, Maintenance, and Turnaround
+  Control Platform
+industry: Commercial aviation
+difficulty: extreme
+analyst_persona: Principal airline operations threat analyst preparing a safety and
+  operational-resilience review
+description: Hybrid airline operations-control platform spanning dispatch release,
+  crew recovery, maintenance deferrals, turnaround readiness, EFB synchronization,
+  vendor support, and immutable operational records.
+system_name: SkyBridge Airways Flight Operations and Maintenance Control Platform
+data_classification: Restricted
+regulatory_scope:
+- ISO 27001
+- NIST
+deployment_model: hybrid
+critical_components:
+- Dispatch Release Service
+- Maintenance Control Service
+- Turnaround Coordination Service
+- Crew Recovery Engine
+- Privileged Access Broker
+- Records Retention Vault
+- EFB Sync Service
+critical_flows:
+- Ground Handler Partner API -> Turnaround Coordination Service (turnaround milestone
+  update)
+- Aircraft Health Feed -> Maintenance Control Service (aircraft health alert)
+- Turnaround Coordination Service -> Dispatch Release Service (turnaround readiness
+  state)
+- Dispatch Release Service -> Audit and Decision Log (dispatch decision record)
+- Audit and Decision Log -> Records Retention Vault (immutable record replication)
+critical_boundaries:
+- Corporate Identity and Core Records Boundary
+- Cloud Operations Platform Boundary
+- Vendor Support and Security Boundary
+narrative_doc: narrative.pdf
+structured_doc: structured.pdf
+delta_doc: delta.pdf

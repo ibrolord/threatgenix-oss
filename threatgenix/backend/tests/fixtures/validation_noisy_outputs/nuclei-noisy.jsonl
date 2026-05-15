@@ -1,0 +1,7 @@
+nuclei v3.2.0 starting scan with 214 templates
+{"template-id":"http/cves/2026/vendor-auth-bypass","info":{"name":"Vendor Auth Bypass","severity":"high","tags":"auth-bypass,cve","classification":{"cve-id":["CVE-2026-1111"],"cvss-score":8.8}},"matched-at":"https://api.example.com/admin"}
+{"info":{"name":"Missing template id should not become a finding","severity":"critical","tags":"cve"},"matched-at":"https://api.example.com/no-template"}
+["not","a","finding"]
+{"template-id":null,"info":{"name":"Null template id is malformed","severity":"high"},"matched-at":"https://api.example.com/null"}
+{"template-id":"http/exposures/debug-panel","info":{"name":"Debug Panel Exposure","severity":"medium","tags":["exposure","debug"]},"matched-at":"https://api.example.com/debug"}
+{"template-id":"truncated

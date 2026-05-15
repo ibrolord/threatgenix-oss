@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Threat Model Report &mdash; {{ system_name }}</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 2cm;
+    @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #999; }
+  }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11pt; color: #111; line-height: 1.6; }
+  h1 { font-size: 22pt; font-weight: 300; margin-bottom: 4pt; color: #111; }
+  h2 { font-size: 14pt; font-weight: 600; margin-top: 28pt; color: #111; border-bottom: 1px solid #ddd; padding-bottom: 4pt; }
+  .title-page { page-break-after: always; padding-top: 25%; }
+  .title-page h1 { font-size: 28pt; font-weight: 300; }
+  .title-page .subtitle { font-size: 12pt; color: #666; margin-top: 4pt; }
+  .title-page .meta { margin-top: 40pt; font-size: 10pt; color: #666; }
+  .title-logo { margin-bottom: 20pt; }
+  .title-logo img { max-height: 50pt; max-width: 180pt; }
+  .classification-label { font-size: 10pt; font-weight: 600; text-transform: uppercase; color: #666; margin-top: 12pt; }
+  .threat-item { margin-bottom: 14pt; padding-bottom: 10pt; border-bottom: 1px solid #eee; }
+  .threat-id { font-weight: 600; font-size: 10pt; color: #333; }
+  .threat-meta { font-size: 9pt; color: #888; margin-top: 2pt; }
+  .threat-desc { margin-top: 4pt; }
+  .severity-Critical { color: #c0392b; font-weight: 600; }
+  .severity-High { color: #e74c3c; font-weight: 600; }
+  .severity-Medium { color: #f39c12; }
+  .severity-Low { color: #27ae60; }
+  .methodology { font-size: 10pt; color: #666; margin-top: 10pt; }
+  .dfd-placeholder { text-align: center; padding: 30pt; border: 1px dashed #ccc; color: #999; margin: 16pt 0; }
+  .scope-row { margin-bottom: 6pt; }
+  .scope-label { font-weight: 600; color: #555; display: inline-block; width: 140pt; }
+  .watermark {
+    position: fixed; top: 50%; left: 50%;
+    transform: rotate(-45deg) translate(-50%, -50%);
+    font-size: 72pt; opacity: 0.06; color: #000;
+    white-space: nowrap; pointer-events: none; z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+{% if report_watermark_text %}
+<div class="watermark">{{ report_watermark_text }}</div>
+{% endif %}
+
+<!-- Title Page -->
+<div class="title-page">
+  {% if report_logo_base64 %}
+  <div class="title-logo">
+    <img src="data:image/png;base64,{{ report_logo_base64 }}" alt="Logo" />
+  </div>
+  {% endif %}
+  <h1>{{ system_name }}</h1>
+  <div class="subtitle">Threat Model Report</div>
+  <div class="meta">
+    <div>Generated {{ generated_at }}</div>
+    <div>Created {{ created_at }}</div>
+    <div class="classification-label">{{ data_classification }}</div>
+  </div>
+</div>
+
+<!-- Scope -->
+<h2>Scope</h2>
+<div class="scope-row"><span class="scope-label">System</span>{{ system_name }}</div>
+<div class="scope-row"><span class="scope-label">Description</span>{{ description or "No description provided." }}</div>
+<div class="scope-row"><span class="scope-label">Classification</span>{{ data_classification }}</div>
+
+<!-- DFD -->
+<h2>Data Flow Diagram</h2>
+{% if dfd_image_base64 %}
+<div style="text-align:center;">
+  <img src="data:image/png;base64,{{ dfd_image_base64 }}" alt="Data Flow Diagram" style="max-width:100%; max-height:500pt;" />
+</div>
+{% else %}
+<div class="dfd-placeholder">
+  DFD diagram available in the application.
+</div>
+{% endif %}
+
+<!-- Threats -->
+<h2>Threats ({{ threats | length }})</h2>
+<div class="scope-row"><span class="scope-label">Residual Risk</span>
+  Critical {{ residual_risk_summary.Critical }}, High {{ residual_risk_summary.High }}, Medium {{ residual_risk_summary.Medium }}, Low {{ residual_risk_summary.Low }}, Negligible {{ residual_risk_summary.Negligible }}
+</div>
+{% if threats %}
+  {% for t in threats %}
+  <div class="threat-item">
+    <div class="threat-id">{{ t.display_id }} &mdash; {{ t.stride_category }}</div>
+    <div class="threat-meta">
+      <span class="severity-{{ t.severity }}">{{ t.severity }}</span>
+      &middot; {{ t.source }} &middot; {{ t.status }}
+    </div>
+    <div class="threat-desc">{{ t.description }}</div>
+  </div>
+  {% endfor %}
+{% else %}
+<p>No threats to display.</p>
+{% endif %}
+
+<!-- Compliance -->
+<h2>Compliance Mapping</h2>
+{% if compliance_by_threat %}
+  {% for item in compliance_by_threat %}
+  <div class="threat-item">
+    <div class="threat-id">{{ item.display_id }} &mdash; {{ item.stride_category }}</div>
+    <div class="threat-desc">
+      {% for ctrl in item.controls %}
+        [{{ ctrl.framework }}] {{ ctrl.control_id }}{% if not loop.last %}, {% endif %}
+      {% endfor %}
+      {% if not item.controls %}<em>No mapped controls</em>{% endif %}
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+<p>No compliance mappings available.</p>
+{% endif %}
+
+<!-- Methodology -->
+<h2>Methodology</h2>
+<p class="methodology">{{ methodology_text }}</p>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Threat Model Report &mdash; {{ system_name }}</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 2cm;
+    @bottom-center { content: "Page " counter(page) " of " counter(pages); font-size: 9pt; color: #666; }
+    @bottom-right { content: "ThreatGenix v{{ app_version | default('0.1.0') }}"; font-size: 7pt; color: #999; }
+  }
+  body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 11pt; color: #1a1a1a; line-height: 1.5; }
+  h1 { font-size: 24pt; margin-bottom: 4pt; }
+  h2 { font-size: 16pt; border-bottom: 2px solid #003366; padding-bottom: 4pt; margin-top: 28pt; color: #003366; }
+  h3 { font-size: 13pt; color: #003366; margin-top: 18pt; }
+  .title-page { page-break-after: always; text-align: center; padding-top: 30%; }
+  .title-page h1 { font-size: 32pt; color: #003366; }
+  .title-page .subtitle { font-size: 14pt; color: #555; margin-top: 8pt; }
+  .title-page .meta { margin-top: 40pt; font-size: 11pt; color: #333; }
+  .classification-badge {
+    display: inline-block; padding: 4pt 12pt; border-radius: 4pt;
+    font-weight: bold; font-size: 10pt; text-transform: uppercase; margin-top: 16pt;
+  }
+  .classification-Public { background: #d4edda; color: #155724; }
+  .classification-Internal { background: #cce5ff; color: #004085; }
+  .classification-Confidential { background: #fff3cd; color: #856404; }
+  .classification-Restricted { background: #f8d7da; color: #721c24; }
+  table { width: 100%; border-collapse: collapse; margin-top: 10pt; font-size: 10pt; }
+  th, td { border: 1px solid #ccc; padding: 6pt 8pt; text-align: left; vertical-align: top; }
+  th { background: #003366; color: #fff; font-weight: bold; }
+  tr:nth-child(even) { background: #f7f9fc; }
+  .severity-Critical { color: #721c24; font-weight: bold; }
+  .severity-High { color: #c0392b; font-weight: bold; }
+  .severity-Medium { color: #e67e22; font-weight: bold; }
+  .severity-Low { color: #27ae60; }
+  .source-badge { display: inline-block; padding: 2pt 6pt; border-radius: 3pt; font-size: 8pt; font-weight: bold; }
+  .source-Rules { background: #e8eaf6; color: #283593; }
+  .source-AI { background: #fce4ec; color: #880e4f; }
+  .source-AI-Rules { background: #f3e5f5; color: #6a1b9a; }
+  .methodology { font-style: italic; color: #555; margin-top: 10pt; }
+  .dfd-placeholder { text-align: center; padding: 40pt; border: 2px dashed #aaa; color: #777; margin: 16pt 0; border-radius: 6pt; }
+  .scope-table td:first-child { font-weight: bold; width: 30%; background: #f0f4f8; }
+</style>
+</head>
+<body>
+
+<!-- Title Page -->
+<div class="title-page">
+  <h1>{{ system_name }}</h1>
+  <div class="subtitle">Threat Model Report</div>
+  <div class="meta">
+    <div>Generated: {{ generated_at }}</div>
+    <div>Created: {{ created_at }}</div>
+    <div class="classification-badge classification-{{ data_classification }}">{{ data_classification }}</div>
+  </div>
+</div>
+
+<!-- Scope Section -->
+<h2>1. Scope</h2>
+<table class="scope-table">
+  <tr><td>System Name</td><td>{{ system_name }}</td></tr>
+  <tr><td>Description</td><td>{{ description or "No description provided." }}</td></tr>
+  <tr><td>Data Classification</td><td>{{ data_classification }}</td></tr>
+  {% if next_review_date %}
+  <tr><td>Next Review Date</td><td>{{ next_review_date }}</td></tr>
+  {% endif %}
+</table>
+{% if out_of_scope_statement %}
+<h3>Out of Scope</h3>
+<div style="padding:8pt 12pt;border:1px solid #ccc;border-left:4px solid #e67e22;background:#fff9f0;border-radius:0 4pt 4pt 0;color:#333;">
+  {{ out_of_scope_statement }}
+</div>
+{% endif %}
+
+<!-- DFD Section -->
+<h2>2. Data Flow Diagram</h2>
+{% if dfd_image_base64 %}
+<div style="text-align:center;">
+  <img src="data:image/png;base64,{{ dfd_image_base64 }}" alt="Data Flow Diagram" style="max-width:100%; max-height:600pt;" />
+</div>
+{% else %}
+<div class="dfd-placeholder">
+  DFD diagram &mdash; see application for interactive view.
+</div>
+{% endif %}
+
+<!-- Threat Table -->
+<h2>3. Threats</h2>
+<p>Total threats shown: {{ threats | length }} (Accepted + Open)</p>
+{% if threats %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>STRIDE Category</th>
+      <th>Severity</th>
+      <th>Description</th>
+      <th>Source</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for t in threats %}
+    <tr>
+      <td>{{ t.display_id }}{% if t.rule_id %}<div style="font-size:8pt;color:#666;">{{ t.rule_id }}</div>{% endif %}</td>
+      <td>{{ t.stride_category }}</td>
+      <td class="severity-{{ t.severity }}">{{ t.severity }}</td>
+      <td>
+        {{ t.description }}
+        {% if t.relevance_rationale %}
+        <div style="margin-top:6pt;padding:6pt 8pt;background:#f0f4f8;border-left:3px solid #003366;border-radius:0 4pt 4pt 0;font-size:9pt;color:#003366;">
+          <strong>Why This Matters:</strong> {{ t.relevance_rationale }}
+        </div>
+        {% endif %}
+      </td>
+      <td><span class="source-badge source-{{ t.source | replace('+', '-') }}">{{ t.source }}</span></td>
+      <td>{{ t.status }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No threats to display.</p>
+{% endif %}
+
+<!-- Compliance Mapping -->
+<h2>4. Compliance Mapping</h2>
+{% if compliance_by_threat %}
+<table>
+  <thead>
+    <tr>
+      <th>Threat ID</th>
+      <th>STRIDE Category</th>
+      <th>Compliance Controls</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in compliance_by_threat %}
+    <tr>
+      <td>{{ item.display_id }}</td>
+      <td>{{ item.stride_category }}</td>
+      <td>
+        {% for ctrl in item.controls %}
+          <span{% if ctrl.framework == "OSFI B-13" %} style="font-weight:700;color:#0f274f;"{% endif %}>[{{ ctrl.framework }}] {{ ctrl.control_id }} ({{ ctrl.control_name }})</span>{% if not loop.last %}, {% endif %}
+        {% endfor %}
+        {% if not item.controls %}
+          <em style="color:#c0392b;">&#9888; No compliance controls mapped to this threat.</em>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No compliance mappings available.</p>
+{% endif %}
+
+<!-- Methodology -->
+<h2>5. Methodology</h2>
+<p class="methodology">{{ methodology_text }}</p>
+
+<!-- Analyst Attestation -->
+<h2>6. Analyst Attestation</h2>
+<table class="scope-table" style="margin-top:10pt;">
+  <tr><td>Analyst</td><td>{{ analyst_name or "_________________________" }}</td></tr>
+  <tr><td>Report Date</td><td>{{ generated_at }}</td></tr>
+  <tr><td>Next Review</td><td>{{ next_review_date or "Not scheduled" }}</td></tr>
+</table>
+{% if analyst_attestation %}
+<div style="margin-top:12pt;padding:10pt 14pt;border:1px solid #003366;border-radius:4pt;background:#f0f4f8;">
+  <strong>Statement:</strong> {{ analyst_attestation }}
+</div>
+{% else %}
+<div style="margin-top:12pt;padding:10pt 14pt;border:1px dashed #aaa;border-radius:4pt;color:#777;">
+  <em>Attestation statement not yet recorded. Complete via Report Settings before final submission.</em>
+</div>
+{% endif %}
+<div style="margin-top:24pt;">
+  <div style="display:inline-block;width:45%;border-top:1px solid #333;padding-top:4pt;font-size:9pt;">Analyst Signature &amp; Date</div>
+  <div style="display:inline-block;width:45%;margin-left:8%;border-top:1px solid #333;padding-top:4pt;font-size:9pt;">Reviewer Signature &amp; Date</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+{
+  "version": "1.80.0",
+  "results": [
+    {
+      "check_id": "python.jwt.decode-without-verify",
+      "path": "app/auth.py",
+      "start": {"line": 42},
+      "extra": {
+        "message": "JWT verification disabled",
+        "severity": "ERROR",
+        "metadata": {"category": "security", "technology": ["python", "jwt"]}
+      }
+    },
+    {
+      "path": "app/no-rule.py",
+      "start": {"line": 7},
+      "extra": {"message": "No rule id should be ignored", "severity": "ERROR"}
+    },
+    "truncated result object",
+    {"check_id": "", "extra": {"message": "Blank rule id should be ignored"}},
+    {"not_a_result": true}
+  ],
+  "errors": [
+    {"message": "partial parse failure in generated/vendor.py"},
+    "scanner warning: skipped binary file"
+  ],
+  "paths": {"scanned": ["app/auth.py"], "skipped": ["vendor/bundle.js"]}
+}
