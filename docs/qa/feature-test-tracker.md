@@ -38,7 +38,7 @@ fixed.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | QA-001 | Boot | Local stack starts and health is green | `test_health.py`, basic e2e smoke | Compose-up smoke against real stack and deep health | integration | P0 | S0 | backend | open |
 | QA-002 | Auth | Register, login, reload, logout all work | auth API and React context tests | Browser auth roundtrip | browser E2E | P0 | S1 | frontend | open |
-| QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Parametrized production gate coverage | startup | P0 | S0 | backend | open |
+| QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Release journey retest for production auth gate | startup | P0 | S0 | backend | awaiting-retest |
 | QA-004 | Tenant isolation | Users cannot access other users' data | partial SaaS foundation tests | Route matrix across all owned resources | API contract | P0 | S0 | backend | open |
 | QA-005 | Migration readiness | Partially migrated DB does not serve traffic | migration/startup tests | Downgrade/stale schema health degradation test | migration | P0 | S0 | backend | open |
 | QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend and dashboard tests | Browser create/archive journey | browser E2E | P1 | S1 | frontend | open |
@@ -63,9 +63,9 @@ fixed.
 | QA-025 | Application review | Bundle to findings to decision works | broad app-review tests | Browser flow with mocked scanners | browser E2E | P1 | S1 | frontend | open |
 | QA-026 | TMAC | Threat model code round-trips | TMAC tests | Import, mutate, export, diff minimality | unit | P2 | S2 | backend | open |
 | QA-027 | Provider settings | Provider switching and BYOK are usable | API and BYOK tests | Settings-page browser flow | browser E2E | P1 | S1 | frontend | open |
-| QA-028 | Security headers | Common hardening headers are present | weak direct coverage | Header assertions on health and owned route | security | P0 | S0 | backend | open |
+| QA-028 | Security headers | Common hardening headers are present | health and catalog header tests | Release journey retest for deployed headers | security | P0 | S0 | backend | awaiting-retest |
 | QA-029 | Rate limiting | Auth endpoints throttle bursts | partial limiter presence | Burst-login 429 test | security | P1 | S1 | backend | open |
-| QA-030 | Production gates | Unsafe production defaults fail closed | startup tests | Matrix for each unsafe production setting | startup | P0 | S0 | backend | open |
+| QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix | Release journey retest for packaged production config | startup | P0 | S0 | backend | awaiting-retest |
 | QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script and CI job | Negative fixture test or CI assertion | security | P0 | S0 | DevOps | open |
 | QA-032 | CLI | CLI emits valid MCP config | CI wheel smoke | CLI argument combination tests | unit | P2 | S2 | backend | open |
 | QA-033 | Document retention | Raw upload text is purged | weak direct coverage | Time-controlled purge test | unit | P1 | S1 | backend | open |
@@ -79,6 +79,17 @@ fixed.
 | P0 | Automated regression test, full relevant CI job, manual release journey retest |
 | P1 | Automated regression test and relevant CI job |
 | P2 | Automated test or documented manual retest |
+
+## Progress Notes
+
+- 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
+  `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
+  ready for focused retest; production release journey retest remains before
+  closure.
+- 2026-05-15: QA-028 gained direct middleware assertions in
+  `threatgenix/backend/tests/test_security_headers.py` for `/api/health`,
+  `/api/threat-catalog`, and HTTPS-only HSTS behavior. Production release
+  journey retest remains before closure.
 
 ## Release Exit Criteria
 
