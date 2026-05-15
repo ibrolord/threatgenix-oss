@@ -37,7 +37,7 @@ fixed.
 | ID | Area | User promise | Existing coverage | Missing or weak coverage | Type | Priority | Severity | Owner | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | QA-001 | Boot | Local stack starts and health is green | configurable deep e2e smoke | Release journey retest for full compose stack | integration | P0 | S0 | backend | awaiting-retest |
-| QA-002 | Auth | Register, login, reload, logout all work | auth API and React context tests | Browser auth roundtrip | browser E2E | P0 | S1 | frontend | open |
+| QA-002 | Auth | Register, login, reload, logout all work | auth API, React context tests, and browser auth roundtrip | Release journey retest against packaged self-hosted stack | browser E2E | P0 | S1 | frontend | awaiting-retest |
 | QA-003 | Auth hardening | Dev auth tokens never leak in production | startup/security tests | Release journey retest for production auth gate | startup | P0 | S0 | backend | awaiting-retest |
 | QA-004 | Tenant isolation | Users cannot access other users' data | owned-resource route matrix and SaaS foundation tests | Release journey retest against full API stack | API contract | P0 | S0 | backend | awaiting-retest |
 | QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression | Release journey retest on downgraded schema fixture | migration | P0 | S0 | backend | awaiting-retest |
@@ -94,6 +94,10 @@ fixed.
   creates negative fixtures for secret patterns, private/customer strings,
   legacy product naming, tracked `.env`, and uncommented provider credentials.
   CI now runs the self-test after the normal hygiene scan.
+- 2026-05-15: QA-002 gained
+  `threatgenix/frontend/e2e/auth-roundtrip.spec.ts`, which creates a unique
+  account through the browser, verifies token persistence across reload, logs
+  out, and signs back in with the same credentials.
 - 2026-05-15: QA-004 gained
   `threatgenix/backend/tests/test_tenant_isolation_route_matrix.py`, a
   parametrized cross-tenant denial matrix for representative owned-resource
