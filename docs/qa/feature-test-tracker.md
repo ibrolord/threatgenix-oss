@@ -42,7 +42,7 @@ fixed.
 | QA-004 | Tenant isolation | Users cannot access other users' data | owned-resource route matrix, SaaS foundation tests, and Compose product-readiness tenant smoke | Keep regression active | API contract | P0 | S0 | backend | closed-verified |
 | QA-005 | Migration readiness | Partially migrated DB does not serve traffic | startup missing-schema regression and local P0 retest | Keep regression active | migration | P0 | S0 | backend | closed-verified |
 | QA-006 | Threat model CRUD | User can create, open, list, and archive models | backend and dashboard tests | Browser create/archive journey | browser E2E | P1 | S1 | frontend | open |
-| QA-007 | Document upload | Architecture document becomes DFD input | parser and upload tests | End-to-end extraction plus retention purge | integration | P1 | S1 | backend | open |
+| QA-007 | Document upload | Architecture document becomes DFD input | Docker-backed upload-to-DFD e2e plus retention purge regression | Keep regression active | integration | P1 | S1 | backend | closed-verified |
 | QA-008 | DFD API | Nodes, edges, boundaries, views persist | broad DFD tests | Quick-add, view regeneration, repository suggestion contracts | API contract | P1 | S1 | backend | open |
 | QA-009 | DFD UI | Canvas editing works in browser | component and Playwright specs | Visual regression and save-state assertion | browser E2E | P2 | S2 | frontend | open |
 | QA-010 | DFD quality gates | Modeling issues are visible and actionable | service tests | UI rendering of quality issues | browser E2E | P2 | S2 | frontend | open |
@@ -158,6 +158,10 @@ fixed.
   expired and future documents into the live e2e database, verifies only expired
   `raw_text` is purged, and proves `parsed_components` remains intact. The
   Docker-backed `make e2e` target passed 69 tests with this contract included.
+- 2026-05-15: QA-007 closed on the same Docker-backed e2e evidence: document
+  upload tests now exercise fixture PDF upload, parser/Bedrock-stub extraction,
+  DFD generation, DFD readback, and the time-controlled retention purge
+  regression without leaving raw text beyond expiry.
 
 ## Release Exit Criteria
 
