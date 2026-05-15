@@ -48,7 +48,7 @@ fixed.
 | QA-010 | DFD quality gates | Modeling issues are visible and actionable | service tests | UI rendering of quality issues | browser E2E | P2 | S2 | frontend | open |
 | QA-011 | Rules engine | STRIDE output is deterministic | rules unit tests, golden DFD threat-set regression, and Compose product-readiness threat generation smoke | Intentional rule change approval/update process | unit | P0 | S1 | rules | closed-verified |
 | QA-012 | Rule suppression | Properties suppress or trigger correct rules | targeted suppression tests | Broader property permutation sweep | unit | P2 | S2 | rules | open |
-| QA-013 | AI enhancement | Available AI improves threat output | AI service tests | Stubbed provider end-to-end contract | API contract | P1 | S1 | AI | open |
+| QA-013 | AI enhancement | Available AI improves threat output | AI service tests plus Docker-backed stubbed-provider analyze contract | Keep regression active | API contract | P1 | S1 | AI | closed-verified |
 | QA-014 | AI degradation | Provider outage does not block rules | analyze fallback tests, browser degradation banner regression, and frontend release retest | Keep regression active | browser E2E | P0 | S1 | AI | closed-verified |
 | QA-015 | Threat triage | Accept, dismiss, bulk update, and audit persist | API and modal tests | Bulk triage browser flow | browser E2E | P1 | S1 | frontend | open |
 | QA-016 | Threat diff | Re-analysis shows new and removed threats | diff tests | Browser edit-and-reanalyze journey | browser E2E | P2 | S2 | frontend | open |
@@ -175,6 +175,12 @@ fixed.
   persistence. The regression exposed and fixed dropped repository seed
   provenance on node properties. The Docker-backed `make e2e` target passed 72
   tests with this contract included.
+- 2026-05-15: QA-013 gained `tests/e2e/test_13_ai_enhancement_contracts.py`
+  and a tool-aware Bedrock e2e stub. The live `/analyze` contract now proves
+  rules-only analysis returns a skip reason, full analysis uses the local
+  provider stub, an AI-generated threat is added with `ai_enhanced=true`, and
+  the AI threat persists through `GET /threats`. The Docker-backed `make e2e`
+  target passed 73 tests with this contract included.
 
 ## Release Exit Criteria
 

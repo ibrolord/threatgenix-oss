@@ -6,6 +6,10 @@ import sys
 backend_dir = os.path.join(os.path.dirname(__file__), "..", "..", "threatgenix", "backend")
 sys.path.insert(0, backend_dir)
 
+# Force the e2e app through the patched Bedrock provider instead of a local or
+# user-configured provider.
+os.environ["LLM_PROVIDER"] = "bedrock"
+
 # Patch BedrockClient before importing the app
 FAKE_BEDROCK_EXTRACTION = {
     "components": [
@@ -43,6 +47,53 @@ FAKE_BEDROCK_EXTRACTION = {
     ],
 }
 
+FAKE_BEDROCK_ENHANCEMENT = {
+    "new_threats": [
+        {
+            "title": "Session token replay bypass",
+            "stride_category": "Spoofing",
+            "severity": "High",
+            "description": (
+                "Authenticated Banking API requests can be replayed with a valid "
+                "customer token when session freshness is not modeled."
+            ),
+            "affected_node_names": ["Authenticated Banking API"],
+            "rationale": (
+                "The API is internet exposed and handles confidential transfer "
+                "requests, so replayed identity assertions create material fraud risk."
+            ),
+            "relevance_rationale": (
+                "The account transfer request and Account Ledger Database records are "
+                "at risk; the API is internet facing and only strict input validation "
+                "is shown, with no session freshness or replay control in the DFD; exploitation "
+                "would create OSFI B-13 technology-risk and resilience impact."
+            ),
+            "attack_technique_ids": ["T1078"],
+            "capec_ids": ["CAPEC-151"],
+            "cwe_ids": ["CWE-287"],
+            "regulatory_citations": [
+                {
+                    "framework": "OSFI B-13",
+                    "section": "Technology and cyber risk management",
+                    "description": "Business-logic tampering can affect critical banking operations.",
+                }
+            ],
+        }
+    ],
+    "enrichments": [
+        {
+            "original_display_id": "T-001",
+            "enhanced_description": (
+                "Authenticated Banking API exposure increases the impact of the "
+                "existing rule finding because transfer requests cross the customer "
+                "to API trust path."
+            ),
+            "suggested_severity": "High",
+            "rationale": "The enrichment references the same internet-facing API node.",
+        }
+    ],
+}
+
 class FakeBedrockClient:
     """Fake BedrockClient that returns canned responses."""
 
@@ -52,6 +103,13 @@ class FakeBedrockClient:
         self.model_name = self.model_id
 
     def call_with_tools(self, system_message, user_message, tools, **kwargs):
+        tool_names = {
+            tool.get("name")
+            for tool in (tools or [])
+            if isinstance(tool, dict)
+        }
+        if "enhance_threats" in tool_names:
+            return FAKE_BEDROCK_ENHANCEMENT
         return FAKE_BEDROCK_EXTRACTION
 
 
