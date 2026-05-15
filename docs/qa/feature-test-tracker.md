@@ -52,7 +52,7 @@ fixed.
 | QA-014 | AI degradation | Provider outage does not block rules | analyze fallback tests, browser degradation banner regression, and frontend release retest | Keep regression active | browser E2E | P0 | S1 | AI | closed-verified |
 | QA-015 | Threat triage | Accept, dismiss, bulk update, and audit persist | API and modal tests | Bulk triage browser flow | browser E2E | P1 | S1 | frontend | open |
 | QA-016 | Threat diff | Re-analysis shows new and removed threats | diff tests | Browser edit-and-reanalyze journey | browser E2E | P2 | S2 | frontend | open |
-| QA-017 | Compliance | Threats show relevant controls | compliance tests | Framework coverage by STRIDE sample | API contract | P1 | S1 | backend | open |
+| QA-017 | Compliance | Threats show relevant controls | compliance tests plus live framework coverage by STRIDE sample | Keep regression active | API contract | P1 | S1 | backend | closed-verified |
 | QA-018 | Threat intelligence | ATT&CK, CAPEC, CWE, KEV, and advisory context appears | threat-intel tests | Sync smoke and UI rendering | integration | P2 | S2 | AI | open |
 | QA-019 | PDF report | Exported PDF is complete and parseable | real PDF render/parse test with required sections and DFD image plus Compose product-readiness export smoke | Keep regression active | integration | P0 | S1 | backend | closed-verified |
 | QA-020 | Report config | Template, logo, watermark, attestation persist | partial tests | Report-config and template-library contract test | API contract | P1 | S2 | backend | open |
@@ -148,6 +148,11 @@ fixed.
   verifies threat CSV headers, row count, generated threat IDs, residual-risk
   values, attachment filename, and cross-tenant denial against the live backend.
   The Docker-backed `make e2e` target passed 67 tests with this contract included.
+- 2026-05-15: QA-017 gained
+  `tests/e2e/test_10_compliance_framework_coverage.py`, which verifies every
+  STRIDE category returns seeded controls across NIST 800-53, OSFI B-13,
+  PCI DSS 4.0, and ISO 27001 through the live API. The Docker-backed `make e2e`
+  target passed 68 tests with this contract included.
 
 ## Release Exit Criteria
 
