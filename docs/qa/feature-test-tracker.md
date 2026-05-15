@@ -49,7 +49,7 @@ fixed.
 | QA-011 | Rules engine | STRIDE output is deterministic | rules unit tests and golden DFD threat-set regression | Intentional rule change approval/update process | unit | P0 | S1 | rules | awaiting-retest |
 | QA-012 | Rule suppression | Properties suppress or trigger correct rules | targeted suppression tests | Broader property permutation sweep | unit | P2 | S2 | rules | open |
 | QA-013 | AI enhancement | Available AI improves threat output | AI service tests | Stubbed provider end-to-end contract | API contract | P1 | S1 | AI | open |
-| QA-014 | AI degradation | Provider outage does not block rules | partial analyze tests | Browser banner and deterministic threat fallback | browser E2E | P0 | S1 | AI | open |
+| QA-014 | AI degradation | Provider outage does not block rules | analyze fallback tests and browser degradation banner regression | Full browser journey retest with mocked provider outage | browser E2E | P0 | S1 | AI | awaiting-retest |
 | QA-015 | Threat triage | Accept, dismiss, bulk update, and audit persist | API and modal tests | Bulk triage browser flow | browser E2E | P1 | S1 | frontend | open |
 | QA-016 | Threat diff | Re-analysis shows new and removed threats | diff tests | Browser edit-and-reanalyze journey | browser E2E | P2 | S2 | frontend | open |
 | QA-017 | Compliance | Threats show relevant controls | compliance tests | Framework coverage by STRIDE sample | API contract | P1 | S1 | backend | open |
@@ -104,6 +104,10 @@ fixed.
   DFD to the expected deterministic STRIDE threat set including rule order,
   display IDs, categories, severity, affected nodes, affected edges, and boundary
   flags.
+- 2026-05-15: QA-014 gained
+  `threatgenix/frontend/src/pages/ThreatModelPage.test.tsx`, which mocks an AI
+  provider outage response from `/analyze` and proves the page keeps the
+  deterministic rule threat visible while surfacing the AI degradation alert.
 - 2026-05-15: QA-003 and QA-030 gained a per-setting pytest matrix in
   `threatgenix/backend/tests/test_startup_readiness.py`. Automated coverage is
   ready for focused retest; production release journey retest remains before
