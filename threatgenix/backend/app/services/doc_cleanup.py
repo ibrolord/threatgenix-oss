@@ -21,12 +21,12 @@ from app.models.document import Document
 logger = logging.getLogger("threatgenix.doc_cleanup")
 
 
-async def purge_expired_documents() -> int:
+async def purge_expired_documents(now: datetime | None = None) -> int:
     """Purge raw_text from documents past their expires_at.
 
     Returns the number of documents purged.
     """
-    now = datetime.now(timezone.utc)
+    now = now or datetime.now(timezone.utc)
 
     async with async_session() as session:
         # Find expired, unpurged documents

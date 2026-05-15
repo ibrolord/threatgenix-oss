@@ -68,7 +68,7 @@ fixed.
 | QA-030 | Production gates | Unsafe production defaults fail closed | per-setting production gate matrix and local P0 retest | Keep regression active | startup | P0 | S0 | backend | closed-verified |
 | QA-031 | OSS hygiene | Public tree has no obvious secrets or private strings | hygiene script self-test and local release retest | Keep regression active | security | P0 | S0 | DevOps | closed-verified |
 | QA-032 | CLI | CLI emits valid MCP config | CI wheel smoke | CLI argument combination tests | unit | P2 | S2 | backend | open |
-| QA-033 | Document retention | Raw upload text is purged | weak direct coverage | Time-controlled purge test | unit | P1 | S1 | backend | open |
+| QA-033 | Document retention | Raw upload text is purged | time-controlled live DB purge test | Keep regression active | unit | P1 | S1 | backend | closed-verified |
 | QA-034 | Lazy chunk reload | Stale chunks recover cleanly | weak direct coverage | Unit test for reload-once guard | unit | P2 | S3 | frontend | open |
 | QA-035 | Product identity | Legacy naming does not return | product identity test, hygiene script, and local release retest | Keep regression active | security | P1 | S1 | DevOps | closed-verified |
 
@@ -153,6 +153,11 @@ fixed.
   STRIDE category returns seeded controls across NIST 800-53, OSFI B-13,
   PCI DSS 4.0, and ISO 27001 through the live API. The Docker-backed `make e2e`
   target passed 68 tests with this contract included.
+- 2026-05-15: QA-033 gained `tests/e2e/test_11_document_retention.py` plus a
+  deterministic `now` parameter on `purge_expired_documents`. The test inserts
+  expired and future documents into the live e2e database, verifies only expired
+  `raw_text` is purged, and proves `parsed_components` remains intact. The
+  Docker-backed `make e2e` target passed 69 tests with this contract included.
 
 ## Release Exit Criteria
 
