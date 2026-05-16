@@ -24,7 +24,7 @@ async def sync_all(db: AsyncSession, with_embeddings: bool = True) -> dict[str, 
 
     Args:
         db: Async database session.
-        with_embeddings: Whether to generate embeddings (requires Bedrock).
+        with_embeddings: Whether to generate embeddings with the configured provider.
 
     Returns:
         Dict mapping source name to number of records ingested.

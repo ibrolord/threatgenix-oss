@@ -59,6 +59,18 @@ key, and local Compose database hosts.
 
 The local default is Ollama. External providers are configured through environment variables and should be enabled only after your organization approves provider data transfer.
 
+Supported generation providers are `bedrock`, `ollama`, `anthropic`, `openai`,
+`openrouter`, `gemini`, `xai`, `zai`, and `perplexity`. The direct providers
+also support per-user BYOK from the Settings page, except Bedrock, which uses
+AWS IAM credentials.
+
+Threat-intel embeddings default to Bedrock Titan. You can set
+`EMBEDDING_PROVIDER=openai`, `openrouter`, `zai`, or `openai_compatible` for
+OpenAI-compatible embedding APIs, but the selected embedding model must return
+1024 dimensions because the shipped pgvector schema stores `Vector(1024)`.
+Use `EMBEDDING_MODEL`, `EMBEDDING_DIMENSION=1024`, and, for custom providers,
+`EMBEDDING_API_KEY` plus `EMBEDDING_BASE_URL`.
+
 ## Repository Evidence Boundary
 
 ThreatGenix OSS v1 supports a single GitHub repository, pull request, uploaded archive, or manifest bundle as repository evidence for a threat model at a time. Importing or uploading repository evidence again replaces the currently saved repository evidence for that model. Coordinated multi-repository review orchestration is not exposed in this release.

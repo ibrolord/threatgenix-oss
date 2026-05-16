@@ -10,6 +10,7 @@ const BYOK_PROVIDERS = [
   { name: "openrouter", display_name: "OpenRouter" },
   { name: "gemini", display_name: "Google Gemini" },
   { name: "xai", display_name: "xAI (Grok)" },
+  { name: "zai", display_name: "Z.ai" },
   { name: "perplexity", display_name: "Perplexity" },
 ] as const;
 

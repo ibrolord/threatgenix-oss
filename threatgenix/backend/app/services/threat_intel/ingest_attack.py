@@ -58,7 +58,7 @@ async def ingest_attack(db: AsyncSession, with_embeddings: bool = True) -> int:
 
     Args:
         db: Async database session.
-        with_embeddings: Whether to generate embeddings (requires Bedrock).
+        with_embeddings: Whether to generate embeddings with the configured provider.
 
     Returns:
         Number of techniques ingested.

@@ -509,6 +509,8 @@ def configured_model_provider_names(env: dict[str, str] | None = None) -> list[s
         configured.append("gemini")
     if source.get("XAI_API_KEY"):
         configured.append("xai")
+    if source.get("ZAI_API_KEY"):
+        configured.append("zai")
     if source.get("PERPLEXITY_API_KEY"):
         configured.append("perplexity")
     if source.get("AWS_ACCESS_KEY_ID") or source.get("AWS_PROFILE"):

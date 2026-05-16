@@ -13,6 +13,7 @@ All tests are pure unit tests -- no network calls, no database, all mocked.
 
 from __future__ import annotations
 
+import json
 import xml.etree.ElementTree as ET
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -245,11 +246,12 @@ class TestEmbeddingPartialFailure:
 
     def test_generate_embedding_uses_configured_bedrock_model(self, monkeypatch):
         """The embedding model ID should be configurable and use the documented Titan ID."""
+        expected_embedding = [0.25] * EMBEDDING_DIMENSION
 
         class _Body:
             @staticmethod
             def read() -> bytes:
-                return b'{"embedding": [0.25, 0.75]}'
+                return json.dumps({"embedding": expected_embedding}).encode()
 
         mock_client = MagicMock()
         mock_client.invoke_model.return_value = {"body": _Body()}
@@ -261,12 +263,176 @@ class TestEmbeddingPartialFailure:
             "app.services.threat_intel.embeddings.settings.bedrock_embedding_model_id",
             DEFAULT_EMBEDDING_MODEL_ID,
         )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_provider",
+            "bedrock",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_model",
+            None,
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_dimension",
+            EMBEDDING_DIMENSION,
+        )
 
-        assert generate_embedding("payments api") == [0.25, 0.75]
+        assert generate_embedding("payments api") == expected_embedding
         assert (
             mock_client.invoke_model.call_args.kwargs["modelId"]
             == "amazon.titan-embed-text-v2:0"
         )
+        body = json.loads(mock_client.invoke_model.call_args.kwargs["body"])
+        assert body["dimensions"] == EMBEDDING_DIMENSION
+
+    def test_generate_embedding_uses_openai_embedding_provider(self, monkeypatch):
+        expected_embedding = [0.5] * EMBEDDING_DIMENSION
+        captured: dict[str, object] = {}
+
+        class FakeResponse:
+            @staticmethod
+            def raise_for_status():
+                return None
+
+            @staticmethod
+            def json():
+                return {"data": [{"embedding": expected_embedding}]}
+
+        def fake_post(url, *, headers, json, timeout):
+            captured["url"] = url
+            captured["headers"] = headers
+            captured["json"] = json
+            captured["timeout"] = timeout
+            return FakeResponse()
+
+        import httpx
+
+        monkeypatch.setattr(httpx, "post", fake_post)
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_provider",
+            "openai",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_model",
+            "text-embedding-3-large",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_dimension",
+            EMBEDDING_DIMENSION,
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_api_key",
+            None,
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.openai_api_key",
+            "openai-provider-key",
+        )
+
+        assert generate_embedding("payments api") == expected_embedding
+        assert captured["url"] == "https://api.openai.com/v1/embeddings"
+        assert captured["headers"] == {
+            "Authorization": "Bearer openai-provider-key",
+            "Content-Type": "application/json",
+        }
+        assert captured["json"] == {
+            "model": "text-embedding-3-large",
+            "input": "payments api",
+            "dimensions": EMBEDDING_DIMENSION,
+        }
+        assert captured["timeout"] == 60
+
+    def test_generate_embedding_uses_zai_openai_compatible_provider(self, monkeypatch):
+        expected_embedding = [0.125] * EMBEDDING_DIMENSION
+        captured: dict[str, object] = {}
+
+        class FakeResponse:
+            @staticmethod
+            def raise_for_status():
+                return None
+
+            @staticmethod
+            def json():
+                return {"data": [{"embedding": expected_embedding}]}
+
+        def fake_post(url, *, headers, json, timeout):
+            captured["url"] = url
+            captured["headers"] = headers
+            captured["json"] = json
+            captured["timeout"] = timeout
+            return FakeResponse()
+
+        import httpx
+
+        monkeypatch.setattr(httpx, "post", fake_post)
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_provider",
+            "zai",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_model",
+            "zai-embedding-1024",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_dimension",
+            EMBEDDING_DIMENSION,
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_api_key",
+            None,
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.zai_api_key",
+            "zai-provider-key",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.zai_base_url",
+            "https://api.z.ai/api/paas/v4/",
+        )
+
+        assert generate_embedding("payments api") == expected_embedding
+        assert captured["url"] == "https://api.z.ai/api/paas/v4/embeddings"
+        assert captured["headers"] == {
+            "Authorization": "Bearer zai-provider-key",
+            "Content-Type": "application/json",
+        }
+        assert captured["json"] == {
+            "model": "zai-embedding-1024",
+            "input": "payments api",
+            "dimensions": EMBEDDING_DIMENSION,
+        }
+
+    def test_embedding_dimension_mismatch_fails_before_pgvector_write(self, monkeypatch):
+        class FakeResponse:
+            @staticmethod
+            def raise_for_status():
+                return None
+
+            @staticmethod
+            def json():
+                return {"data": [{"embedding": [0.1, 0.2]}]}
+
+        import httpx
+
+        monkeypatch.setattr(httpx, "post", lambda *args, **kwargs: FakeResponse())
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_provider",
+            "openai",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_model",
+            "text-embedding-3-large",
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_dimension",
+            EMBEDDING_DIMENSION,
+        )
+        monkeypatch.setattr(
+            "app.services.threat_intel.embeddings.settings.embedding_api_key",
+            "embedding-provider-key",
+        )
+
+        with pytest.raises(RuntimeError, match="returned 2 dimensions"):
+            generate_embedding("payments api")
 
     @patch("app.services.threat_intel.embeddings.generate_embedding")
     def test_partial_embedding_failure_uses_zero_vector(self, mock_embed):

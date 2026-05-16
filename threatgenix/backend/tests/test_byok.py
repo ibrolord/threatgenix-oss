@@ -352,6 +352,60 @@ async def test_test_gemini_key_uses_header_not_query_parameter(monkeypatch):
 
 
 @pytest.mark.asyncio
+async def test_test_zai_key_uses_configured_openai_compatible_models_endpoint(monkeypatch):
+    app.dependency_overrides[get_current_user] = _override_user()
+    fake_db = FakeDB()
+    fake_db.add(
+        UserProviderKey(
+            user_id=FAKE_USER_A,
+            provider="zai",
+            encrypted_key=encrypt_key("zai-provider-key"),
+        )
+    )
+    captured: dict[str, object] = {}
+
+    class FakeResponse:
+        status_code = 200
+
+    class FakeAsyncClient:
+        def __init__(self, timeout):
+            self.timeout = timeout
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, exc_type, exc, tb):
+            return False
+
+        async def get(self, url, *, headers=None):
+            captured["url"] = url
+            captured["headers"] = headers or {}
+            return FakeResponse()
+
+    import httpx
+
+    monkeypatch.setattr(httpx, "AsyncClient", FakeAsyncClient)
+    monkeypatch.setattr(
+        "app.api.llm.settings.zai_base_url",
+        "https://api.z.ai/api/paas/v4/",
+    )
+
+    async def override_db():
+        yield fake_db
+
+    app.dependency_overrides[get_db] = override_db
+
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
+        resp = await client.post(f"{API_PREFIX}/keys/zai/test")
+
+    assert resp.status_code == 200
+    assert resp.json() == {"status": "ok", "provider": "zai"}
+    assert captured["url"] == "https://api.z.ai/api/paas/v4/models"
+    assert captured["headers"] == {"Authorization": "Bearer zai-provider-key"}
+
+
+@pytest.mark.asyncio
 async def test_keys_require_auth():
     """BYOK endpoints should return 401 without auth."""
     saved = dict(app.dependency_overrides)

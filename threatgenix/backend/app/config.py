@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     deployment_profile: str = "local"
 
     # LLM provider: "ollama", "bedrock", "anthropic", "openai", "openrouter",
-    #               "gemini", "xai", "perplexity", "auto"
+    #               "gemini", "xai", "zai", "perplexity", "auto"
     llm_provider: str = "ollama"
     allow_external_ai_providers_in_production: bool = False
 
@@ -23,6 +23,14 @@ class Settings(BaseSettings):
     bedrock_embedding_model_id: str = "amazon.titan-embed-text-v2:0"
     bedrock_max_tokens: int = 4096
     bedrock_timeout_seconds: int = 90
+
+    # Threat-intel embeddings. The database schema stores Vector(1024), so
+    # alternate providers must return exactly 1024 dimensions.
+    embedding_provider: str = "bedrock"
+    embedding_model: Optional[str] = None
+    embedding_dimension: int = 1024
+    embedding_base_url: Optional[str] = None
+    embedding_api_key: Optional[str] = None
 
     # Anthropic API (direct)
     anthropic_api_key: Optional[str] = None
@@ -44,6 +52,11 @@ class Settings(BaseSettings):
     # xAI (Grok) — OpenAI-compatible
     xai_api_key: Optional[str] = None
     xai_model: str = "grok-3-mini"
+
+    # Z.ai — OpenAI-compatible
+    zai_api_key: Optional[str] = None
+    zai_base_url: str = "https://api.z.ai/api/paas/v4"
+    zai_model: str = "glm-4.6"
 
     # Perplexity — OpenAI-compatible (limited tool support)
     perplexity_api_key: Optional[str] = None

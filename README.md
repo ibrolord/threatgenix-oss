@@ -141,9 +141,37 @@ BEDROCK_EMBEDDING_MODEL_ID=amazon.titan-embed-text-v2:0
 ```
 
 For direct provider APIs, set `LLM_PROVIDER` to one of `anthropic`, `openai`,
-`openrouter`, `gemini`, `xai`, or `perplexity` and set the matching API key.
+`openrouter`, `gemini`, `xai`, `zai`, or `perplexity` and set the matching API key.
 The app also supports BYOK for those direct API providers from the Settings
 page. Bedrock uses AWS IAM and is not stored as a per-user BYOK key.
+
+Z.ai uses its OpenAI-compatible endpoint:
+
+```env
+LLM_PROVIDER=zai
+ZAI_API_KEY=<your Z.ai key>
+ZAI_BASE_URL=https://api.z.ai/api/paas/v4
+ZAI_MODEL=glm-4.6
+```
+
+Threat-intel semantic retrieval stores 1024-dimension vectors in PostgreSQL
+pgvector. Bedrock Titan remains the default embedding provider, but self-hosted
+deployments can opt into OpenAI-compatible embedding APIs when the selected
+model can return exactly 1024 dimensions:
+
+```env
+EMBEDDING_PROVIDER=openai
+OPENAI_API_KEY=<your OpenAI key>
+EMBEDDING_MODEL=text-embedding-3-large
+EMBEDDING_DIMENSION=1024
+```
+
+For OpenRouter, Z.ai, or another OpenAI-compatible embedding endpoint, set
+`EMBEDDING_PROVIDER=openrouter`, `EMBEDDING_PROVIDER=zai`, or
+`EMBEDDING_PROVIDER=openai_compatible` plus `EMBEDDING_MODEL`. Use
+`EMBEDDING_API_KEY` and `EMBEDDING_BASE_URL` for a custom compatible provider.
+If a provider returns anything other than 1024 dimensions, ThreatGenix rejects
+the vector before writing it to pgvector.
 
 External AI providers are opt-in. Do not set provider API keys unless your
 deployment policy allows sending review context to that provider.

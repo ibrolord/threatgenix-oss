@@ -48,7 +48,7 @@ class AttackTechnique(Base):
     url: Mapped[Optional[str]] = mapped_column(String(500))
     stix_id: Mapped[Optional[str]] = mapped_column(String(100))  # STIX 2.1 object ID
     version: Mapped[str] = mapped_column(String(20), default="0")  # ATT&CK version
-    embedding: Mapped[Optional[list]] = mapped_column(Vector(1024))  # Titan Embeddings v2
+    embedding: Mapped[Optional[list]] = mapped_column(Vector(1024))  # threat-intel embedding vector
     ingested_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 

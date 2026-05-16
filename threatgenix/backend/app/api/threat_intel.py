@@ -60,7 +60,7 @@ async def get_intel_status(
 async def sync_all_sources(
     background_tasks: BackgroundTasks,
     with_embeddings: bool = Query(
-        True, description="Generate embeddings (requires Bedrock)"
+        True, description="Generate embeddings using the configured embedding provider"
     ),
     current_user: User = Depends(get_current_user),
 ) -> dict:

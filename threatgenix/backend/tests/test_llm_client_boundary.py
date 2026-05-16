@@ -258,6 +258,75 @@ def test_openai_provider_uses_model_compatible_token_limit(
     assert other_key not in body
 
 
+def test_zai_provider_uses_openai_compatible_endpoint(monkeypatch):
+    captured: dict[str, object] = {}
+
+    class FakeResponse:
+        @staticmethod
+        def raise_for_status():
+            return None
+
+        @staticmethod
+        def json():
+            return {
+                "choices": [
+                    {
+                        "message": {
+                            "tool_calls": [
+                                {
+                                    "function": {
+                                        "arguments": '{"summary":"ok"}',
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "usage": {"prompt_tokens": 1, "completion_tokens": 1},
+            }
+
+    class FakeHTTPClient:
+        def __init__(self, timeout):
+            self.timeout = timeout
+
+        def post(self, url, *, headers, json):
+            captured["url"] = url
+            captured["headers"] = headers
+            captured["json"] = json
+            return FakeResponse()
+
+    import httpx
+
+    monkeypatch.setattr(httpx, "Client", FakeHTTPClient)
+    monkeypatch.setattr(llm_client.settings, "zai_base_url", "https://api.z.ai/api/paas/v4/")
+
+    client = llm_client.ZAIProvider(api_key="zai-provider-key", model="glm-4.6")
+    result = client.call_with_tools(
+        system_message="system",
+        user_message="user",
+        tools=[
+            {
+                "name": "record_agent_reasoning",
+                "description": "Record result",
+                "inputSchema": {"json": {"type": "object"}},
+            }
+        ],
+        max_tokens=32,
+    )
+
+    assert result == {"summary": "ok"}
+    assert captured["url"] == "https://api.z.ai/api/paas/v4/chat/completions"
+    assert captured["headers"] == {
+        "Authorization": "Bearer zai-provider-key",
+        "Content-Type": "application/json",
+    }
+    body = captured["json"]
+    assert isinstance(body, dict)
+    assert body["model"] == "glm-4.6"
+    assert body["max_tokens"] == 32
+    assert body["tool_choice"] == "auto"
+
+
 def test_gemini_provider_uses_header_auth_not_query_parameter(monkeypatch):
     captured: dict[str, object] = {}
 

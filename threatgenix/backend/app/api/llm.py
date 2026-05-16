@@ -26,8 +26,16 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/llm", tags=["llm"])
 
-# The 6 non-Bedrock providers that support BYOK
-BYOK_PROVIDERS = {"anthropic", "openai", "openrouter", "gemini", "xai", "perplexity"}
+# The non-Bedrock providers that support BYOK
+BYOK_PROVIDERS = {
+    "anthropic",
+    "openai",
+    "openrouter",
+    "gemini",
+    "xai",
+    "zai",
+    "perplexity",
+}
 
 # Display names for UI
 PROVIDER_DISPLAY_NAMES = {
@@ -36,6 +44,7 @@ PROVIDER_DISPLAY_NAMES = {
     "openrouter": "OpenRouter",
     "gemini": "Google Gemini",
     "xai": "xAI (Grok)",
+    "zai": "Z.ai",
     "perplexity": "Perplexity",
 }
 
@@ -46,6 +55,7 @@ _PROVIDER_TEST_URLS: dict[str, str] = {
     "openrouter": "https://openrouter.ai/api/v1/models",
     "gemini": "https://generativelanguage.googleapis.com/v1beta/models",
     "xai": "https://api.x.ai/v1/models",
+    "zai": "https://api.z.ai/api/paas/v4/models",
     "perplexity": "https://api.perplexity.ai/chat/completions",
 }
 _OPENAI_CHAT_MODEL_PREFIXES = ("gpt-", "o")
@@ -97,11 +107,19 @@ def _default_models_for_provider(provider: str) -> list[str]:
         return [settings.gemini_model]
     if provider == "xai":
         return [settings.xai_model]
+    if provider == "zai":
+        return [settings.zai_model]
     if provider == "perplexity":
         return [settings.perplexity_model]
     if provider == "ollama":
         return [settings.ollama_model]
     return []
+
+
+def _provider_test_url(provider: str) -> str:
+    if provider == "zai":
+        return f"{settings.zai_base_url.rstrip('/')}/models"
+    return _PROVIDER_TEST_URLS[provider]
 
 
 async def _stored_user_provider_key(
@@ -570,9 +588,9 @@ async def test_user_key(
                     },
                 )
             else:
-                # OpenAI-compatible: openai, openrouter, xai — list models
+                # OpenAI-compatible: openai, openrouter, xai, zai — list models
                 resp = await http.get(
-                    _PROVIDER_TEST_URLS[provider],
+                    _provider_test_url(provider),
                     headers={"Authorization": f"Bearer {api_key}"},
                 )
 

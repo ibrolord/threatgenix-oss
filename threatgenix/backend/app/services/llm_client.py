@@ -508,6 +508,25 @@ class XAIProvider(_OpenAICompatibleProvider):
         )
 
 
+# ─── Z.ai Provider ────────────────────────────────────────────────
+
+
+class ZAIProvider(_OpenAICompatibleProvider):
+    """Z.ai GLM provider — OpenAI-compatible."""
+
+    provider_name = "zai"
+
+    def __init__(self, *, api_key: str | None = None, model: str | None = None) -> None:
+        selected_api_key = api_key or settings.zai_api_key
+        if not selected_api_key:
+            raise RuntimeError("ZAI_API_KEY not set")
+        super().__init__(
+            api_key=selected_api_key,
+            base_url=settings.zai_base_url,
+            model=model or settings.zai_model,
+        )
+
+
 # ─── Perplexity Provider ──────────────────────────────────────────
 
 
@@ -809,6 +828,7 @@ PROVIDER_REGISTRY: list[tuple[str, type]] = [
     ("openrouter", OpenRouterProvider),
     ("gemini", GeminiProvider),
     ("xai", XAIProvider),
+    ("zai", ZAIProvider),
     ("perplexity", PerplexityProvider),
     ("ollama", OllamaProvider),
 ]
@@ -902,7 +922,7 @@ def get_llm_client() -> LLMClient:
     """Get an LLM client based on LLM_PROVIDER setting.
 
     "auto" tries providers in order: bedrock -> anthropic -> openai -> openrouter
-    -> gemini -> xai -> perplexity -> ollama.
+    -> gemini -> xai -> zai -> perplexity -> ollama.
     Result is cached until reset_llm_client() is called.
     """
     global _cached_client, _active_provider_name, _active_model_name
@@ -1137,6 +1157,7 @@ def _set_model_for_provider(provider_name: str, model: str) -> None:
         "openrouter": "openrouter_model",
         "gemini": "gemini_model",
         "xai": "xai_model",
+        "zai": "zai_model",
         "perplexity": "perplexity_model",
         "ollama": "ollama_model",
     }
@@ -1191,6 +1212,7 @@ def get_available_providers() -> list[dict[str, Any]]:
         ("openrouter", "OpenRouter", bool(settings.openrouter_api_key), settings.openrouter_model),
         ("gemini", "Google Gemini", bool(settings.gemini_api_key), settings.gemini_model),
         ("xai", "xAI (Grok)", bool(settings.xai_api_key), settings.xai_model),
+        ("zai", "Z.ai", bool(settings.zai_api_key), settings.zai_model),
         ("perplexity", "Perplexity", bool(settings.perplexity_api_key), settings.perplexity_model),
         ("ollama", "Ollama (Local)", True, settings.ollama_model),
         # Ollama has no key — availability depends on the server running
