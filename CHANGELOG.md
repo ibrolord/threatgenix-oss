@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.0.0-oss - 2026-05-15
+## v1.0.0-oss - 2026-05-16
 
 Initial open-source self-hosted release.
 
@@ -11,6 +11,8 @@ Initial open-source self-hosted release.
 - Local-first AI support with Ollama, optional external provider configuration, AWS Bedrock support through IAM, and BYOK for direct API providers.
 - Single-source repository or pull-request evidence import per threat model/review.
 - OSS hygiene scan for secrets, private/customer strings, and legacy product-name leaks.
+- `python-multipart` pinned to `0.0.27` to include the upstream multipart
+  header denial-of-service fix.
 
 ### Not Included
 
