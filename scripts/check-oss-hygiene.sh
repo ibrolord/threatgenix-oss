@@ -34,7 +34,7 @@ scan_tree() {
 
   secret_hits="$(
     rg -a -n --hidden "${COMMON_EXCLUDES[@]}" \
-      '(BEGIN (RSA|OPENSSH|PRIVATE) KEY|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-(ant|proj|or-v1)-[A-Za-z0-9_-]{12,})' \
+      '(-----BEGIN [A-Z0-9 _-]*PRIVATE KEY-----|BEGIN [A-Z0-9 _-]*PRIVATE KEY|AKIA[0-9A-Z]{16}|ASIA[0-9A-Z]{16}|ghp_[A-Za-z0-9_]{20,}|github_pat_[A-Za-z0-9_]{20,}|sk-(ant|proj|or-v1)-[A-Za-z0-9_-]{12,})' \
       . || true
   )"
   fail_with_hits "high-signal secret pattern found" "$secret_hits"
@@ -103,6 +103,13 @@ setup_secret_fixture() {
   printf 'aws=%s%s\n' 'AKIA' 'ABCDEFGHIJKLMNOP' > "$1/leak.txt"
 }
 
+setup_private_key_fixture() {
+  printf '%s\n%s\n%s\n' \
+    '-----BEGIN OPENSSH '"PRIVATE KEY-----" \
+    'fixture-key-body' \
+    '-----END OPENSSH '"PRIVATE KEY-----" > "$1/private-key.txt"
+}
+
 setup_private_fixture() {
   printf 'owner=ibrobaba\n' > "$1/private.txt"
 }
@@ -147,6 +154,7 @@ run_self_test() {
 
   expect_fixture_passes
   expect_fixture_fails "secret" "high-signal secret pattern found" setup_secret_fixture
+  expect_fixture_fails "private-key" "high-signal secret pattern found" setup_private_key_fixture
   expect_fixture_fails "private" "private or customer-specific string found" setup_private_fixture
   expect_fixture_fails "legacy" "legacy product name found outside the regression test" setup_legacy_fixture
   expect_fixture_fails "tracked-env" "tracked .env file found" setup_tracked_env_fixture
