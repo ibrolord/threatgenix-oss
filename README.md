@@ -4,6 +4,12 @@ ThreatGenix is a self-hosted threat modeling and security-review workspace. It h
 
 This repository is the open-source self-hosted edition. It is intended for local development, internal security teams, and teams that want to run ThreatGenix on their own infrastructure.
 
+## Release Status
+
+Current OSS release: `v1.0.0-oss`.
+
+This release is ready for self-hosted evaluation and internal security-review workflows. It supports one repository or pull-request evidence source per threat model or application review at a time. Re-importing repository evidence replaces the saved repository evidence for that model. Coordinated multi-repository workflows are not marketed or exposed in v1.
+
 ## What Is Included
 
 - FastAPI backend with PostgreSQL/pgvector persistence
@@ -11,6 +17,7 @@ This repository is the open-source self-hosted edition. It is intended for local
 - CLI and MCP entry points for review automation
 - Local Docker Compose stack for self-hosted development
 - Optional LLM providers, including local Ollama and external providers configured by environment variable
+- GitHub repository or pull-request evidence import for a single source per model/review
 - Optional validation-tool ingestion and controlled scanner execution paths
 
 ## What Is Not Included
@@ -19,6 +26,7 @@ This repository is the open-source self-hosted edition. It is intended for local
 - Private customer evidence, production smoke artifacts, or internal planning notes
 - Managed cloud runner infrastructure
 - Production secrets or provider credentials
+- Coordinated multi-repository review orchestration
 
 ## How To Run It
 

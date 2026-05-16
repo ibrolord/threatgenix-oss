@@ -1,5 +1,7 @@
 # Self-Hosting ThreatGenix
 
+This guide applies to the `v1.0.0-oss` self-hosted release.
+
 The default self-hosted path is Docker Compose from the app root:
 
 ```bash
@@ -56,6 +58,10 @@ key, and local Compose database hosts.
 ## AI Providers
 
 The local default is Ollama. External providers are configured through environment variables and should be enabled only after your organization approves provider data transfer.
+
+## Repository Evidence Boundary
+
+ThreatGenix OSS v1 supports a single GitHub repository, pull request, uploaded archive, or manifest bundle as repository evidence for a threat model at a time. Importing or uploading repository evidence again replaces the currently saved repository evidence for that model. Coordinated multi-repository review orchestration is not exposed in this release.
 
 ## Validation Runners
 
