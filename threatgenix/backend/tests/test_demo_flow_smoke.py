@@ -339,6 +339,11 @@ class TestDemoFlowSmoke:
         try:
             with (
                 patch("app.api.documents.get_threat_model", new_callable=AsyncMock, return_value=fake_tm),
+                patch(
+                    "app.api.documents.get_llm_client_for_user_async",
+                    new_callable=AsyncMock,
+                    return_value=object(),
+                ),
                 patch("app.api.documents.parse_uploaded_document", new_callable=AsyncMock, return_value=MagicMock(
                     file_bytes=pdf_bytes,
                     filename="banking_app.pdf",

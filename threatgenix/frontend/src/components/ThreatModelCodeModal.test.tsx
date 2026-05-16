@@ -137,8 +137,7 @@ describe("ThreatModelCodeModal", () => {
       "The live TMAC document loads here. You can also paste YAML or JSON.",
     );
 
-    await user.clear(editor);
-    await user.type(editor, "tmac_version: '1.0'");
+    fireEvent.change(editor, { target: { value: "tmac_version: '1.0'" } });
     await user.click(screen.getByRole("button", { name: "Validate Now" }));
 
     await waitFor(() => {
@@ -167,8 +166,9 @@ describe("ThreatModelCodeModal", () => {
       "The live TMAC document loads here. You can also paste YAML or JSON.",
     );
 
-    await user.clear(editor);
-    await user.type(editor, "tmac_version: '1.0'\nmetadata:\n  system_name: Before AI");
+    fireEvent.change(editor, {
+      target: { value: "tmac_version: '1.0'\nmetadata:\n  system_name: Before AI" },
+    });
     await user.type(
       screen.getByPlaceholderText(
         "Tell AI what to review, explain, or change. For example: Add a secrets vault and update the related threats.",
@@ -243,8 +243,7 @@ describe("ThreatModelCodeModal", () => {
     const editor = await screen.findByPlaceholderText(
       "The live TMAC document loads here. You can also paste YAML or JSON.",
     );
-    await user.clear(editor);
-    await user.type(editor, "tmac_version: '1.0'");
+    fireEvent.change(editor, { target: { value: "tmac_version: '1.0'" } });
 
     await user.click(screen.getByLabelText("Include governance and collaboration state"));
     await user.click(screen.getByLabelText("Include embedded reporting assets"));

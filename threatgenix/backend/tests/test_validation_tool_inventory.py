@@ -297,7 +297,7 @@ def test_self_hosted_inventory_allows_osv_with_process_advisory_db_opt_in(monkey
     )
 
 
-def test_self_hosted_production_inventory_allows_osv_with_explicit_process_advisory_opt_in(
+def test_self_hosted_production_inventory_rejects_process_advisory_opt_in(
     monkeypatch,
 ):
     monkeypatch.delenv("APP_ENV", raising=False)
@@ -311,8 +311,8 @@ def test_self_hosted_production_inventory_allows_osv_with_explicit_process_advis
         inventory = build_validation_tool_inventory()
 
     tools = {tool.name: tool for tool in inventory}
-    assert tools["osv-scanner"].readiness_status == "ready"
-    assert not any(
+    assert tools["osv-scanner"].readiness_status == "needs_configuration"
+    assert any(
         "advisory_db network policy requires an isolated network runner" in reason
         for reason in tools["osv-scanner"].blocker_reasons
     )

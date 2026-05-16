@@ -133,6 +133,13 @@ async def test_owned_resource_routes_reject_cross_tenant_access(
     for module in (threat_models, dfd, threats, evidence):
         monkeypatch.setattr(module, "get_threat_model", foreign_get_threat_model)
 
+    for dependency in (
+        threats._require_owner,
+        threats._require_read_access,
+        threats._require_review_access,
+    ):
+        app.dependency_overrides.pop(dependency, None)
+
     app.dependency_overrides[get_current_user] = current_user_override
     app.dependency_overrides[get_db] = db_override
 

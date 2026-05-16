@@ -476,6 +476,11 @@ async def test_analyze_with_ai_returns_rule_and_ai_threats():
             new_callable=AsyncMock,
             return_value=(fake_ai_output, None),
         ),
+        patch(
+            "app.api.threats.get_llm_client_for_user_async",
+            new_callable=AsyncMock,
+            return_value=object(),
+        ),
         patch("app.api.threats.merge_ai_threats", return_value=merged_threats),
     ):
         transport = ASGITransport(app=app)
@@ -539,6 +544,11 @@ async def test_analyze_merges_ai_threats_even_when_warning_present():
                 fake_ai_output,
                 "Threat intelligence unavailable: pgvector type unavailable.",
             ),
+        ),
+        patch(
+            "app.api.threats.get_llm_client_for_user_async",
+            new_callable=AsyncMock,
+            return_value=object(),
         ),
         patch("app.api.threats.merge_ai_threats", return_value=merged_threats),
     ):
@@ -678,6 +688,11 @@ async def test_analyze_uses_isolated_session_for_ai_enhancement():
         ),
         patch("app.api.threats.evaluate_rules", return_value=fake_rules_output),
         patch("app.api.threats.enhance_threats", new=fake_enhance_threats),
+        patch(
+            "app.api.threats.get_llm_client_for_user_async",
+            new_callable=AsyncMock,
+            return_value=object(),
+        ),
         patch("app.api.threats.async_session", return_value=FakeSessionManager()),
         patch("app.api.threats.AsyncSession", AsyncMock),
     ):
@@ -729,6 +744,11 @@ async def test_analyze_passes_environment_context_to_ai_enhancement():
         ),
         patch("app.api.threats.evaluate_rules", return_value=fake_rules_output),
         patch("app.api.threats.enhance_threats", new=fake_enhance_threats),
+        patch(
+            "app.api.threats.get_llm_client_for_user_async",
+            new_callable=AsyncMock,
+            return_value=object(),
+        ),
         patch("app.api.threats.async_session", return_value=FakeSessionManager()),
         patch("app.api.threats.AsyncSession", AsyncMock),
     ):
@@ -778,6 +798,11 @@ async def test_analyze_passes_document_context_summary_to_ai_enhancement():
         ),
         patch("app.api.threats.evaluate_rules", return_value=fake_rules_output),
         patch("app.api.threats.enhance_threats", new=fake_enhance_threats),
+        patch(
+            "app.api.threats.get_llm_client_for_user_async",
+            new_callable=AsyncMock,
+            return_value=object(),
+        ),
         patch("app.api.threats.async_session", return_value=FakeSessionManager()),
         patch("app.api.threats.AsyncSession", AsyncMock),
     ):

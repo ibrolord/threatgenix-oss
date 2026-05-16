@@ -508,7 +508,11 @@ async def test_fetch_github_repository_archive_over_ssh_uses_private_key(monkeyp
     archive_bytes, repository_slug, ref = await fetch_github_repository_archive_over_ssh(
         "git@github.com:openai/threatgenix.git",
         ref="main",
-        ssh_private_key="FAKE_OPENSSH_PRIVATE_KEY_FOR_TESTS",
+        ssh_private_key=(
+            "-----BEGIN OPENSSH PRIVATE KEY-----\n"
+            "FAKE_OPENSSH_PRIVATE_KEY_FOR_TESTS\n"
+            "-----END OPENSSH PRIVATE KEY-----"
+        ),
     )
 
     evidence = parse_repository_evidence(archive_bytes, "openai-threatgenix.zip")
@@ -518,7 +522,9 @@ async def test_fetch_github_repository_archive_over_ssh_uses_private_key(monkeyp
     assert evidence.source_type == "archive"
     assert "Python" in evidence.languages
     assert all(".env" not in path for path in evidence.security_sensitive_paths)
-    assert captured["private_key"] == "FAKE_OPENSSH_PRIVATE_KEY_FOR_TESTS\n"
+    assert str(captured["private_key"]).startswith("-----BEGIN OPENSSH PRIVATE KEY-----\n")
+    assert "FAKE_OPENSSH_PRIVATE_KEY_FOR_TESTS\n" in str(captured["private_key"])
+    assert str(captured["private_key"]).endswith("-----END OPENSSH PRIVATE KEY-----\n")
     assert "github.com ssh-ed25519" in str(captured["known_hosts"])
     calls = captured["calls"]
     assert any(call["args"][:3] == ["git", "remote", "add"] for call in calls)

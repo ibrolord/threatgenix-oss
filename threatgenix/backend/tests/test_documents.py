@@ -215,6 +215,11 @@ async def test_upload_valid_pdf_returns_201():
     with (
         patch("app.api.documents.get_threat_model", new_callable=AsyncMock, return_value=fake_tm),
         patch(
+            "app.api.documents.get_llm_client_for_user_async",
+            new_callable=AsyncMock,
+            return_value=object(),
+        ),
+        patch(
             "app.api.documents.parse_uploaded_document",
             new_callable=AsyncMock,
             return_value=ParsedUploadedDocument(
