@@ -1,6 +1,6 @@
 # Self-Hosting ThreatGenix
 
-This guide applies to the `v1.0.0-oss` self-hosted release.
+This guide applies to the `v1.0.1-oss` self-hosted release.
 
 The default self-hosted path is Docker Compose from the app root:
 

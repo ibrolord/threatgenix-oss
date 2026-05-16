@@ -1,5 +1,27 @@
 # Changelog
 
+## v1.0.1-oss - 2026-05-16
+
+Provider and embedding support release for self-hosted deployments.
+
+### Added
+
+- Z.ai generation provider support through the OpenAI-compatible chat API.
+- Z.ai BYOK support in the backend provider API and Settings page.
+- Configurable threat-intel embeddings through Bedrock, OpenAI, OpenRouter,
+  Z.ai, or another OpenAI-compatible embedding endpoint.
+- Embedding dimension guardrails that reject non-1024-dimensional vectors before
+  they can be written to the shipped pgvector `Vector(1024)` schema.
+- README, self-hosting, and env example documentation for Z.ai and configurable
+  embedding providers.
+
+### Release Gates
+
+- GitHub CI passed for hygiene, backend, and frontend jobs.
+- Full backend pytest passed locally.
+- Full frontend Vitest, typecheck, lint, and production build passed locally.
+- OSS hygiene scan passed locally and in GitHub CI.
+
 ## v1.0.0-oss - 2026-05-16
 
 Initial open-source self-hosted release.

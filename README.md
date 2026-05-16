@@ -6,7 +6,7 @@ This repository is the open-source self-hosted edition. It is intended for local
 
 ## Release Status
 
-Current OSS release: `v1.0.0-oss`.
+Current OSS release: `v1.0.1-oss`.
 
 This release is ready for self-hosted evaluation and internal security-review workflows. It supports one repository or pull-request evidence source per threat model or application review at a time. Re-importing repository evidence replaces the saved repository evidence for that model. Coordinated multi-repository workflows are not marketed or exposed in v1.
 
