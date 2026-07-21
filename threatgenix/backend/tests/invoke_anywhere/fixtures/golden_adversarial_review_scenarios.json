@@ -192,12 +192,12 @@
           "source_type": "manual",
           "item_type": "accepted_risk",
           "title": "Accepted risk active for legacy export",
-          "body": "Accepted risk active for legacy export until 2026-07-01 with compensating monitoring.",
+          "body": "Accepted risk active for legacy export until 2126-07-01 with compensating monitoring.",
           "facets": {
             "acceptance_state": "active",
             "scope_type": "route",
             "scope_value": "legacy/export.py:42",
-            "expires_at": "2026-07-01T00:00:00+00:00",
+            "expires_at": "2126-07-01T00:00:00+00:00",
             "compensating_control_present": true
           },
           "source_refs": [{"type": "risk_acceptance", "id": "risk-1"}]

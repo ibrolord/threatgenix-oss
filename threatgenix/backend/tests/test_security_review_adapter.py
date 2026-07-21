@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from types import SimpleNamespace
 
 from app.schemas.environment_evidence import (
@@ -217,7 +217,7 @@ def test_build_security_review_context_infers_assets_and_risk_acceptance() -> No
         residual_risk_level="High",
         qualification_label="Review",
     )
-    threat.due_date = date(2026, 6, 30)
+    threat.due_date = date.today() + timedelta(days=180)
     intel = ThreatIntelResponse(
         local_severity="High",
         highest_external_severity="Critical",
@@ -259,7 +259,7 @@ def test_build_security_review_context_infers_assets_and_risk_acceptance() -> No
     assert context.existing_risk_acceptance is not None
     assert context.existing_risk_acceptance.status == "active"
     assert context.existing_risk_acceptance.accepted_by == "priya"
-    assert context.existing_risk_acceptance.expires_at == "2026-06-30"
+    assert context.existing_risk_acceptance.expires_at == threat.due_date.isoformat()
     assert context.previous_priority == "p3_backlog"
 
 
@@ -294,7 +294,7 @@ def test_build_security_review_findings_projects_threat_risk_acceptance() -> Non
         residual_risk_level="Low",
         qualification_label="Review",
     )
-    threat.due_date = date(2026, 6, 30)
+    threat.due_date = date.today() + timedelta(days=180)
 
     response = build_security_review_findings(
         model,
@@ -309,7 +309,7 @@ def test_build_security_review_findings_projects_threat_risk_acceptance() -> Non
     assert finding.risk_acceptance is not None
     assert finding.risk_acceptance.status == "active"
     assert finding.risk_acceptance.accepted_by == "priya"
-    assert finding.risk_acceptance.expires_at == "2026-06-30"
+    assert finding.risk_acceptance.expires_at == threat.due_date.isoformat()
     assert finding.risk_acceptance.acceptance_rationale == "Accepted pending rollout"
     assert finding.risk_acceptance.compensating_control == "Restrict role scope"
     anchors = {
