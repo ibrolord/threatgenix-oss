@@ -17,12 +17,16 @@ def check(label, condition, detail=""):
         FAIL += 1
         print(f"  FAIL: {label} — {detail}")
 
+SMOKE_PASSWORD = "Password123"
+
+
 def auth():
-    r = requests.post(f"{BASE}/auth/login", json={"email": "analyst@example.test", "password": "password123"})
+    r = requests.post(f"{BASE}/auth/login", json={"email": "analyst@example.test", "password": SMOKE_PASSWORD})
     if r.status_code != 200:
         # Register first
-        requests.post(f"{BASE}/auth/register", json={"email": "analyst@example.test", "password": "password123", "full_name": "Priya Sharma"})
-        r = requests.post(f"{BASE}/auth/login", json={"email": "analyst@example.test", "password": "password123"})
+        requests.post(f"{BASE}/auth/register", json={"email": "analyst@example.test", "password": SMOKE_PASSWORD, "full_name": "Priya Sharma"})
+        r = requests.post(f"{BASE}/auth/login", json={"email": "analyst@example.test", "password": SMOKE_PASSWORD})
+    r.raise_for_status()
     return {"Authorization": f"Bearer {r.json()['access_token']}"}
 
 headers = auth()
