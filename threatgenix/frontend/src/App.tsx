@@ -175,7 +175,7 @@ function ProtectedApp() {
         </Suspense>
       </main>
       <footer className="app-footer">
-        <span>ThreatGenix v0.1.0</span>
+        <span>ThreatGenix v1.0.2 OSS</span>
         {buildCommit ? (
           <>
             <span className="app-footer-sep">&middot;</span>

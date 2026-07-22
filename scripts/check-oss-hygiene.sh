@@ -71,6 +71,25 @@ scan_tree() {
     )"
   fi
   fail_with_hits "uncommented provider credential in env example" "$uncommented_provider_key_hits"
+
+  frontend_dockerfile="threatgenix/frontend/Dockerfile"
+  frontend_dockerignore="threatgenix/frontend/.dockerignore"
+  if [[ -f "$frontend_dockerfile" ]]; then
+    if [[ ! -f "$frontend_dockerignore" ]]; then
+      fail_with_hits \
+        "frontend Docker context can copy host dependencies" \
+        "$frontend_dockerignore is missing"
+    fi
+    docker_context_hits=""
+    for required_exclude in node_modules dist; do
+      if ! rg -q "^${required_exclude}/?$" "$frontend_dockerignore"; then
+        docker_context_hits+="${frontend_dockerignore} must exclude ${required_exclude}"$'\n'
+      fi
+    done
+    fail_with_hits \
+      "frontend Docker context can copy host dependencies" \
+      "$docker_context_hits"
+  fi
 }
 
 create_clean_fixture() {
@@ -128,6 +147,11 @@ setup_provider_key_fixture() {
   git -C "$1" add threatgenix/backend/.env.example
 }
 
+setup_unsafe_frontend_docker_context_fixture() {
+  mkdir -p "$1/threatgenix/frontend"
+  printf 'FROM node:20-alpine\nCOPY . .\n' > "$1/threatgenix/frontend/Dockerfile"
+}
+
 expect_fixture_fails() {
   local name="$1"
   local expected_label="$2"
@@ -159,6 +183,10 @@ run_self_test() {
   expect_fixture_fails "legacy" "legacy product name found outside the regression test" setup_legacy_fixture
   expect_fixture_fails "tracked-env" "tracked .env file found" setup_tracked_env_fixture
   expect_fixture_fails "provider-key" "uncommented provider credential in env example" setup_provider_key_fixture
+  expect_fixture_fails \
+    "unsafe-frontend-docker-context" \
+    "frontend Docker context can copy host dependencies" \
+    setup_unsafe_frontend_docker_context_fixture
 
   echo "OSS hygiene self-test passed."
 }

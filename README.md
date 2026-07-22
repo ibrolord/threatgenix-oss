@@ -6,7 +6,7 @@ This repository is the open-source self-hosted edition. It is intended for local
 
 ## Release Status
 
-Current OSS release: `v1.0.1-oss`.
+Current OSS release: `v1.0.2-oss`.
 
 This release is ready for self-hosted evaluation and internal security-review workflows. It supports one repository or pull-request evidence source per threat model or application review at a time. Re-importing repository evidence replaces the saved repository evidence for that model. Coordinated multi-repository workflows are not marketed or exposed in v1.
 
@@ -16,9 +16,14 @@ This release is ready for self-hosted evaluation and internal security-review wo
 - React/Vite frontend for DFD editing, review workflows, validation evidence, and reporting
 - CLI and MCP entry points for review automation
 - Local Docker Compose stack for self-hosted development
-- Optional LLM providers, including local Ollama and external providers configured by environment variable
-- GitHub repository or pull-request evidence import for a single source per model/review
-- Optional validation-tool ingestion and controlled scanner execution paths
+- Optional LLM provider adapters, including local Ollama and external providers
+  configured by environment variable; provider credentials and model downloads
+  are not bundled
+- GitHub repository or pull-request evidence import for a single source per
+  model/review when the required GitHub credentials are configured
+- Validation-tool ingestion and controlled scanner execution paths; the default
+  Compose profile uses the non-executing `try_sandbox` mode and does not bundle
+  every scanner binary
 
 ## What Is Not Included
 
@@ -40,7 +45,7 @@ Requirements:
 ### Option A: Docker Compose
 
 ```bash
-git clone <your-fork-url> threatgenix-oss
+git clone https://github.com/ibrolord/threatgenix-oss.git
 cd threatgenix-oss/threatgenix
 docker compose up --build
 ```
@@ -61,6 +66,10 @@ frontend to `127.0.0.1` by default, starts PostgreSQL with pgvector, and uses th
 safe example settings in `threatgenix/backend/.env.example`. The backend runs
 `alembic upgrade head` before serving requests so fresh self-hosted databases are
 migration-stamped.
+
+The login limit defaults to `10/minute` per client IP. Self-hosted teams behind
+a shared NAT can tune `AUTH_LOGIN_RATE_LIMIT` after reviewing their own abuse
+controls and reverse-proxy behavior.
 
 Stop it with:
 
@@ -186,6 +195,9 @@ make lint
 make test-backend
 make test-frontend
 ```
+
+The evidence and known boundaries from the current release retest are recorded
+in `docs/qa/v1.0.2-release-validation.md`.
 
 Run the open-source hygiene gate before publishing a fork, release, or source
 context. This command runs from the repository root:

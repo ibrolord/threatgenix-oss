@@ -10,7 +10,7 @@ from typing import Any, BinaryIO, Callable
 from app.cli.threatgenix import DEFAULT_SERVER_URL, CliError, ThreatGenixClient
 
 SERVER_NAME = "threatgenix"
-SERVER_VERSION = "0.1.0"
+SERVER_VERSION = "1.0.2"
 DEFAULT_PROTOCOL_VERSION = "2024-11-05"
 
 DEFAULT_RATE_LIMIT_ANNOTATION = {

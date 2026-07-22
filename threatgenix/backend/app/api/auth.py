@@ -130,7 +130,7 @@ async def verify_email(data: VerifyEmailRequest, db: AsyncSession = Depends(get_
 
 
 @router.post("/login", response_model=TokenResponse)
-@limiter.limit("10/minute")
+@limiter.limit(settings.auth_login_rate_limit)
 async def login(request: Request, data: LoginRequest, db: AsyncSession = Depends(get_db)) -> TokenResponse:
     result = await db.execute(select(User).where(User.email == data.email))
     user = result.scalar_one_or_none()
