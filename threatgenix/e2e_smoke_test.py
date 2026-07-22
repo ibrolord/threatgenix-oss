@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """End-to-end smoke test for ThreatGenix copilot mode via live API."""
 import json
+import os
 import sys
 import requests
 
-BASE = "http://localhost:8000/api"
+BASE = os.getenv("TG_API_BASE_URL", "http://localhost:8000/api").rstrip("/")
 PASS = 0
 FAIL = 0
 

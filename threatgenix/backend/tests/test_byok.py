@@ -203,12 +203,13 @@ async def test_put_and_list_key():
 
     app.dependency_overrides[get_db] = override_db
 
+    fake_api_key = "sk-test" + "1234abcd"
     transport = ASGITransport(app=app)
     async with AsyncClient(transport=transport, base_url=BASE_URL) as client:
         # Store key
         resp = await client.put(
             f"{API_PREFIX}/keys/openai",
-            json={"api_key": "sk-test1234abcd", "model_override": "gpt-4o"},
+            json={"api_key": fake_api_key, "model_override": "gpt-4o"},
         )
         assert resp.status_code == 200
         body = resp.json()

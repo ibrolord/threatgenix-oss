@@ -1,5 +1,50 @@
 # Changelog
 
+## v1.0.2-oss - 2026-07-22
+
+Launch-readiness release for the self-hosted v1 product.
+
+### Fixed
+
+- Prevented host `node_modules` and build artifacts from entering the frontend
+  Docker context, which broke the documented Compose quick start on Apple
+  Silicon with a missing Linux Rollup binary.
+- Made the login rate limit configurable for self-hosted teams behind shared
+  NAT while preserving the secure `10/minute` default.
+- Made the live API smoke test accept a configurable base URL for isolated and
+  non-default-port deployments.
+- Replaced the README clone placeholder with the public repository URL.
+- Removed an undefined Vite HTML placeholder that generated noisy production
+  build output.
+- Removed a false-positive secret fixture from the current-tree Gitleaks scan
+  without weakening the BYOK test.
+- Updated WeasyPrint to 69.0 to resolve CVE-2026-49452 before launch.
+- Aligned the visible application, API, CLI, PDF, and package versions with the
+  OSS release.
+
+### Updated
+
+- Extended the OSS hygiene gate with a regression that requires the frontend
+  Docker context to exclude host dependencies and build output.
+
+### Release Gates
+
+- Fresh Docker Compose build and startup passed on Apple Silicon with PostgreSQL
+  connected, Alembic revision `084`, backend health green, and frontend HTTP 200.
+- Full backend pytest passed with 1,852 tests; 7 optional live-tool/provider
+  tests remained skipped.
+- Frontend typecheck, lint, 121 Vitest tests, and production build passed.
+- Docker-backed API integration passed 74 tests.
+- Live API journey passed 19/19 checks.
+- Browser E2E passed all 20 customer journeys, including auth roundtrip, tenant
+  isolation, DFD editing, triage, provider settings, application review, and
+  exports.
+- The Python dependency audit reported no known vulnerabilities after the
+  WeasyPrint security update.
+- The v1.0.2 CLI wheel built, installed into a clean virtual environment, and
+  passed its installed `--help` and MCP configuration entry-point checks.
+- OSS hygiene, hygiene self-test, and current-tree Gitleaks scan passed.
+
 ## v1.0.1-oss - 2026-05-16
 
 Provider and embedding support release for self-hosted deployments.

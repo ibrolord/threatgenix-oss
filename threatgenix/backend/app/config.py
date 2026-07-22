@@ -79,6 +79,7 @@ class Settings(BaseSettings):
     # Auth
     secret_key: str = "dev-secret-change-in-production"
     access_token_expire_minutes: int = 1440  # 24 hours for pilot
+    auth_login_rate_limit: str = "10/minute"
     auth_require_email_verification: bool = False
     auth_expose_dev_tokens: bool = False
     remediation_webhook_signature_secret: Optional[str] = None

@@ -214,6 +214,15 @@ fixed.
   internal host leaks. The slice also fixed duplicate artifact evidence-chain
   IDs by keying chains to context entry IDs and added a backend regression for
   duplicate content hashes.
+- 2026-07-22: The v1.0.2 OSS release retest ran from a fresh Apple Silicon
+  Docker Compose stack. It found and fixed host `node_modules` leaking into the
+  Linux frontend image, then passed deep health at Alembic revision 084,
+  1,852 backend tests, 121 frontend tests plus typecheck/lint/build, 74
+  Docker-backed API tests, 19/19 live API smoke checks, and all 20 Playwright
+  customer journeys. The installed-tool smoke passed four executable scanner
+  paths and skipped missing Semgrep and Checkov binaries. External provider and
+  authenticated GitHub calls remain configuration-dependent boundaries, not
+  release-gate claims. See `docs/qa/v1.0.2-release-validation.md`.
 
 ## Release Exit Criteria
 

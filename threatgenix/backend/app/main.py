@@ -498,7 +498,7 @@ async def lifespan(app: FastAPI):
 _is_production = _is_production_like()
 app = FastAPI(
     title=settings.api_title,
-    version="0.1.0",
+    version="1.0.2",
     lifespan=lifespan,
     # Disable interactive API docs in production — they expose internal schema
     docs_url=None if _is_production else "/docs",

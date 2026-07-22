@@ -720,7 +720,7 @@ async def generate_report(
         "next_review_date": str(getattr(threat_model, "next_review_date", None) or ""),
         "out_of_scope_statement": getattr(threat_model, "out_of_scope_statement", None) or "",
         "render_sections": render_sections,
-        "app_version": "0.1.0",
+        "app_version": "1.0.2",
     }
 
     # autoescape=True: WeasyPrint parses HTML, so entities like &lt; render correctly as < in the PDF.
