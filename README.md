@@ -1,8 +1,58 @@
 # ThreatGenix
 
-ThreatGenix is a self-hosted threat modeling and security-review workspace. It helps teams model systems as DFDs, generate STRIDE findings, attach validation evidence, review risks, and export structured security review output.
+**Open-source threat modeling and security reviews, from architecture to evidence.**
 
-This repository is the open-source self-hosted edition. It is intended for local development, internal security teams, and teams that want to run ThreatGenix on their own infrastructure.
+ThreatGenix is a self-hosted workspace for application security engineers and development teams. Turn system architecture into editable data flow diagrams (DFDs), identify STRIDE threats, connect findings to validation evidence, and document risk decisions in one place.
+
+Run it on your own infrastructure. Start with deterministic threat rules, then optionally add AI assistance through local Ollama or a configured external provider.
+
+[Get started](#how-to-run-it) · [Features](#features) · [Screenshots](#screenshots) · [Self-hosting guide](docs/self-hosting.md) · [Contributing](CONTRIBUTING.md)
+
+## What You Can Do
+
+1. **Describe the system.** Start a review, upload architecture documents, build a DFD, or import evidence from a GitHub repository or pull request.
+2. **Find and prioritize threats.** Generate STRIDE findings, inspect affected components and flows, and filter by severity, source, and review status.
+3. **Review the evidence.** Attach scanner output and validation artifacts, investigate findings, and record mitigations and risk decisions.
+4. **Share the review.** Export reports and structured findings for engineering work, security reviews, and stakeholder discussions.
+
+## Features
+
+| Capability | What it helps you do |
+| --- | --- |
+| **Visual architecture modeling** | Edit components, data flows, and trust boundaries on an interactive DFD canvas. Organize diagrams into views and use component templates. |
+| **Document ingestion** | Bring architecture documents into the modeling workflow and review extracted system context. |
+| **STRIDE threat analysis** | Generate repeatable rule-based findings across Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, and Elevation of Privilege. |
+| **Optional AI assistance** | Enhance analysis with local Ollama or configured external providers. Core modeling, rules, evidence workflows, and reporting work without external AI. |
+| **Finding triage and mitigation tracking** | Review individual or selected findings, track status, mitigation owners, due dates, and residual risk. |
+| **Validation evidence** | Import scanner findings and attach validation artifacts to support threat review. Controlled scanner execution requires additional runner configuration and tool availability. |
+| **GitHub context** | Import repository or pull-request evidence with configured GitHub credentials. The OSS v1 workflow supports one repository or PR source per model/review at a time. |
+| **Security review decisions** | Organize application review context, evidence, and risk acceptance records for engineer-led decisions. |
+| **Compliance mappings and reports** | Inspect control mappings and export PDF reports and CSV findings. Mappings support review; they do not certify compliance. |
+| **Portfolio dashboard** | See active models, finding counts, severity, and triage progress across your review workspace. |
+| **CLI and MCP access** | Integrate review workflows with command-line tools and MCP clients. |
+| **Self-hosted storage** | Run the React frontend, FastAPI backend, and PostgreSQL/pgvector database on your own infrastructure using Docker Compose or a source setup. |
+
+## Screenshots
+
+These are captures of the OSS frontend with synthetic example data and mocked API responses. They illustrate the interface, not a completed security assessment or a live scanner run. See [capture instructions](docs/screenshots/README.md).
+
+### Review portfolio
+
+See active applications, elevated findings, and triage progress before opening a review.
+
+![ThreatGenix review portfolio showing three synthetic applications, finding counts, and triage progress](docs/screenshots/review-portfolio.png)
+
+### Visual architecture modeling
+
+Build and inspect the components and data paths that form your threat model.
+
+![ThreatGenix Payments API DFD editor showing a customer, Payments API, transaction store, and audit log](docs/screenshots/model-workspace.png)
+
+### STRIDE findings and triage
+
+Filter findings by STRIDE category, severity, and status, then open each finding for review and validation.
+
+![ThreatGenix findings table showing synthetic Spoofing, Tampering, and Repudiation threats with triage actions](docs/screenshots/stride-findings.png)
 
 ## Release Status
 
