@@ -6,7 +6,7 @@ ThreatGenix is a self-hosted workspace for application security engineers and de
 
 Run it on your own infrastructure. Start with deterministic threat rules, then optionally add AI assistance through local Ollama or a configured external provider.
 
-[Get started](#how-to-run-it) · [Features](#features) · [Screenshots](#screenshots) · [Self-hosting guide](docs/self-hosting.md) · [Contributing](CONTRIBUTING.md)
+[Get started](#how-to-run-it) · [Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Self-hosting guide](docs/self-hosting.md) · [Contributing](CONTRIBUTING.md)
 
 ## What You Can Do
 
@@ -53,6 +53,48 @@ Build and inspect the components and data paths that form your threat model.
 Filter findings by STRIDE category, severity, and status, then open each finding for review and validation.
 
 ![ThreatGenix findings table showing synthetic Spoofing, Tampering, and Repudiation threats with triage actions](docs/screenshots/stride-findings.png)
+
+## Architecture
+
+The default Docker Compose deployment runs three services: the web frontend, the API, and the database. The diagram shows how that core stack connects to optional AI, repository context, and validation tooling.
+
+```mermaid
+flowchart LR
+    browser["Browser"]
+    automation["CLI / MCP clients"]
+
+    subgraph core["Self-hosted core · Docker Compose"]
+        web["React + TypeScript + Vite<br/>DFD canvas and review workspace"]
+        api["FastAPI / Python<br/>Rules · evidence · reviews · reports"]
+        db[("PostgreSQL 16 + pgvector<br/>Application state and scan jobs")]
+        web -->|"/api proxy"| api
+        api -->|"SQLAlchemy / asyncpg"| db
+    end
+
+    github["GitHub / uploaded evidence<br/>Optional context imports"]
+    ai["Ollama / external providers<br/>Optional AI and embeddings"]
+    worker["Isolated validation worker<br/>Optional · configured separately"]
+    tools["Installed scanner tools<br/>Scoped execution"]
+
+    browser --> web
+    automation -->|"Authenticated HTTP"| api
+    github -.->|"Import"| api
+    api -.->|"Configured provider calls"| ai
+    worker -.->|"Poll jobs / persist results"| db
+    worker -.-> tools
+```
+
+Solid connections show the core application path. Dashed connections show optional integrations and the separately configured validation worker.
+
+| Layer | Responsibility |
+| --- | --- |
+| **Web interface** | The React app uses React Flow for the DFD canvas and calls the backend through `/api`. Vite supplies the development server and API proxy in the default Compose stack. |
+| **API and application services** | FastAPI handles authenticated requests. Backend services implement modeling, deterministic threat rules, evidence processing, review workflows, and report generation within the same backend service. |
+| **Persistence and retrieval** | PostgreSQL stores application state and scan jobs; pgvector supports semantic retrieval when compatible embeddings are configured. Alembic manages schema migrations. |
+| **AI adapters** | Local Ollama or configured external providers add AI assistance. External calls require credentials; deterministic rules and core review workflows can run without external AI. |
+| **Validation runner** | A separately deployed worker polls database-backed scan jobs and runs available scanners within configured execution limits. It shares the API's database but is not a fourth service in the default Compose file. |
+
+The example Compose configuration defaults to the non-executing `try_sandbox` validation mode. Importing scanner evidence does not require running live scanners. For a public deployment, build and serve the frontend behind TLS and configure the API, database, and any isolated workers for your environment; see the [self-hosting guide](docs/self-hosting.md).
 
 ## Release Status
 
